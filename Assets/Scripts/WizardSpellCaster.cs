@@ -11,6 +11,7 @@ public class WizardSpellCaster : MonoBehaviour
     public float spellSpeed = 12f;
     public float spellLifetime = 5f;
     public float spellSize = 0.12f;
+    public Color spellColor = Color.cyan;
 
     void Update()
     {
@@ -41,10 +42,12 @@ public class WizardSpellCaster : MonoBehaviour
 
         // Set the orb color
         Renderer renderer = spell.GetComponent<Renderer>();
-        renderer.material.color = Color.cyan;
+        renderer.material.color = spellColor;
 
         // NEW: Add impact detection
-        spell.AddComponent<MagicProjectile>();
+        MagicProjectile projectile =
+            spell.AddComponent<MagicProjectile>();
+        projectile.impactColor = spellColor;
 
         // Add physics
         Rigidbody rb = spell.AddComponent<Rigidbody>();

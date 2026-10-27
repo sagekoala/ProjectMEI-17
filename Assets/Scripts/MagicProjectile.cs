@@ -5,6 +5,7 @@ public class MagicProjectile : MonoBehaviour
 {
     public float impactSize = 0.3f;
     public float impactDuration = 0.2f;
+    public Color impactColor = Color.cyan;
 
     private bool hasHit = false;
 
@@ -30,7 +31,7 @@ public class MagicProjectile : MonoBehaviour
         Destroy(flash.GetComponent<Collider>());
 
         Renderer renderer = flash.GetComponent<Renderer>();
-        renderer.material.color = Color.cyan;
+        renderer.material.color = impactColor;
 
         Destroy(flash, impactDuration);
 
