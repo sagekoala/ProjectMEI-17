@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
 // Visual feedback for levitation: a beam from the hand and a color tint
 // on the object that is aimed at (purple) or levitated (gold).
@@ -16,6 +17,13 @@ public class WizardLevitationFeedback : MonoBehaviour
     public Color aimTint = new Color(0.75f, 0.55f, 1f);
     public Color holdTint = new Color(1f, 0.8f, 0.35f);
 
+    [Header("Haptics")]
+    [Tooltip("Haptics of the levitating controller.")]
+    public HapticImpulsePlayer haptics;
+
+    [Tooltip("Seconds between the soft pulses felt while levitating.")]
+    public float holdPulseInterval = 0.25f;
+
     // URP Lit uses _BaseColor; built-in shaders use _Color.
     static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
     static readonly int ColorId = Shader.PropertyToID("_Color");
@@ -26,6 +34,10 @@ public class WizardLevitationFeedback : MonoBehaviour
 
     private Rigidbody highlightedBody;
     private Renderer[] highlightedRenderers;
+
+    private Rigidbody lastHeld;
+    private Rigidbody lastAimed;
+    private float nextHoldPulseTime;
 
     void Awake()
     {
@@ -71,6 +83,8 @@ public class WizardLevitationFeedback : MonoBehaviour
 
         Rigidbody held = levitation.HeldObject;
 
+        UpdateHoldFeedback(held);
+
         if (held != null)
         {
             ShowBeam(held.position, holdBeamColor);
@@ -80,6 +94,13 @@ public class WizardLevitationFeedback : MonoBehaviour
 
         Rigidbody aimed = levitation.FindLevitatable(out Vector3 hitPoint);
 
+        if (aimed != null && aimed != lastAimed)
+        {
+            // A small tick when a new object comes under the beam.
+            MagicFeedback.Pulse(haptics, 0.1f, 0.03f);
+        }
+        lastAimed = aimed;
+
         if (aimed != null)
         {
             ShowBeam(hitPoint, aimBeamColor);
@@ -88,6 +109,34 @@ public class WizardLevitationFeedback : MonoBehaviour
         }
 
         HideAll();
+    }
+
+    // Sound and vibration when grabbing/releasing, and a soft
+    // continuous pulse while an object is levitated.
+    void UpdateHoldFeedback(Rigidbody held)
+    {
+        if (held != lastHeld)
+        {
+            if (held != null)
+            {
+                MagicFeedback.Play(MagicFeedback.GrabSound, held.position, 0.6f);
+                MagicFeedback.Pulse(haptics, 0.4f, 0.1f);
+            }
+            else if (lastHeld != null)
+            {
+                MagicFeedback.Play(MagicFeedback.ReleaseSound, lastHeld.position, 0.5f);
+                MagicFeedback.Pulse(haptics, 0.2f, 0.05f);
+            }
+
+            lastHeld = held;
+            nextHoldPulseTime = Time.time + holdPulseInterval;
+        }
+
+        if (held != null && Time.time >= nextHoldPulseTime)
+        {
+            MagicFeedback.Pulse(haptics, 0.06f, 0.05f);
+            nextHoldPulseTime = Time.time + holdPulseInterval;
+        }
     }
 
     void HideAll()

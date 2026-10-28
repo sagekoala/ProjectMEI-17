@@ -174,7 +174,10 @@ public class WizardLevitation : MonoBehaviour
 
         Ray ray = new Ray(transform.position, transform.forward);
 
-        if (!Physics.Raycast(ray, out RaycastHit hit, maxDistance))
+        // Triggers (e.g. the wandering souls) don't block the ray.
+        if (!Physics.Raycast(
+                ray, out RaycastHit hit, maxDistance,
+                Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
             return null;
 
         Rigidbody rb = hit.rigidbody;

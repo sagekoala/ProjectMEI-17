@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Teleportation;
 
 // Custom navigation: throw a teleport orb that flies in an arc. If it
@@ -27,6 +28,10 @@ public class WizardTeleportOrb : MonoBehaviour
     [Header("Impact Flash")]
     public float flashSize = 0.6f;
     public float flashDuration = 0.3f;
+
+    [Header("Feedback")]
+    [Tooltip("Haptics of the throwing controller.")]
+    public HapticImpulsePlayer haptics;
 
     private InputAction throwAction;
     private GameObject activeOrb;
@@ -97,6 +102,9 @@ public class WizardTeleportOrb : MonoBehaviour
 
         activeOrb = orb;
 
+        MagicFeedback.Play(MagicFeedback.WhooshSound, orb.transform.position, 0.6f);
+        MagicFeedback.Pulse(haptics, 0.25f, 0.1f);
+
         // Remove the orb if it never lands.
         Destroy(orb, orbLifetime);
     }
@@ -123,7 +131,14 @@ public class WizardTeleportOrb : MonoBehaviour
         );
 
         if (!canTeleport)
+        {
+            MagicFeedback.Play(MagicFeedback.FailSound, contact.point, 0.8f);
+            MagicFeedback.Pulse(haptics, 0.15f, 0.2f);
             return;
+        }
+
+        MagicFeedback.Play(MagicFeedback.ChimeSound, contact.point, 0.8f);
+        MagicFeedback.Pulse(haptics, 0.5f, 0.15f);
 
         teleportationProvider.QueueTeleportRequest(new TeleportRequest
         {
