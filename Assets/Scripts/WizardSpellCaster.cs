@@ -21,6 +21,11 @@ public class WizardSpellCaster : MonoBehaviour
         Color.red
     };
 
+    [Header("Spell Cooldown")]
+    public float spellCooldown = 2f;
+
+    private float nextCastTime = 0f;
+
     private int currentColorIndex = 0;
 
     void Update()
@@ -47,6 +52,11 @@ public class WizardSpellCaster : MonoBehaviour
     // Creates a projectile in the direction of the controller.
     void CastSpell()
     {
+        if (Time.time < nextCastTime)
+            return;
+
+        nextCastTime = Time.time + spellCooldown;
+
         Vector3 direction = transform.forward;
 
         Vector3 spawnPosition =

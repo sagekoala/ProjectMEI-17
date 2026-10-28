@@ -7,35 +7,30 @@ public class PumpkinDeliveryZone : MonoBehaviour
     [Header("Score Display")]
     public TMP_Text scoreText;
 
-    private int totalScore = 0;
-
-    void Start()
-    {
-        UpdateScoreDisplay();
-    }
-
     private void OnTriggerEnter(Collider other)
     {
-        PumpkinItem pumpkin = other.GetComponentInParent<PumpkinItem>();
+        PumpkinItem pumpkin =
+            other.GetComponentInParent<PumpkinItem>();
 
         if (pumpkin == null)
             return;
 
-        totalScore += pumpkin.pointValue;
+        if (GraveyardGameManager.Instance == null)
+        {
+            Debug.LogWarning("GraveyardGameManager not found.");
+            return;
+        }
 
-        Debug.Log(
-            $"Pumpkin delivered! +{pumpkin.pointValue} points. " +
-            $"Total score: {totalScore}"
+        GraveyardGameManager.Instance.PumpkinDelivered(
+            pumpkin.pointValue
         );
 
-        UpdateScoreDisplay();
+        if (scoreText != null)
+        {
+            scoreText.text =
+                $"SCORE: {GraveyardGameManager.Instance.TotalScore}";
+        }
 
         Destroy(pumpkin.gameObject);
-    }
-
-    private void UpdateScoreDisplay()
-    {
-        if (scoreText != null)
-            scoreText.text = $"PUMPKINS: {totalScore}";
     }
 }

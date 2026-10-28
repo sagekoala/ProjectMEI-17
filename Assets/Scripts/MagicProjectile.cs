@@ -23,6 +23,14 @@ public class MagicProjectile : MonoBehaviour
 
         Vector3 impactPosition = collision.GetContact(0).point;
 
+        GoblinEnemy goblin =
+            collision.collider.GetComponentInParent<GoblinEnemy>();
+
+        if (goblin != null)
+        {
+            goblin.TakeDamage(1);
+        }
+
         // Preserve the projectile color for the impact effect.
         Color impactColor = Color.cyan;
 
