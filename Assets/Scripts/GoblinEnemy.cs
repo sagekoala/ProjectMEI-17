@@ -10,7 +10,7 @@ public class GoblinEnemy : MonoBehaviour
     private PumpkinItem target;
 
     [Header("Combat")]
-    public int maxHealth = 2;
+    public int maxHealth = 6;
 
     private int currentHealth;
 
