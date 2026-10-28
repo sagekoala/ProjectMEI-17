@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
 public class WizardSpellCaster : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class WizardSpellCaster : MonoBehaviour
     public float spellLifetime = 5f;
     public float spellSize = 0.12f;
     public Color spellColor = Color.cyan;
+
+    [Header("Feedback")]
+    [Tooltip("Haptics of the casting controller.")]
+    public HapticImpulsePlayer haptics;
 
     void Update()
     {
@@ -48,6 +53,10 @@ public class WizardSpellCaster : MonoBehaviour
         MagicProjectile projectile =
             spell.AddComponent<MagicProjectile>();
         projectile.impactColor = spellColor;
+        projectile.travelDirection = direction;
+
+        MagicFeedback.Play(MagicFeedback.CastSound, spawnPosition, 0.6f);
+        MagicFeedback.Pulse(haptics, 0.3f, 0.08f);
 
         // Add physics
         Rigidbody rb = spell.AddComponent<Rigidbody>();
