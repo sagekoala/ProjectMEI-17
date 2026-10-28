@@ -1,13 +1,17 @@
+using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 using UnityEngine.XR.Interaction.Toolkit.UI;
 
 // Wrist "spellbook" menu: a world-space panel that floats above the left
-// controller. It changes the spell color and the locomotion options.
+// controller, organized in tabs: spell color, locomotion options and the
+// world (day/night and the soul hunt mini-game).
 // Open/close it with the left Menu button; use it with the right hand
 // ray (trigger) or by poking it.
 public class WizardControlMenu : MonoBehaviour
@@ -15,6 +19,8 @@ public class WizardControlMenu : MonoBehaviour
     [Header("Targets")]
     public WizardSpellCaster spellCaster;
     public WizardLocomotionSettings locomotion;
+    public NightAtmosphere atmosphere;
+    public SoulHunt soulHunt;
 
     [Tooltip("Paused while the menu is open, so menu clicks don't cast spells or levitate objects.")]
     public Behaviour[] disableWhileOpen;
@@ -41,6 +47,10 @@ public class WizardControlMenu : MonoBehaviour
 
     public bool startOpen = false;
 
+    [Header("Feedback")]
+    [Tooltip("Haptics of the hand that clicks the menu (the right controller).")]
+    public HapticImpulsePlayer haptics;
+
     [Header("Spell Colors")]
     public Color[] spellColors =
     {
@@ -62,6 +72,9 @@ public class WizardControlMenu : MonoBehaviour
     private InputAction toggleAction;
     private GameObject canvasObject;
 
+    private readonly List<Button> tabButtons = new List<Button>();
+    private readonly List<GameObject> tabPages = new List<GameObject>();
+
     private Button[] colorButtons;
     private Button walkButton;
     private Button teleportButton;
@@ -70,6 +83,10 @@ public class WizardControlMenu : MonoBehaviour
     private TextMeshProUGUI moveSpeedValue;
     private TextMeshProUGUI turnTitle;
     private TextMeshProUGUI turnValue;
+    private Button dayButton;
+    private Button nightButton;
+    private Button huntButton;
+    private TextMeshProUGUI huntStatus;
 
     public bool IsOpen =>
         canvasObject != null && canvasObject.activeSelf;
@@ -95,6 +112,12 @@ public class WizardControlMenu : MonoBehaviour
 
         if (locomotion != null)
             locomotion.Changed += Refresh;
+
+        if (atmosphere != null)
+            atmosphere.Changed += Refresh;
+
+        if (soulHunt != null)
+            soulHunt.Changed += Refresh;
     }
 
     void OnDisable()
@@ -103,6 +126,12 @@ public class WizardControlMenu : MonoBehaviour
 
         if (locomotion != null)
             locomotion.Changed -= Refresh;
+
+        if (atmosphere != null)
+            atmosphere.Changed -= Refresh;
+
+        if (soulHunt != null)
+            soulHunt.Changed -= Refresh;
     }
 
     void OnDestroy()
@@ -121,7 +150,16 @@ public class WizardControlMenu : MonoBehaviour
     void Update()
     {
         if (canvasObject != null && toggleAction.WasPressedThisFrame())
+        {
             SetOpen(!IsOpen);
+            MagicFeedback.Play(
+                MagicFeedback.WhooshSound, canvasObject.transform.position, 0.4f
+            );
+        }
+
+        // Keep the hunt timer ticking while the menu is open.
+        if (IsOpen && soulHunt != null && soulHunt.IsRunning)
+            RefreshHunt();
     }
 
     void LateUpdate()
@@ -211,6 +249,73 @@ public class WizardControlMenu : MonoBehaviour
                 turnValue.text = $"{locomotion.SnapAngle:0}°";
             }
         }
+
+        if (dayButton != null)
+        {
+            SetSelected(dayButton, !atmosphere.IsNight);
+            SetSelected(nightButton, atmosphere.IsNight);
+        }
+
+        RefreshHunt();
+    }
+
+    void RefreshHunt()
+    {
+        if (huntButton == null)
+            return;
+
+        if (soulHunt.IsRunning)
+        {
+            huntStatus.text =
+                $"Almas: {soulHunt.Remaining}/{soulHunt.Total}   " +
+                SoulHunt.FormatTime(soulHunt.ElapsedTime);
+        }
+        else if (soulHunt.BestTime >= 0f)
+        {
+            huntStatus.text =
+                $"Récord: {SoulHunt.FormatTime(soulHunt.BestTime)}";
+        }
+        else
+        {
+            huntStatus.text = "Exorciza todas las almas con tus hechizos";
+        }
+
+        huntButton.GetComponentInChildren<TextMeshProUGUI>().text =
+            soulHunt.IsRunning ? "Reiniciar caza" : "Empezar caza";
+    }
+
+    void StartHunt()
+    {
+        soulHunt.StartHunt();
+
+        // Close the book so the player can start hunting straight away.
+        SetOpen(false);
+    }
+
+    void SelectTab(int index)
+    {
+        for (int i = 0; i < tabPages.Count; i++)
+        {
+            tabPages[i].SetActive(i == index);
+            SetSelected(tabButtons[i], i == index);
+        }
+    }
+
+    // Called by the menu buttons.
+    public void OnButtonHovered()
+    {
+        MagicFeedback.Play(
+            MagicFeedback.HoverSound, canvasObject.transform.position, 0.4f
+        );
+        MagicFeedback.Pulse(haptics, 0.08f, 0.02f);
+    }
+
+    void OnButtonClicked()
+    {
+        MagicFeedback.Play(
+            MagicFeedback.ClickSound, canvasObject.transform.position, 0.6f
+        );
+        MagicFeedback.Pulse(haptics, 0.2f, 0.04f);
     }
 
     // ---------- Menu construction ----------
@@ -252,16 +357,57 @@ public class WizardControlMenu : MonoBehaviour
         AddText(panel, "Grimorio", 40f, FontStyles.Bold,
             TextAlignmentOptions.Center);
 
+        RectTransform tabRow = AddRow(panel);
+
         if (spellCaster != null)
-            BuildSpellSection(panel);
+            AddTab(panel, tabRow, "Hechizo", BuildSpellSection);
 
         if (locomotion != null && locomotion.IsConfigured)
-            BuildLocomotionSection(panel);
+            AddTab(panel, tabRow, "Movimiento", BuildLocomotionSection);
+
+        if (atmosphere != null || soulHunt != null)
+            AddTab(panel, tabRow, "Mundo", BuildWorldSection);
 
         AddButton(panel, "Cerrar", ButtonColor, () => SetOpen(false));
 
         AddText(panel, "Botón Menú (mando izq.): abrir / cerrar",
             20f, FontStyles.Italic, TextAlignmentOptions.Center);
+
+        SelectTab(0);
+
+        // Sound and vibration for every button.
+        foreach (Button button in canvasObject.GetComponentsInChildren<Button>(true))
+        {
+            button.onClick.AddListener(OnButtonClicked);
+            button.gameObject.AddComponent<MenuButtonHover>().menu = this;
+        }
+    }
+
+    // A tab button plus the page it shows. Pages are laid out below the
+    // tab row; only the selected one is active.
+    void AddTab(
+        Transform panel,
+        Transform tabRow,
+        string title,
+        Action<Transform> buildPage)
+    {
+        int index = tabPages.Count;
+
+        tabButtons.Add(AddButton(tabRow, title, ButtonColor,
+            () => SelectTab(index)));
+
+        RectTransform page = CreateRect(title + " Page", panel);
+
+        VerticalLayoutGroup layout =
+            page.gameObject.AddComponent<VerticalLayoutGroup>();
+        layout.spacing = 10f;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = false;
+
+        buildPage(page);
+        tabPages.Add(page.gameObject);
     }
 
     void BuildSpellSection(Transform panel)
@@ -311,6 +457,28 @@ public class WizardControlMenu : MonoBehaviour
         turnValue = AddStepper(panel,
             () => locomotion.ChangeTurn(-1),
             () => locomotion.ChangeTurn(1));
+    }
+
+    void BuildWorldSection(Transform panel)
+    {
+        if (atmosphere != null)
+        {
+            AddSectionTitle(panel, "Ambiente");
+            RectTransform row = AddRow(panel);
+            dayButton = AddButton(row, "Día", ButtonColor,
+                () => atmosphere.SetNight(false));
+            nightButton = AddButton(row, "Noche", ButtonColor,
+                () => atmosphere.SetNight(true));
+        }
+
+        if (soulHunt != null)
+        {
+            AddSectionTitle(panel, "Caza de almas");
+            huntStatus = AddText(panel, "", 24f, FontStyles.Normal,
+                TextAlignmentOptions.Center);
+            huntButton = AddButton(panel, "Empezar caza", SelectedColor,
+                StartHunt);
+        }
     }
 
     static void EnsureXREventSystem()
@@ -421,6 +589,11 @@ public class WizardControlMenu : MonoBehaviour
         {
             TextMeshProUGUI label = AddText(rect, text, 26f,
                 FontStyles.Bold, TextAlignmentOptions.Center);
+
+            // Long labels shrink to fit narrow buttons.
+            label.enableAutoSizing = true;
+            label.fontSizeMin = 14f;
+            label.fontSizeMax = 26f;
 
             RectTransform labelRect = label.rectTransform;
             labelRect.anchorMin = Vector2.zero;
