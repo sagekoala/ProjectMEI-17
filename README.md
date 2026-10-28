@@ -12,7 +12,8 @@ El usuario es un mago en un cementerio colonial. Ve su propio cuerpo de mago en 
 - **Levitar** lápidas y objetos del cementerio para moverlos, rotarlos y escalarlos.
 - **Lanzar hechizos** que impactan contra la escena.
 - **Desplazarse** caminando, con el teletransporte de la plantilla o con un **orbe de teletransporte** propio.
-- **Configurar** el hechizo y la locomoción desde un **grimorio** (menú 3D) que aparece sobre la mano izquierda.
+- **Configurar** el hechizo, la locomoción y el mundo (día/noche) desde un **grimorio** (menú 3D) que aparece sobre la mano izquierda.
+- Jugar a la **caza de almas**: exorcizar con hechizos las almas que vagan por el cementerio, contra el reloj.
 
 Las metáforas de interacción están elegidas para encajar con la temática de mago:
 
@@ -36,7 +37,7 @@ Las metáforas de interacción están elegidas para encajar con la temática de 
 | Izquierdo | **Gatillo** (mantener) | Levitar el objeto al que se apunta con la mano izquierda |
 | Izquierdo | Girar la **muñeca** mientras se levita | Rotar el objeto levitado |
 | Derecho | **Grip** (mantener) mientras se levita + separar/juntar las manos | Escalar el objeto levitado (entre 0,25× y 4×) |
-| Derecho | **Gatillo** | Lanzar un hechizo |
+| Derecho | **Gatillo** | Lanzar un hechizo (empuja los objetos que golpea) |
 | Derecho | **Botón B** | Lanzar el orbe de teletransporte |
 | Izquierdo | **Stick** | Caminar (por defecto) o teletransporte + giro (configurable en el grimorio) |
 | Derecho | **Stick** adelante / lados | Teletransporte con arco (plantilla XRI) / girar |
@@ -61,18 +62,37 @@ Las metáforas de interacción están elegidas para encajar con la temática de 
 
 ### Control: el grimorio
 
-Se abre con el **botón Menú** del mando izquierdo y flota sobre esa mano mirando hacia ti. Se usa apuntando con el **rayo de la mano derecha + gatillo**, o tocándolo con el dedo. Mientras está abierto, los hechizos, la levitación y el orbe quedan en pausa para que los clics no los activen.
+Se abre con el **botón Menú** del mando izquierdo y flota sobre esa mano mirando hacia ti. Se usa apuntando con el **rayo de la mano derecha + gatillo**, o tocándolo con el dedo. Mientras está abierto, los hechizos, la levitación y el orbe quedan en pausa para que los clics no los activen. Está organizado en tres pestañas:
 
-| Opción | Efecto |
-|---|---|
-| Color del hechizo | 4 colores. Cambia el orbe y su impacto; la opción activa lleva un borde blanco. |
-| Stick izquierdo: Caminar / Teletransporte | Cambia la función del stick izquierdo |
-| Velocidad al caminar − / + | De 0,5 a 6 m/s |
-| Giro: Suave / Por pasos | Tipo de giro con el stick |
-| Velocidad (o ángulo) de giro − / + | 30–180 °/s en giro suave; 15–90° en giro por pasos |
-| Cerrar | Cierra el grimorio |
+| Pestaña | Opción | Efecto |
+|---|---|---|
+| Hechizo | Color del hechizo | 4 colores. Cambia el orbe y su impacto; la opción activa lleva un borde blanco. |
+| Movimiento | Stick izquierdo: Caminar / Teletransporte | Cambia la función del stick izquierdo |
+| Movimiento | Velocidad al caminar − / + | De 0,5 a 6 m/s |
+| Movimiento | Giro: Suave / Por pasos | Tipo de giro con el stick |
+| Movimiento | Velocidad (o ángulo) de giro − / + | 30–180 °/s en giro suave; 15–90° en giro por pasos |
+| Mundo | Ambiente: Día / Noche | Noche con luna azulada, niebla y cielo oscuro |
+| Mundo | Caza de almas: Empezar / Reiniciar | Inicia el minijuego y cierra el grimorio; muestra almas restantes, tiempo y récord |
+| — | Cerrar | Cierra el grimorio |
 
-**Feedback:** los botones se iluminan al apuntarlos y se oscurecen al pulsarlos, y la opción activa se muestra en morado.
+**Feedback:** los botones se iluminan al apuntarlos y se oscurecen al pulsarlos, con un sonido y una vibración suave en cada caso. La opción activa se muestra en morado.
+
+### Caza de almas (minijuego)
+
+Desde la pestaña **Mundo** del grimorio, pulsa **Empezar caza**. Aparecen 8 almas fantasma que vagan y flotan por el cementerio. Cada hechizo que acierta en una la exorciza con un destello y un sonido. Sobre la mano izquierda se ve un marcador con las almas restantes y el tiempo. Al exorcizar la última se muestra el tiempo final, y si es el mejor se guarda como **récord** entre sesiones. Se juega mejor de **noche**.
+
+### Feedback sonoro y háptico
+
+| Acción | Sonido | Vibración |
+|---|---|---|
+| Lanzar hechizo / impacto | Tono ascendente / golpe | Mando derecho |
+| Apuntar a un objeto levitable | — | Toque breve en el mando izquierdo |
+| Coger / soltar un objeto | Barrido ascendente / descendente | Mando izquierdo, más una vibración suave mientras se sostiene |
+| Orbe: lanzar / aterrizaje válido / no válido | Silbido / campanilla / zumbido grave | Mando derecho |
+| Grimorio: abrir o cerrar / apuntar / pulsar | Silbido / tic / clic | Mando derecho |
+| Exorcizar un alma | Campanilla | — |
+
+Los sonidos se generan por código (`MagicFeedback`), porque el proyecto no tenía sonidos adecuados.
 
 ## 4. Estructura
 
@@ -81,12 +101,15 @@ Scripts propios en `Assets/Scripts/`:
 | Script | Responsabilidad |
 |---|---|
 | `WizardHandIK` | IK de las manos del mago hacia los mandos |
-| `WizardSpellCaster`, `MagicProjectile` | Hechizos y destello de impacto |
+| `WizardSpellCaster`, `MagicProjectile`, `ISpellTarget` | Hechizos, empuje físico, destello de impacto y objetivos de hechizo |
 | `WizardLevitation` | Selección por rayo, traslación, rotación y escalado del objeto levitado |
 | `WizardLevitationFeedback` | Rayo visible y tinte del objeto apuntado o levitado |
 | `WizardTeleportOrb`, `TeleportOrbProjectile` | Navegación con el orbe de teletransporte |
 | `WizardLocomotionSettings` | Acceso en tiempo de ejecución a las opciones de locomoción del rig XRI |
-| `WizardControlMenu` | Grimorio (menú 3D world-space) |
+| `WizardControlMenu`, `MenuButtonHover` | Grimorio (menú 3D world-space con pestañas) |
+| `NightAtmosphere` | Modo noche (luz, ambiente, niebla y cielo) |
+| `SoulHunt`, `WanderingSoul` | Minijuego de caza de almas y su marcador |
+| `MagicFeedback` | Sonidos sintetizados y vibración de los mandos |
 
 ## 5. Disclosure notice (uso de herramientas y recursos externos)
 
@@ -104,7 +127,8 @@ Scripts propios en `Assets/Scripts/`:
   - implementar el grimorio (`WizardControlMenu`, `WizardLocomotionSettings` y el color de hechizo configurable);
   - implementar la rotación y el escalado del objeto levitado, el feedback de levitación (`WizardLevitationFeedback`) y la navegación con orbe (`WizardTeleportOrb`, `TeleportOrbProjectile`);
   - añadir las lápidas levitables a la escena, configurar la escena de la build y redactar el borrador de este documento;
-  - escalar el entorno, ajustar el escalón y el salto del jugador y hacer escalables las paredes.
+  - escalar el entorno, ajustar el escalón y el salto del jugador y hacer escalables las paredes;
+  - el feedback sonoro y háptico (`MagicFeedback`), el empuje físico de los hechizos, las pestañas del grimorio, el modo noche (`NightAtmosphere`) y la caza de almas (`SoulHunt`, `WanderingSoul`).
 
   Estos cambios están en la historia de commits de `main` (a partir del commit `1f9ae4a`). El código generado ha sido revisado y probado por el grupo: [COMPLETAR: confirmar tras probarlo en las gafas].
 - [COMPLETAR: cualquier otro uso de IA, p. ej. en los scripts originales `WizardHandIK`, `WizardSpellCaster`, `MagicProjectile`, `WizardLevitation`]
@@ -114,6 +138,8 @@ Scripts propios en `Assets/Scripts/`:
 - El entorno (suelo, iglesia, tumbas, paredes y farolas) está escalado **×1,5** respecto al pack original, porque en las gafas el cementerio parecía una maqueta. El jugador mantiene su escala real.
 - Del rig XR se ha bajado el escalón máximo del CharacterController (0,5 → 0,3 m) y el salto (1,25 m con doble salto → 0,4 m simple), para que las paredes sean una barrera.
 - Al prefab `Graveyard_wall` del pack se le ha añadido un `ClimbInteractable` de XRI para poder escalar las paredes.
+- Las almas usan el material `FresnelHighlight` de los Starter Assets de XRI.
+- En *Graphics Settings*, el *fog stripping* está en modo personalizado para que la niebla del modo noche no se elimine de la build.
 
 ## 7. Limitaciones conocidas
 
