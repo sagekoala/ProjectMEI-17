@@ -12225,6 +12225,7 @@ GameObject:
   - component: {fileID: 1603250297}
   - component: {fileID: 1603250296}
   - component: {fileID: 1603250299}
+  - component: {fileID: 2300000011}
   m_Layer: 0
   m_Name: Wizard_RightHand
   m_TagString: Untagged
@@ -16748,6 +16749,7 @@ MonoBehaviour:
   disableWhileOpen:
   - {fileID: 1603250299}
   - {fileID: 1738405879}
+  - {fileID: 2300000011}
   followTarget: {fileID: 122772278}
   head: {fileID: 0}
 --- !u!114 &2100000005 stripped
@@ -17518,6 +17520,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WizardLevitationFeedback
   beamMaterial: {fileID: 2100000, guid: b0e96864bafcfb54894bb238ad56cf3b, type: 2}
+--- !u!114 &2300000011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603250294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 724323bb432245b787dbaec16e349c06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WizardTeleportOrb
+  teleportationProvider: {fileID: 1536353014}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
