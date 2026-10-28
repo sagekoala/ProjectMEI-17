@@ -106,7 +106,7 @@ Scripts propios en `Assets/Scripts/`:
   - añadir las lápidas levitables a la escena, configurar la escena de la build y redactar el borrador de este documento;
   - escalar el entorno, ajustar el escalón y el salto del jugador y hacer escalables las paredes.
 
-  Estos cambios están en las ramas `feat/wizard-control-menu`, `feat/levitation-manipulation` y `feat/integration` del repositorio. El código generado ha sido revisado y probado por el grupo: [COMPLETAR: confirmar tras probarlo en las gafas].
+  Estos cambios están en la historia de commits de `main` (a partir del commit `1f9ae4a`). El código generado ha sido revisado y probado por el grupo: [COMPLETAR: confirmar tras probarlo en las gafas].
 - [COMPLETAR: cualquier otro uso de IA, p. ej. en los scripts originales `WizardHandIK`, `WizardSpellCaster`, `MagicProjectile`, `WizardLevitation`]
 
 ## 6. Cambios sobre los assets y la plantilla
