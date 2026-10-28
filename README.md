@@ -40,6 +40,8 @@ Las metáforas de interacción están elegidas para encajar con la temática de 
 | Derecho | **Botón B** | Lanzar el orbe de teletransporte |
 | Izquierdo | **Stick** | Caminar (por defecto) o teletransporte + giro (configurable en el grimorio) |
 | Derecho | **Stick** adelante / lados | Teletransporte con arco (plantilla XRI) / girar |
+| Derecho | **Botón A** | Saltar (salto simple de 0,4 m) |
+| Cualquiera | **Grip** con la mano pegada a una pared + tirar | Escalar la pared |
 
 ### Selección y manipulación (levitación)
 
@@ -54,6 +56,7 @@ Las metáforas de interacción están elegidas para encajar con la temática de 
 - **Caminar:** stick izquierdo.
 - **Teletransporte de la plantilla:** stick derecho hacia delante, apuntar y soltar.
 - **Giro:** stick derecho a los lados, suave o por pasos según el grimorio.
+- **Escalar paredes:** las paredes del cementerio bloquean el paso caminando o saltando. Para cruzarlas, acerca una mano a la pared (a menos de 15 cm), mantén el **grip** y tira hacia abajo y hacia ti, alternando manos como en un rocódromo.
 - **Orbe de teletransporte (navegación propia):** pulsa **B** y se lanza un orbe dorado que vuela en arco. Si cae en el **suelo** del cementerio, apareces ahí con un destello dorado. Si choca con una pared, una lápida u otro objeto, el destello es **rojo** y no te mueves. Solo puede haber un orbe en el aire a la vez.
 
 ### Control: el grimorio
@@ -100,12 +103,19 @@ Scripts propios en `Assets/Scripts/`:
   - analizar el proyecto respecto al enunciado;
   - implementar el grimorio (`WizardControlMenu`, `WizardLocomotionSettings` y el color de hechizo configurable);
   - implementar la rotación y el escalado del objeto levitado, el feedback de levitación (`WizardLevitationFeedback`) y la navegación con orbe (`WizardTeleportOrb`, `TeleportOrbProjectile`);
-  - añadir las lápidas levitables a la escena, configurar la escena de la build y redactar el borrador de este documento.
+  - añadir las lápidas levitables a la escena, configurar la escena de la build y redactar el borrador de este documento;
+  - escalar el entorno, ajustar el escalón y el salto del jugador y hacer escalables las paredes.
 
   Estos cambios están en las ramas `feat/wizard-control-menu`, `feat/levitation-manipulation` y `feat/integration` del repositorio. El código generado ha sido revisado y probado por el grupo: [COMPLETAR: confirmar tras probarlo en las gafas].
 - [COMPLETAR: cualquier otro uso de IA, p. ej. en los scripts originales `WizardHandIK`, `WizardSpellCaster`, `MagicProjectile`, `WizardLevitation`]
 
-## 6. Limitaciones conocidas
+## 6. Cambios sobre los assets y la plantilla
+
+- El entorno (suelo, iglesia, tumbas, paredes y farolas) está escalado **×1,5** respecto al pack original, porque en las gafas el cementerio parecía una maqueta. El jugador mantiene su escala real.
+- Del rig XR se ha bajado el escalón máximo del CharacterController (0,5 → 0,3 m) y el salto (1,25 m con doble salto → 0,4 m simple), para que las paredes sean una barrera.
+- Al prefab `Graveyard_wall` del pack se le ha añadido un `ClimbInteractable` de XRI para poder escalar las paredes.
+
+## 7. Limitaciones conocidas
 
 - Las rotaciones grandes requieren soltar y volver a coger el objeto, por el rango de giro de la muñeca.
 - El tinte de resaltado sustituye el color base del material mientras dura, en lugar de añadir un brillo.
