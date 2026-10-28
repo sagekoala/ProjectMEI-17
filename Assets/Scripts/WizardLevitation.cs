@@ -24,6 +24,7 @@ public class WizardLevitation : MonoBehaviour
     public float maxScaleMultiplier = 2f;
 
     private Rigidbody heldObject;
+    public Rigidbody HeldObject => heldObject;
     private bool originalGravity;
     private bool originalKinematic;
     private RigidbodyConstraints originalConstraints;
