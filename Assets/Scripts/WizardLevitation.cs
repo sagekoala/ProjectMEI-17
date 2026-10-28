@@ -46,6 +46,9 @@ public class WizardLevitation : MonoBehaviour
     private readonly Dictionary<Rigidbody, Vector3> originalScales =
         new Dictionary<Rigidbody, Vector3>();
 
+    // The object currently being levitated, or null.
+    public Rigidbody HeldObject => heldObject;
+
     void Awake()
     {
         scaleAction = new InputAction(
@@ -164,25 +167,39 @@ public class WizardLevitation : MonoBehaviour
         heldObject.transform.localScale = originalScale * totalFactor;
     }
 
-    void TryLevitate()
+    // Returns the levitatable object this hand points at, or null.
+    public Rigidbody FindLevitatable(out Vector3 hitPoint)
     {
+        hitPoint = Vector3.zero;
+
         Ray ray = new Ray(transform.position, transform.forward);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, maxDistance))
+        if (!Physics.Raycast(ray, out RaycastHit hit, maxDistance))
+            return null;
+
+        Rigidbody rb = hit.rigidbody;
+
+        if (rb == null)
+            return null;
+
+        // Don't grab kinematic or unrelated objects.
+        if (rb.isKinematic)
+            return null;
+
+        // Only grab objects tagged as levitatable.
+        if (!rb.CompareTag("Levitatable"))
+            return null;
+
+        hitPoint = hit.point;
+        return rb;
+    }
+
+    void TryLevitate()
+    {
+        Rigidbody rb = FindLevitatable(out _);
+
+        if (rb != null)
         {
-            Rigidbody rb = hit.rigidbody;
-
-            if (rb == null)
-                return;
-
-            // Don't grab kinematic or unrelated objects.
-            if (rb.isKinematic)
-                return;
-
-            // Only grab objects tagged as levitatable.
-            if (!rb.CompareTag("Levitatable"))
-                return;
-
             heldObject = rb;
 
             originalGravity = rb.useGravity;
