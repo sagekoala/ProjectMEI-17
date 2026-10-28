@@ -13468,6 +13468,7 @@ MonoBehaviour:
   maxDistance: 8
   holdDistance: 1.5
   moveSpeed: 12
+  otherHand: {fileID: 791225079}
 --- !u!1001 &1742388656
 PrefabInstance:
   m_ObjectHideFlags: 0
