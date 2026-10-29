@@ -32,7 +32,15 @@ public class GraveyardGameManager : MonoBehaviour
 
     public float CurrentEnergy { get; private set; }
     public int TotalScore { get; private set; }
+    [Header("Round Start")]
+    [Tooltip("If true, the round waits for StartRound() (e.g. after the tutorial).")]
+    public bool waitForStart = false;
+
     public bool GameOver { get; private set; }
+    public bool RoundStarted { get; private set; }
+
+    // The round is running: started and not over yet.
+    public bool IsPlaying => RoundStarted && !GameOver;
     public bool Victory { get; private set; }
     public float RemainingTime => remainingTime;
 
@@ -41,6 +49,7 @@ public class GraveyardGameManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        RoundStarted = !waitForStart;
         CurrentEnergy = startingEnergy;
         remainingTime = roundDuration;
     }
@@ -58,7 +67,7 @@ public class GraveyardGameManager : MonoBehaviour
 
     void Update()
     {
-        if (GameOver)
+        if (!IsPlaying)
             return;
 
         remainingTime -= Time.deltaTime;
@@ -76,7 +85,7 @@ public class GraveyardGameManager : MonoBehaviour
 
     public void PumpkinDelivered(int points)
     {
-        if (GameOver)
+        if (!IsPlaying)
             return;
 
         TotalScore += points;
@@ -91,7 +100,7 @@ public class GraveyardGameManager : MonoBehaviour
 
     public void PumpkinDestroyed()
     {
-        if (GameOver)
+        if (!IsPlaying)
             return;
 
         ChangeEnergy(-energyLostPerPumpkin);
@@ -104,13 +113,23 @@ public class GraveyardGameManager : MonoBehaviour
 
     public void GoblinDefeated()
     {
-        if (GameOver)
+        if (!IsPlaying)
             return;
 
         TotalScore += pointsPerGoblin;
         UpdateDisplay();
 
         Debug.Log($"Goblin defeated! Score: {TotalScore}");
+    }
+
+    // Starts a round that was waiting (see waitForStart).
+    public void StartRound()
+    {
+        if (RoundStarted || GameOver)
+            return;
+
+        RoundStarted = true;
+        UpdateDisplay();
     }
 
     void ChangeEnergy(float amount)

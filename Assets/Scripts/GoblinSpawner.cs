@@ -25,7 +25,7 @@ public class GoblinSpawner : MonoBehaviour
     void Update()
     {
         if (GraveyardGameManager.Instance != null &&
-            GraveyardGameManager.Instance.GameOver)
+            !GraveyardGameManager.Instance.IsPlaying)
             return;
 
         elapsedTime += Time.deltaTime;
@@ -40,6 +40,15 @@ public class GoblinSpawner : MonoBehaviour
 
     IEnumerator GoblinSlot()
     {
+        // No goblins before the round starts (e.g. during the tutorial).
+        if (GraveyardGameManager.Instance != null)
+        {
+            yield return new WaitUntil(() =>
+                GraveyardGameManager.Instance == null ||
+                GraveyardGameManager.Instance.RoundStarted
+            );
+        }
+
         while (true)
         {
             if (GraveyardGameManager.Instance != null &&

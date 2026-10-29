@@ -17,7 +17,7 @@ public class GoblinEnemy : MonoBehaviour
     void Update()
     {
         if (GraveyardGameManager.Instance != null &&
-            GraveyardGameManager.Instance.GameOver)
+            !GraveyardGameManager.Instance.IsPlaying)
             return;
 
         FindTarget();
