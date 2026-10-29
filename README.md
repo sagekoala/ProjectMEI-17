@@ -45,8 +45,8 @@ Otras decisiones:
 | Mando | Control | Acción |
 |---|---|---|
 | Izquierdo | **Gatillo** (mantener) | Telequinesis: levitar el objeto al que apuntas |
-| Izquierdo | **Y** (mientras levitas) | Rotar el objeto |
-| Derecho | **A / B** (mientras levitas) | Agrandar / encoger el objeto (entre 0,5× y 2×) |
+| Izquierdo | **Y** (mantener, mientras levitas) | Rotar el objeto girando la muñeca, en cualquier eje. Al soltar Y se queda como está |
+| Derecho | **A / B** (mientras levitas) | Agrandar / encoger el objeto (entre 0,5× y 2× de su tamaño original). Mientras levitas, A no salta |
 | Derecho | **Gatillo** | Lanzar un hechizo (se recarga en 0,35 s) |
 | Derecho | **Grip** (mantener) | Volar hacia donde apunta la mano; más presión, más velocidad |
 | Izquierdo | **Stick** | Caminar (o teletransporte, según el grimorio) |
@@ -152,6 +152,7 @@ Scripts en `Assets/Scripts/`:
   - la niebla y el ajuste de la iluminación, y la tipografía de Halloween (`HalloweenFontTheme`);
   - el tutorial y el inicio de ronda (`GraveyardTutorial`; estado de espera en `GraveyardGameManager`, `GoblinEnemy` y `GoblinSpawner`);
   - el feedback sonoro y háptico (`MagicFeedback`, `GraveyardFeedback` y los cambios en `WizardLevitationFeedback`, `WizardSpellCaster`, `MagicProjectile`, `GoblinEnemy` y `PumpkinDeliveryZone`);
+  - la rotación de la telequinesis con la muñeca, su alcance de 8 m, el bloqueo del salto mientras se levita y el arreglo de los límites de escalado (`WizardLevitation`);
   - la escena de inicio de la build y este documento.
 
   El detalle está en el historial de commits de la rama. [COMPLETAR: confirmar que el grupo ha revisado y probado estos cambios.]
@@ -160,6 +161,4 @@ Scripts en `Assets/Scripts/`:
 ## 7. Limitaciones conocidas
 
 - **El APK se abre como una ventana plana en las Quest**: la app no está arrancando en modo VR. Está pendiente de revisar la configuración de OpenXR para Android; la primera prueba es desactivar "Android XR Support" y dejar solo "Meta Quest Support".
-- **Botón A:** además de agrandar el objeto levitado, el rig de la plantilla lo usa para saltar.
-- **Rotación limitada:** el objeto levitado solo se rota en el eje vertical.
 - **Panel antiguo:** el panel de control anterior y su conmutador siguen en la escena, desactivados.

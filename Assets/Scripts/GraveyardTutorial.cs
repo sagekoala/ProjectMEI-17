@@ -128,7 +128,7 @@ public class GraveyardTutorial : MonoBehaviour
                 body =
                     "Apunta a una calabaza con la mano izquierda y " +
                     "mantén el GATILLO IZQUIERDO para levitarla.\n\n" +
-                    "Mientras la levitas: Y para girarla, A / B para " +
+                    "Mientras la levitas: mantén Y y gira la muñeca para rotarla, A / B para " +
                     "agrandarla o encogerla.",
                 isDone = () => levitation.HeldObject != null,
             });

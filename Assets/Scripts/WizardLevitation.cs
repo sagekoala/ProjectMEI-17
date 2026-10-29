@@ -7,6 +7,7 @@ public class WizardLevitation : MonoBehaviour
 {
     [Header("Quest 3 Input")]
     public InputActionReference levitateAction;
+    [Tooltip("Clutch: while held, the levitated object turns with the wrist.")]
     public InputActionReference rotateAction;
     public InputActionReference enlargeAction;
     public InputActionReference shrinkAction;
@@ -16,13 +17,16 @@ public class WizardLevitation : MonoBehaviour
     public float holdDistance = 1.5f;
     public float moveSpeed = 12f;
 
-    [Header("Rotation Settings")]
-    public float rotationSpeed = 90f;
-
     [Header("Scaling Settings")]
     public float scaleSpeed = 0.5f;
     public float minScaleMultiplier = 0.5f;
     public float maxScaleMultiplier = 2f;
+
+    [Header("Jump")]
+    [Tooltip("The XR rig's jump provider. A also enlarges the levitated " +
+             "object, so jumping is switched off while holding one. " +
+             "Found automatically if left empty.")]
+    public Behaviour jumpProvider;
 
     private Rigidbody heldObject;
     public Rigidbody HeldObject => heldObject;
@@ -31,11 +35,24 @@ public class WizardLevitation : MonoBehaviour
     private RigidbodyConstraints originalConstraints;
     private Vector3 initialScale;
 
+    // Wrist rotation: hand and object rotations when Y was pressed.
+    private bool isRotating;
+    private Quaternion handRotationAtClutch;
+    private Quaternion objectRotationAtClutch;
+
+    private bool jumpWasEnabled;
+
     // Scale each object had the first time it was levitated. The scale
     // limits are relative to this, so regrabbing an object can't push it
     // past minScaleMultiplier / maxScaleMultiplier.
     private readonly Dictionary<Rigidbody, Vector3> originalScales =
         new Dictionary<Rigidbody, Vector3>();
+
+    void Start()
+    {
+        if (jumpProvider == null)
+            jumpProvider = FindJumpProvider();
+    }
 
     void Update()
     {
@@ -65,18 +82,35 @@ public class WizardLevitation : MonoBehaviour
         heldObject.linearVelocity = direction * moveSpeed;
         heldObject.angularVelocity = Vector3.zero;
 
-        if (rotateAction != null &&
-            rotateAction.action != null &&
-            rotateAction.action.IsPressed())
-        {
-            Quaternion rotation = Quaternion.Euler(
-                0f,
-                rotationSpeed * Time.fixedDeltaTime,
-                0f
-            );
+        UpdateRotation();
+    }
 
-            heldObject.MoveRotation(heldObject.rotation * rotation);
+    // While Y is held, the object copies how the wrist turns since Y was
+    // pressed, on every axis. Releasing Y leaves the object as it is, so
+    // it can be turned further by pressing Y again (like a ratchet).
+    void UpdateRotation()
+    {
+        bool pressed = rotateAction != null &&
+                       rotateAction.action != null &&
+                       rotateAction.action.IsPressed();
+
+        if (!pressed)
+        {
+            isRotating = false;
+            return;
         }
+
+        if (!isRotating)
+        {
+            isRotating = true;
+            handRotationAtClutch = transform.rotation;
+            objectRotationAtClutch = heldObject.rotation;
+        }
+
+        Quaternion wristDelta =
+            transform.rotation * Quaternion.Inverse(handRotationAtClutch);
+
+        heldObject.MoveRotation(wristDelta * objectRotationAtClutch);
     }
 
     void UpdateScale()
@@ -115,7 +149,11 @@ public class WizardLevitation : MonoBehaviour
 
         Ray ray = new Ray(transform.position, transform.forward);
 
-        if (!Physics.Raycast(ray, out RaycastHit hit, maxDistance))
+        // Ignore trigger volumes (e.g. the delivery tomb), so they don't
+        // block the ray in front of a pumpkin.
+        if (!Physics.Raycast(ray, out RaycastHit hit, maxDistance,
+                Physics.DefaultRaycastLayers,
+                QueryTriggerInteraction.Ignore))
             return;
 
         Rigidbody rb = hit.rigidbody;
@@ -127,6 +165,7 @@ public class WizardLevitation : MonoBehaviour
             return;
 
         heldObject = rb;
+        isRotating = false;
 
         originalGravity = rb.useGravity;
         originalKinematic = rb.isKinematic;
@@ -139,6 +178,8 @@ public class WizardLevitation : MonoBehaviour
 
         // Prevent collisions from causing uncontrolled rotation.
         rb.constraints |= RigidbodyConstraints.FreezeRotation;
+
+        SetJumpEnabled(false);
     }
 
     Vector3 GetOriginalScale(Rigidbody rb)
@@ -179,6 +220,40 @@ public class WizardLevitation : MonoBehaviour
         heldObject.constraints = originalConstraints;
 
         heldObject = null;
+        isRotating = false;
+
+        SetJumpEnabled(true);
+    }
+
+    // Off: remember whether jumping was on. On: restore that state.
+    void SetJumpEnabled(bool enable)
+    {
+        if (jumpProvider == null)
+            return;
+
+        if (!enable)
+        {
+            jumpWasEnabled = jumpProvider.enabled;
+            jumpProvider.enabled = false;
+        }
+        else if (jumpWasEnabled)
+        {
+            jumpProvider.enabled = true;
+        }
+    }
+
+    // Looks the provider up by type name, so this script doesn't depend
+    // on the XR Interaction Toolkit's jump namespace.
+    static Behaviour FindJumpProvider()
+    {
+        foreach (MonoBehaviour behaviour in FindObjectsByType<MonoBehaviour>(
+                     FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (behaviour.GetType().Name == "JumpProvider")
+                return behaviour;
+        }
+
+        return null;
     }
 
     void OnDisable()

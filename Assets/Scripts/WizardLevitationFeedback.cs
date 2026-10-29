@@ -81,7 +81,9 @@ public class WizardLevitationFeedback : MonoBehaviour
             transform.position,
             transform.forward,
             out RaycastHit hit,
-            maxDistance))
+            maxDistance,
+            Physics.DefaultRaycastLayers,
+            QueryTriggerInteraction.Ignore))
         {
             Rigidbody target = hit.rigidbody;
 

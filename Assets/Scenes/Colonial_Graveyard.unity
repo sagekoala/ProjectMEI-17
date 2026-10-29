@@ -22138,10 +22138,9 @@ MonoBehaviour:
   rotateAction: {fileID: -5793761651888629782, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   enlargeAction: {fileID: 5863156644536139880, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   shrinkAction: {fileID: 861921060543447858, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  maxDistance: 1.5
+  maxDistance: 8
   holdDistance: 1
   moveSpeed: 12
-  rotationSpeed: 90
   scaleSpeed: 0.5
   minScaleMultiplier: 0.5
   maxScaleMultiplier: 2
@@ -22158,7 +22157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WizardLevitationFeedback
   levitation: {fileID: 1738405879}
-  maxDistance: 1.5
+  maxDistance: 8
   rayWidth: 0.012
   targetColor: {r: 0, g: 1, b: 1, a: 1}
   holdingColor: {r: 1, g: 0.75, b: 0.1, a: 1}

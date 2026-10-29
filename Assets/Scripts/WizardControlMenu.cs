@@ -513,7 +513,7 @@ public class WizardControlMenu : MonoBehaviour
         help +=
             "\n<b>CONTROLES</b>\n" +
             "Gatillo izq.: levitar / soltar\n" +
-            "Y: rotar el objeto levitado\n" +
+            "Y + girar la muñeca: rotar el objeto levitado\n" +
             "A / B: agrandar / encoger\n" +
             "Gatillo der.: lanzar hechizo\n" +
             "Grip der.: volar hacia donde apunta la mano\n" +
