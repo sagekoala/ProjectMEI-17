@@ -33,6 +33,8 @@ public class GraveyardGameManager : MonoBehaviour
     public float CurrentEnergy { get; private set; }
     public int TotalScore { get; private set; }
     public bool GameOver { get; private set; }
+    public bool Victory { get; private set; }
+    public float RemainingTime => remainingTime;
 
     private float remainingTime;
 
@@ -129,6 +131,7 @@ public class GraveyardGameManager : MonoBehaviour
             return;
 
         GameOver = true;
+        Victory = victory;
 
         string message = victory
             ? "VICTORY!\nGRAVEYARD RESTORED"
