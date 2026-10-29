@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
 public class WizardSpellCaster : MonoBehaviour
 {
@@ -38,6 +39,10 @@ public class WizardSpellCaster : MonoBehaviour
 
     [Header("Spell Cooldown")]
     public float spellCooldown = 2f;
+
+    [Header("Feedback")]
+    [Tooltip("Haptics of the casting controller.")]
+    public HapticImpulsePlayer haptics;
 
     private float nextCastTime = 0f;
 
@@ -122,7 +127,11 @@ public class WizardSpellCaster : MonoBehaviour
     void CastSpell()
     {
         if (Time.time < nextCastTime)
+        {
+            // Not ready yet: a light tick, so the press isn't ignored silently.
+            MagicFeedback.Pulse(haptics, 0.08f, 0.03f);
             return;
+        }
 
         nextCastTime = Time.time + spellCooldown;
         LastCastTime = Time.time;
@@ -159,6 +168,9 @@ public class WizardSpellCaster : MonoBehaviour
             CollisionDetectionMode.Continuous;
 
         rb.linearVelocity = direction * spellSpeed;
+
+        MagicFeedback.Play(MagicFeedback.CastSound, spawnPosition, 0.6f);
+        MagicFeedback.Pulse(haptics, 0.3f, 0.08f);
 
         // Remove projectiles that do not collide with anything.
         Destroy(spell, spellLifetime);

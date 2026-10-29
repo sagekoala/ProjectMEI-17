@@ -56,6 +56,8 @@ public class MagicProjectile : MonoBehaviour
 
         Destroy(flash, impactDuration);
 
+        MagicFeedback.Play(MagicFeedback.ImpactSound, impactPosition, 0.6f);
+
         // Remove the projectile after impact.
         Destroy(gameObject);
     }

@@ -20245,6 +20245,7 @@ MonoBehaviour:
   - {r: 1, g: 0, b: 0, a: 1}
   spellCooldown: 0.35
   trailMaterial: {fileID: 2100000, guid: 13d6dfe2331ff0d4085f20f67a209236, type: 2}
+  haptics: {fileID: 2600000006}
 --- !u!1001 &1603330050
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22161,6 +22162,7 @@ MonoBehaviour:
   rayWidth: 0.012
   targetColor: {r: 0, g: 1, b: 1, a: 1}
   holdingColor: {r: 1, g: 0.75, b: 0.1, a: 1}
+  haptics: {fileID: 2900000001}
 --- !u!120 &1738405881
 LineRenderer:
   serializedVersion: 3
