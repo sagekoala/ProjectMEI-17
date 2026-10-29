@@ -23,8 +23,15 @@ public class GraveyardWristHud : MonoBehaviour
     [Tooltip("Energy (%) below which the display turns red.")]
     public float lowEnergyWarning = 25f;
 
+    [Tooltip("How long the display flashes when the energy changes (seconds).")]
+    public float changeFlashDuration = 0.6f;
+    public Color energyGainColor = new Color(0.4f, 1f, 0.55f);
+
     private GameObject hudObject;
     private TextMeshProUGUI hudText;
+    private float lastEnergy = -1f;
+    private float flashEndTime;
+    private Color flashColor;
 
     void Awake()
     {
@@ -81,9 +88,22 @@ public class GraveyardWristHud : MonoBehaviour
         }
 
         hudText.text = stats;
-        hudText.color = game.CurrentEnergy < lowEnergyWarning
-            ? lowEnergyColor
-            : textColor;
+
+        // Flash red when energy is lost, green when it is gained.
+        if (lastEnergy >= 0f && !Mathf.Approximately(game.CurrentEnergy, lastEnergy))
+        {
+            flashColor = game.CurrentEnergy < lastEnergy
+                ? lowEnergyColor
+                : energyGainColor;
+            flashEndTime = Time.time + changeFlashDuration;
+        }
+        lastEnergy = game.CurrentEnergy;
+
+        bool flashing = Time.time < flashEndTime;
+        hudText.color = flashing
+            ? flashColor
+            : game.CurrentEnergy < lowEnergyWarning ? lowEnergyColor : textColor;
+        hudText.transform.localScale = Vector3.one * (flashing ? 1.15f : 1f);
     }
 
     void UpdatePlacement()
