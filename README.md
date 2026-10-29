@@ -1,121 +1,165 @@
-# Wizard Graveyard — SGI-MIRI VR Project
+# Guardián del Cementerio — SGI-MIRI VR Project
 
-Aplicación de Realidad Virtual para **Meta Quest 3** hecha con **Unity + OpenXR**, para la práctica de SGI (MIRI, Q1).
+Juego de Realidad Virtual para **Meta Quest 3** hecho con **Unity + OpenXR**, para la práctica de SGI (MIRI, Q1).
 
 - **Autores:** [COMPLETAR: nombres del grupo]
 - **Vídeo de demostración:** [COMPLETAR: enlace o nombre del fichero entregado]
 
 ## 1. Objetivo de la aplicación
 
-El usuario es un mago en un cementerio colonial. Ve su propio cuerpo de mago en primera persona y sus manos siguen a los mandos. Con su magia puede:
+Eres un mago que protege un cementerio colonial en la noche de Halloween. Unos duendes quieren destruir las calabazas mágicas que mantienen encendidas las luces protectoras del cementerio. Para salvarlo tienes que:
 
-- **Levitar** lápidas y objetos del cementerio para moverlos, rotarlos y escalarlos.
-- **Lanzar hechizos** que impactan contra la escena.
-- **Desplazarse** caminando, con el teletransporte de la plantilla o con un **orbe de teletransporte** propio.
-- **Configurar** el hechizo y la locomoción desde un **grimorio** (menú 3D) que aparece sobre la mano izquierda.
+- **Llevar las calabazas** con telequinesis hasta la **tumba iluminada**. Cada entrega da puntos y energía.
+- **Eliminar a los duendes** con tus hechizos antes de que lleguen a las calabazas. Al morir, explotan.
+- **Mantener la energía** del cementerio por encima del 10% hasta que acabe el tiempo de la ronda (7 minutos). Las luces protectoras se apagan a medida que baja la energía. Si llega a 0, pierdes.
 
-Las metáforas de interacción están elegidas para encajar con la temática de mago:
+Antes de cada ronda, un **tutorial interactivo** enseña a jugar.
 
-- La selección y manipulación es **telequinesis**: apuntar con la mano, levitar el objeto y girarlo con la muñeca.
-- La navegación propia **lanza un orbe mágico** y lleva al usuario a donde cae.
-- El control del sistema se hace desde un **libro de hechizos** que el mago lleva en la mano.
+## 2. Decisiones de diseño
 
-## 2. Cómo abrir y ejecutar el proyecto
+Todas las metáforas de interacción se eligieron para que encajen con la fantasía de ser un mago:
+
+| Tarea | Metáfora | Por qué |
+|---|---|---|
+| Selección y manipulación | **Telequinesis**: un rayo mágico desde la mano izquierda; el objeto flota delante de la mano y la sigue | Selección a distancia por rayo, natural para "mover cosas con la mente". El objeto se puede rotar y escalar mientras se sostiene |
+| Navegación propia | **Vuelo mágico**: mantener el grip derecho y volar hacia donde apunta la mano, con la velocidad según la presión | Es el desplazamiento propio de un mago. Se controla con una sola mano, así que se puede volar y lanzar hechizos a la vez |
+| Navegación estándar | Caminar con el stick y teletransporte (plantilla XRI) | Opciones de confort conocidas, configurables en el grimorio |
+| Acción | **Hechizos** con el gatillo derecho | La mano derecha "ataca" y la izquierda "manipula": cada mano tiene un papel claro |
+| Control | **Grimorio**: libro de hechizos que flota sobre la mano izquierda | Un mago consulta su grimorio. Va en la muñeca y no pegado a la cara, que en VR es incómodo |
+
+Otras decisiones:
+- **Interfaces en el mundo.** El grimorio, el marcador y el tutorial están colocados en el mundo o en la mano, nunca fijos a la vista. El tutorial flota delante y se recoloca solo si giras la cabeza.
+- **Feedback multisensorial.** Cada acción importante se nota con la vista, el oído y el tacto (sección 4.6).
+- **Ambiente de Halloween.** Noche con niebla, tipografía de terror (Creepster) y viento de fondo.
+
+## 3. Cómo abrir y ejecutar el proyecto
 
 1. Abrir la carpeta del proyecto con **Unity 6000.5.0f1**. Los paquetes (XR Interaction Toolkit 3.5.1, OpenXR, Meta OpenXR, Input System, URP) se resuelven desde `Packages/manifest.json`.
-2. Abrir la escena `Assets/Scenes/Colonial_Graveyard.unity`. Es la escena inicial de la build.
+2. La escena del juego es `Assets/Scenes/Colonial_Graveyard.unity`, que es la escena inicial de la build.
 3. Para las gafas: plataforma **Android**, con las Meta Quest 3 conectadas, **Build And Run**.
 
-## 3. Manual de uso
+## 4. Manual de uso
 
-### Controles
+### 4.1 Controles
 
 | Mando | Control | Acción |
 |---|---|---|
-| Izquierdo | **Botón Menú** (≡) | Abrir / cerrar el grimorio (en el editor: **F2**) |
-| Izquierdo | **Gatillo** (mantener) | Levitar el objeto al que se apunta con la mano izquierda |
-| Izquierdo | Girar la **muñeca** mientras se levita | Rotar el objeto levitado |
-| Derecho | **Grip** (mantener) mientras se levita + separar/juntar las manos | Escalar el objeto levitado (entre 0,25× y 4×) |
-| Derecho | **Gatillo** | Lanzar un hechizo |
-| Derecho | **Botón B** | Lanzar el orbe de teletransporte |
-| Izquierdo | **Stick** | Caminar (por defecto) o teletransporte + giro (configurable en el grimorio) |
-| Derecho | **Stick** adelante / lados | Teletransporte con arco (plantilla XRI) / girar |
-| Derecho | **Botón A** | Saltar (salto simple de 0,4 m) |
-| Cualquiera | **Grip** con la mano pegada a una pared + tirar | Escalar la pared |
+| Izquierdo | **Gatillo** (mantener) | Telequinesis: levitar el objeto al que apuntas |
+| Izquierdo | **Y** (mientras levitas) | Rotar el objeto |
+| Derecho | **A / B** (mientras levitas) | Agrandar / encoger el objeto (entre 0,5× y 2×) |
+| Derecho | **Gatillo** | Lanzar un hechizo (se recarga en 0,35 s) |
+| Derecho | **Grip** (mantener) | Volar hacia donde apunta la mano; más presión, más velocidad |
+| Izquierdo | **Stick** | Caminar (o teletransporte, según el grimorio) |
+| Derecho | **Stick** adelante / lados | Teletransporte (plantilla XRI) / girar |
+| Izquierdo | **X** | Abrir / cerrar el grimorio |
 
-### Selección y manipulación (levitación)
+Las interfaces (tutorial y grimorio) se usan apuntando con el **rayo de la mano derecha + gatillo**, o tocándolas con el dedo.
 
-1. Apunta con la mano izquierda a un objeto levitable. Las lápidas pequeñas junto al punto de inicio y el cubo de prueba lo son. Un **rayo morado** sale de la mano y el objeto se **tiñe de morado**.
-2. Mantén el **gatillo izquierdo**: el objeto flota delante de la mano y la sigue (**traslación**). El rayo y el objeto pasan a **dorado**.
-3. **Rotación:** gira la muñeca izquierda y el objeto gira igual. Para girarlo más, suéltalo y vuelve a cogerlo.
-4. **Escalado:** mantén el **grip derecho** y separa las manos para agrandarlo, o júntalas para encogerlo.
-5. Suelta el gatillo y el objeto cae con física, conservando su nuevo tamaño.
+### 4.2 Tutorial
 
-### Navegación
+Aparece al empezar y cada vez que se reinicia la partida. Mientras dura, el tiempo no corre y no salen duendes, pero hay calabazas para practicar (no puntúan). Los pasos son: objetivo, telequinesis, hechizos, vuelo y grimorio. Cada paso **se completa al hacer la acción** ("¡Bien hecho!"), y se puede saltar un paso o el tutorial entero. El último paso, **EMPEZAR RONDA**, lanza una cuenta atrás 3-2-1 y la ronda empieza.
 
-- **Caminar:** stick izquierdo.
-- **Teletransporte de la plantilla:** stick derecho hacia delante, apuntar y soltar.
-- **Giro:** stick derecho a los lados, suave o por pasos según el grimorio.
-- **Escalar paredes:** las paredes del cementerio bloquean el paso caminando o saltando. Para cruzarlas, acerca una mano a la pared (a menos de 15 cm), mantén el **grip** y tira hacia abajo y hacia ti, alternando manos como en un rocódromo.
-- **Orbe de teletransporte (navegación propia):** pulsa **B** y se lanza un orbe dorado que vuela en arco. Si cae en el **suelo** del cementerio, apareces ahí con un destello dorado. Si choca con una pared, una lápida u otro objeto, el destello es **rojo** y no te mueves. Solo puede haber un orbe en el aire a la vez.
+### 4.3 Reglas y puntuación
 
-### Control: el grimorio
-
-Se abre con el **botón Menú** del mando izquierdo y flota sobre esa mano mirando hacia ti. Se usa apuntando con el **rayo de la mano derecha + gatillo**, o tocándolo con el dedo. Mientras está abierto, los hechizos, la levitación y el orbe quedan en pausa para que los clics no los activen.
-
-| Opción | Efecto |
+| Evento | Efecto |
 |---|---|
-| Color del hechizo | 4 colores. Cambia el orbe y su impacto; la opción activa lleva un borde blanco. |
-| Stick izquierdo: Caminar / Teletransporte | Cambia la función del stick izquierdo |
-| Velocidad al caminar − / + | De 0,5 a 6 m/s |
-| Giro: Suave / Por pasos | Tipo de giro con el stick |
-| Velocidad (o ángulo) de giro − / + | 30–180 °/s en giro suave; 15–90° en giro por pasos |
-| Cerrar | Cierra el grimorio |
+| Entregar una calabaza en la tumba iluminada | +10 puntos y +15% de energía |
+| Eliminar un duende (6 impactos) | +5 puntos |
+| Un duende destruye una calabaza | −10% de energía |
+| Energía al empezar | 70% |
+| Victoria | Acabar los 7 minutos con más del 10% de energía |
+| Derrota | Energía al 0% |
 
-**Feedback:** los botones se iluminan al apuntarlos y se oscurecen al pulsarlos, y la opción activa se muestra en morado.
+Al principio hay un duende; a partir del primer minuto, dos a la vez. Cada duende eliminado reaparece a los 8 s. Siempre hay hasta 3 calabazas en el cementerio.
 
-## 4. Estructura
+### 4.4 El grimorio (control)
 
-Scripts propios en `Assets/Scripts/`:
+Se abre con **X** y flota sobre la mano izquierda, mirando hacia ti. Mientras está abierto se pausan los hechizos, la telequinesis y el vuelo, para que los clics no los activen.
+
+| Pestaña | Opciones |
+|---|---|
+| Hechizo | Elegir entre los 4 colores del hechizo; el activo lleva un borde blanco |
+| Movimiento | Stick izquierdo: caminar o teletransporte · velocidad al caminar · giro suave o por pasos · velocidad o ángulo de giro · velocidad de vuelo |
+| Partida | Puntos, energía, tiempo y resultado · **Pausar / Reanudar** · **Reiniciar** |
+| Ayuda | Objetivo, puntuación y controles (los valores se leen del juego) |
+
+### 4.5 Marcador
+
+Encima de la mano izquierda se ven siempre los **puntos**, la **energía** y el **tiempo**. Se pone en rojo con poca energía, parpadea en rojo al perder energía y en verde al ganarla, y muestra el resultado al acabar la ronda.
+
+### 4.6 Feedback
+
+| Acción | Visual | Sonido | Vibración |
+|---|---|---|---|
+| Apuntar con telequinesis | Rayo cian y objeto teñido de cian | — | Toque en el mando izquierdo |
+| Coger / sostener / soltar | Rayo y objeto dorados | Barrido ascendente / descendente | Pulso al coger, latido suave al sostener |
+| Lanzar un hechizo | Bola con estela de cometa y luz de su color | Tono ascendente | Pulso en el mando derecho |
+| Hechizo aún recargando | La bolita de la mano derecha está creciendo | — | Toque muy suave |
+| Impacto | Destello del color del hechizo | Golpe | — |
+| Golpear a un duende | Parpadeo rojo y barra de vida (verde → rojo) | Golpe seco | — |
+| Eliminar a un duende | Explosión: destello, luz naranja y trozos | Estallido | — |
+| Aparece un duende | — | Gruñido 3D: se oye de dónde viene | — |
+| Un duende destruye una calabaza | Destello rojo; marcador en rojo | Zumbido 3D | Ambos mandos |
+| Entregar una calabaza | Destello dorado; marcador en verde | Campanilla | Ambos mandos |
+| Volar | — | — | Vibración que crece con la velocidad |
+| Grimorio y tutorial | Botones que se iluminan; opción activa resaltada | Campanilla y cuenta atrás en el tutorial | Toque al apuntar y al pulsar |
+| Ambiente | Niebla nocturna | Viento de fondo | — |
+
+Los sonidos se generan por código (`MagicFeedback`), porque el proyecto no tenía efectos de sonido adecuados.
+
+## 5. Estructura
+
+Scripts en `Assets/Scripts/`:
 
 | Script | Responsabilidad |
 |---|---|
-| `WizardHandIK` | IK de las manos del mago hacia los mandos |
-| `WizardSpellCaster`, `MagicProjectile` | Hechizos y destello de impacto |
-| `WizardLevitation` | Selección por rayo, traslación, rotación y escalado del objeto levitado |
-| `WizardLevitationFeedback` | Rayo visible y tinte del objeto apuntado o levitado |
-| `WizardTeleportOrb`, `TeleportOrbProjectile` | Navegación con el orbe de teletransporte |
-| `WizardLocomotionSettings` | Acceso en tiempo de ejecución a las opciones de locomoción del rig XRI |
-| `WizardControlMenu` | Grimorio (menú 3D world-space) |
+| `GraveyardGameManager` | Reglas de la ronda: energía, puntos, tiempo, inicio, victoria y derrota |
+| `GraveyardTutorial` | Tutorial interactivo antes de cada ronda y cuenta atrás |
+| `GoblinEnemy`, `GoblinSpawner` | Duendes: buscan la calabaza más cercana, reciben daño y reaparecen |
+| `GoblinHealthBar`, `GoblinExplosion`, `FadingLight` | Barra de vida, parpadeo al recibir daño y explosión al morir |
+| `PumpkinItem`, `PumpkinSpawner`, `PumpkinDeliveryZone` | Calabazas, su aparición y la tumba de entrega |
+| `GraveyardLightingController` | Luces protectoras que se apagan con la energía |
+| `WizardLevitation`, `WizardLevitationFeedback` | Telequinesis (selección, traslación, rotación y escalado) y su feedback |
+| `WizardSpellCaster`, `MagicProjectile` | Hechizos, estela, indicador de recarga e impactos |
+| `WizardFlight` | Vuelo mágico (proveedor de locomoción de XRI) |
+| `WizardLocomotionSettings`, `WizardTurnSettings` | Opciones de movimiento y giro del rig XRI |
+| `WizardControlMenu`, `MenuButtonHover` | Grimorio de muñeca con pestañas |
+| `GraveyardWristHud` | Marcador de la muñeca |
+| `GraveyardFeedback`, `MagicFeedback` | Feedback de eventos de la partida, sonidos sintetizados y vibración |
+| `HalloweenFontTheme` | Aplica la tipografía Creepster a los textos |
+| `WizardHandIK`, `WizardBodyFollow` | IK de las manos del mago y orientación del cuerpo con la cabeza |
 
-## 5. Disclosure notice (uso de herramientas y recursos externos)
+## 6. Disclosure notice (uso de herramientas y recursos externos)
 
 **Recursos de terceros:**
 
-- **Unity VR Template** (`Assets/VRTemplateAssets`) y samples del **XR Interaction Toolkit 3.5.1** (Starter Assets, Hands Interaction Demo): rig XR, locomoción base (movimiento continuo, teletransporte, giro) e interactores.
-- **Colonial City LittlePack – Church Graveyard Environment**, de *3DShapes* (Unity Asset Store): entorno del cementerio.
-- **WizardPBR** (Unity Asset Store) [COMPLETAR: autor]: modelo y animaciones del mago.
-- [COMPLETAR: tutoriales, vídeos o documentación que hayáis seguido]
+- **Unity VR Template** (`Assets/VRTemplateAssets`) y samples del **XR Interaction Toolkit 3.5.1** (Starter Assets, Hands Interaction Demo): rig XR, locomoción base (caminar, teletransporte, giro) e interactores.
+- **Colonial City LittlePack – Church Graveyard Environment**, de *3DShapes* (Unity Asset Store): el cementerio.
+- **WizardPBR** (Unity Asset Store) [COMPLETAR: autor]: modelo del mago.
+- **LOWPO: Low-Poly Goblin Pack**, de *Standout 7* (Unity Asset Store): los duendes.
+- **Spooky pumpkins** [COMPLETAR: autor y origen]: las calabazas.
+- **Creepster**, de *Font Diner* (Google Fonts), con licencia SIL Open Font License 1.1, incluida en `Assets/Fonts/Creepster/OFL.txt`.
+- [COMPLETAR: tutoriales, vídeos o documentación seguidos]
 
 **Uso de IA generativa:**
 
-- Se ha usado **Claude (Anthropic)**, a través de Claude Code, como asistente de programación para:
-  - analizar el proyecto respecto al enunciado;
-  - implementar el grimorio (`WizardControlMenu`, `WizardLocomotionSettings` y el color de hechizo configurable);
-  - implementar la rotación y el escalado del objeto levitado, el feedback de levitación (`WizardLevitationFeedback`) y la navegación con orbe (`WizardTeleportOrb`, `TeleportOrbProjectile`);
-  - añadir las lápidas levitables a la escena, configurar la escena de la build y redactar el borrador de este documento;
-  - escalar el entorno, ajustar el escalón y el salto del jugador y hacer escalables las paredes.
+- Se ha usado **Claude (Anthropic)**, a través de Claude Code, como asistente de programación. En esta rama ha implementado:
+  - el vuelo mágico (`WizardFlight`);
+  - el arreglo del cambio de giro (`WizardTurnSettings`) y la orientación del cuerpo con la cabeza (`WizardBodyFollow`);
+  - la estela, la luz y el indicador de recarga de los hechizos;
+  - el grimorio de muñeca (`WizardControlMenu`, `WizardLocomotionSettings`, `MenuButtonHover`) y el marcador de muñeca (`GraveyardWristHud`), que sustituyen al panel anterior fijado a la cámara;
+  - la explosión de los duendes (`GoblinExplosion`, `FadingLight`) y su barra de vida (`GoblinHealthBar`);
+  - la niebla y el ajuste de la iluminación, y la tipografía de Halloween (`HalloweenFontTheme`);
+  - el tutorial y el inicio de ronda (`GraveyardTutorial`; estado de espera en `GraveyardGameManager`, `GoblinEnemy` y `GoblinSpawner`);
+  - el feedback sonoro y háptico (`MagicFeedback`, `GraveyardFeedback` y los cambios en `WizardLevitationFeedback`, `WizardSpellCaster`, `MagicProjectile`, `GoblinEnemy` y `PumpkinDeliveryZone`);
+  - la escena de inicio de la build y este documento.
 
-  Estos cambios están en la historia de commits de `main` (a partir del commit `1f9ae4a`). El código generado ha sido revisado y probado por el grupo: [COMPLETAR: confirmar tras probarlo en las gafas].
-- [COMPLETAR: cualquier otro uso de IA, p. ej. en los scripts originales `WizardHandIK`, `WizardSpellCaster`, `MagicProjectile`, `WizardLevitation`]
-
-## 6. Cambios sobre los assets y la plantilla
-
-- El entorno (suelo, iglesia, tumbas, paredes y farolas) está escalado **×1,5** respecto al pack original, porque en las gafas el cementerio parecía una maqueta. El jugador mantiene su escala real.
-- Del rig XR se ha bajado el escalón máximo del CharacterController (0,5 → 0,3 m) y el salto (1,25 m con doble salto → 0,4 m simple), para que las paredes sean una barrera.
-- Al prefab `Graveyard_wall` del pack se le ha añadido un `ClimbInteractable` de XRI para poder escalar las paredes.
+  El detalle está en el historial de commits de la rama. [COMPLETAR: confirmar que el grupo ha revisado y probado estos cambios.]
+- [COMPLETAR: uso de IA, si lo hubo, en el resto del código (mago en primera persona, telequinesis, hechizos, calabazas, duendes, reglas de la partida, iluminación)]
 
 ## 7. Limitaciones conocidas
 
-- Las rotaciones grandes requieren soltar y volver a coger el objeto, por el rango de giro de la muñeca.
-- El tinte de resaltado sustituye el color base del material mientras dura, en lugar de añadir un brillo.
+- **El APK se abre como una ventana plana en las Quest**: la app no está arrancando en modo VR. Está pendiente de revisar la configuración de OpenXR para Android; la primera prueba es desactivar "Android XR Support" y dejar solo "Meta Quest Support".
+- **Botón A:** además de agrandar el objeto levitado, el rig de la plantilla lo usa para saltar.
+- **Rotación limitada:** el objeto levitado solo se rota en el eje vertical.
+- **Panel antiguo:** el panel de control anterior y su conmutador siguen en la escena, desactivados.
