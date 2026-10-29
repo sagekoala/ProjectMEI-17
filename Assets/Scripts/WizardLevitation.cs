@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -29,6 +30,12 @@ public class WizardLevitation : MonoBehaviour
     private bool originalKinematic;
     private RigidbodyConstraints originalConstraints;
     private Vector3 initialScale;
+
+    // Scale each object had the first time it was levitated. The scale
+    // limits are relative to this, so regrabbing an object can't push it
+    // past minScaleMultiplier / maxScaleMultiplier.
+    private readonly Dictionary<Rigidbody, Vector3> originalScales =
+        new Dictionary<Rigidbody, Vector3>();
 
     void Update()
     {
@@ -124,7 +131,7 @@ public class WizardLevitation : MonoBehaviour
         originalGravity = rb.useGravity;
         originalKinematic = rb.isKinematic;
         originalConstraints = rb.constraints;
-        initialScale = rb.transform.localScale;
+        initialScale = GetOriginalScale(rb);
 
         rb.useGravity = false;
         rb.linearVelocity = Vector3.zero;
@@ -132,6 +139,31 @@ public class WizardLevitation : MonoBehaviour
 
         // Prevent collisions from causing uncontrolled rotation.
         rb.constraints |= RigidbodyConstraints.FreezeRotation;
+    }
+
+    Vector3 GetOriginalScale(Rigidbody rb)
+    {
+        // Forget objects that were destroyed (e.g. pumpkins delivered or
+        // broken by goblins), so the dictionary doesn't keep growing.
+        if (originalScales.Count > 32)
+        {
+            var destroyed = new List<Rigidbody>();
+            foreach (Rigidbody key in originalScales.Keys)
+            {
+                if (key == null)
+                    destroyed.Add(key);
+            }
+            foreach (Rigidbody key in destroyed)
+                originalScales.Remove(key);
+        }
+
+        if (!originalScales.TryGetValue(rb, out Vector3 scale))
+        {
+            scale = rb.transform.localScale;
+            originalScales[rb] = scale;
+        }
+
+        return scale;
     }
 
     void ReleaseObject()
