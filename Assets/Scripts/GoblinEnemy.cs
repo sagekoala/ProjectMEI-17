@@ -65,8 +65,23 @@ public class GoblinEnemy : MonoBehaviour
                 GraveyardGameManager.Instance.GoblinDefeated();
 
             Debug.Log("Goblin defeated!");
+            Explode();
             Destroy(gameObject);
         }
+    }
+
+    // Bursts into chunks of its own material, from the middle of its body.
+    void Explode()
+    {
+        Renderer body = GetComponentInChildren<Renderer>();
+
+        Vector3 center = body != null
+            ? body.bounds.center
+            : transform.position + Vector3.up * 0.5f;
+
+        GoblinExplosion.Explode(
+            center, body != null ? body.sharedMaterial : null
+        );
     }
 
     void FindTarget()
