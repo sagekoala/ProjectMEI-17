@@ -8831,6 +8831,7 @@ MonoBehaviour:
   timerText: {fileID: 1535758891}
   resultText: {fileID: 1421273648}
   resultBackground: {fileID: 1671679856}
+  waitForStart: 1
 --- !u!114 &946911181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26352,6 +26353,57 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HalloweenFontTheme
   font: {fileID: 12800000, guid: 675b68dc77cc401f811fead7551e6c18, type: 3}
+--- !u!1 &2800000021
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2800000022}
+  - component: {fileID: 2800000023}
+  m_Layer: 0
+  m_Name: Graveyard Tutorial
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2800000022
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2800000021}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2800000023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2800000021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32924789cda247f4b29c5fc415e3bc58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GraveyardTutorial
+  game: {fileID: 946911180}
+  levitation: {fileID: 1738405879}
+  spellCaster: {fileID: 1603250299}
+  flight: {fileID: 2600000003}
+  menu: {fileID: 2700000004}
+  head: {fileID: 0}
+  haptics: {fileID: 2600000006}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -26382,3 +26434,4 @@ SceneRoots:
   - {fileID: 2700000002}
   - {fileID: 2700000006}
   - {fileID: 2800000012}
+  - {fileID: 2800000022}

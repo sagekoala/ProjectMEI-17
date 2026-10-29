@@ -36,6 +36,8 @@ public class WizardFlight : LocomotionProvider, IGravityController
     private bool isFlying;
     private float nextPulseTime;
 
+    public bool IsFlying => isFlying;
+
     // ---------- IGravityController ----------
 
     public bool canProcess => isActiveAndEnabled;

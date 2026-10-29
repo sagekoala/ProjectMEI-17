@@ -48,6 +48,9 @@ public class WizardSpellCaster : MonoBehaviour
 
     public int CurrentColorIndex => currentColorIndex;
 
+    // Time of the last spell cast (negative if none yet).
+    public float LastCastTime { get; private set; } = -1f;
+
     public Color CurrentColor =>
         spellColors != null && spellColors.Length > 0
             ? spellColors[currentColorIndex % spellColors.Length]
@@ -122,6 +125,7 @@ public class WizardSpellCaster : MonoBehaviour
             return;
 
         nextCastTime = Time.time + spellCooldown;
+        LastCastTime = Time.time;
 
         Vector3 direction = transform.forward;
 
