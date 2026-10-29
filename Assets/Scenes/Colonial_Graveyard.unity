@@ -20243,6 +20243,7 @@ MonoBehaviour:
   - {r: 0, g: 1, b: 0, a: 1}
   - {r: 1, g: 0, b: 0, a: 1}
   spellCooldown: 0.35
+  trailMaterial: {fileID: 2100000, guid: 13d6dfe2331ff0d4085f20f67a209236, type: 2}
 --- !u!1001 &1603330050
 PrefabInstance:
   m_ObjectHideFlags: 0
