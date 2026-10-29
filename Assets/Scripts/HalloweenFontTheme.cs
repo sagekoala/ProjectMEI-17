@@ -5,14 +5,16 @@ using UnityEngine;
 
 // Gives the game's texts a Halloween look: a spooky font (Creepster) on
 // every TextMeshPro text of the scene, including the ones the grimoire
-// and the HUD build in code. Small texts keep the default font, because
-// a decorative font is hard to read at small sizes in VR.
+// and the HUD build in code, and the 3D texts in the world. Small
+// interface texts keep the default font, because a decorative font is
+// hard to read at small sizes in VR.
 public class HalloweenFontTheme : MonoBehaviour
 {
     [Tooltip("Spooky font file (.ttf) with 'Include Font Data' enabled.")]
     public Font font;
 
-    [Tooltip("Texts smaller than this keep the default font, for readability.")]
+    [Tooltip("Interface (canvas) texts smaller than this keep the default font, " +
+             "for readability. 3D world texts always get the spooky font.")]
     public float minFontSize = 24f;
 
     private TMP_FontAsset fontAsset;
@@ -53,12 +55,21 @@ public class HalloweenFontTheme : MonoBehaviour
 
         foreach (TMP_Text text in texts)
         {
-            // Auto-sized texts (buttons) are judged by their largest size.
-            float size = text.enableAutoSizing ? text.fontSizeMax : text.fontSize;
-
-            if (size >= minFontSize)
+            if (UsesSpookyFont(text))
                 text.font = fontAsset;
         }
+    }
+
+    bool UsesSpookyFont(TMP_Text text)
+    {
+        // 3D texts (e.g. the delivery sign) measure size in other units,
+        // so the size limit only applies to canvas texts.
+        if (!(text is TextMeshProUGUI))
+            return true;
+
+        // Auto-sized texts (buttons) are judged by their largest size.
+        float size = text.enableAutoSizing ? text.fontSizeMax : text.fontSize;
+        return size >= minFontSize;
     }
 
     void OnDestroy()
