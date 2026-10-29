@@ -13,6 +13,7 @@ public class GoblinEnemy : MonoBehaviour
     public int maxHealth = 6;
 
     private int currentHealth;
+    private GoblinHealthBar healthBar;
 
     void Update()
     {
@@ -54,6 +55,7 @@ public class GoblinEnemy : MonoBehaviour
     void Awake()
     {
         currentHealth = maxHealth;
+        healthBar = gameObject.AddComponent<GoblinHealthBar>();
     }
 
     void Start()
@@ -66,6 +68,11 @@ public class GoblinEnemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+
+        // Show the hit: red flash, shorter health bar and a thump.
+        healthBar.SetHealth((float)currentHealth / maxHealth);
+        healthBar.Flash();
+        MagicFeedback.Play(MagicFeedback.HitSound, transform.position, 0.8f);
 
         Debug.Log($"Goblin hit! Health: {currentHealth}");
 
