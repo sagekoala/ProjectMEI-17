@@ -19,6 +19,9 @@ public static class MagicFeedback
     static AudioClip clickSound;
     static AudioClip hoverSound;
     static AudioClip explosionSound;
+    static AudioClip growlSound;
+    static AudioClip hitSound;
+    static AudioClip windLoop;
 
     // Rising tone.
     public static AudioClip CastSound =>
@@ -65,6 +68,21 @@ public static class MagicFeedback
     public static AudioClip ExplosionSound =>
         explosionSound != null ? explosionSound :
         (explosionSound = Noise("Explosion", 0.9f, 0.9f, 5f, 0.08f, 3));
+
+    // Low, rough falling tone: an enemy appears.
+    public static AudioClip GrowlSound =>
+        growlSound != null ? growlSound :
+        (growlSound = Growl("Growl", 0.7f, 0.6f));
+
+    // Short, punchy hit.
+    public static AudioClip HitSound =>
+        hitSound != null ? hitSound :
+        (hitSound = Noise("Hit", 0.15f, 0.7f, 30f, 0.4f, 4));
+
+    // Seamless looping wind for the background.
+    public static AudioClip WindLoop =>
+        windLoop != null ? windLoop :
+        (windLoop = Wind("Wind Loop", 8f, 0.5f));
 
     // Plays a 3D sound at a world position.
     public static void Play(AudioClip clip, Vector3 position, float volume = 1f)
@@ -135,6 +153,68 @@ public static class MagicFeedback
             previous = Mathf.Lerp(previous, white, smoothing);
             return volume * Envelope(time, decay) * previous;
         });
+    }
+
+    static AudioClip Growl(string name, float seconds, float volume)
+    {
+        System.Random random = new System.Random(5);
+        float phase = 0f;
+        float previous = 0f;
+
+        return Create(name, seconds, time =>
+        {
+            float hz = Mathf.Lerp(140f, 70f, time / seconds);
+            phase += 2f * Mathf.PI * hz / SampleRate;
+
+            float white = (float)(random.NextDouble() * 2.0 - 1.0);
+            previous = Mathf.Lerp(previous, white, 0.2f);
+
+            // A square-ish tone plus noise sounds rough.
+            float tone = Mathf.Sign(Mathf.Sin(phase)) * 0.5f + Mathf.Sin(phase);
+            float shape = Mathf.Clamp01(time / 0.05f) * Mathf.Clamp01((seconds - time) / 0.3f);
+            return volume * shape * (0.35f * tone + 0.8f * previous);
+        });
+    }
+
+    // Slowly swelling, heavily filtered noise. The end is cross-faded
+    // into the start so the clip loops without a click.
+    static AudioClip Wind(string name, float seconds, float volume)
+    {
+        const float fadeSeconds = 0.5f;
+        int count = Mathf.CeilToInt(seconds * SampleRate);
+        int fade = Mathf.CeilToInt(fadeSeconds * SampleRate);
+
+        System.Random random = new System.Random(6);
+        float previous = 0f;
+        float[] raw = new float[count + fade];
+
+        for (int i = 0; i < raw.Length; i++)
+        {
+            float time = (float)i / SampleRate;
+            float white = (float)(random.NextDouble() * 2.0 - 1.0);
+            previous = Mathf.Lerp(previous, white, 0.02f);
+
+            // Two whole gusts per clip, so the swell also loops.
+            float gust = 0.6f + 0.4f * Mathf.Sin(2f * Mathf.PI * 2f * time / seconds);
+            raw[i] = volume * 6f * gust * previous;
+        }
+
+        float[] data = new float[count];
+        for (int i = 0; i < count; i++)
+            data[i] = raw[i];
+
+        for (int i = 0; i < fade; i++)
+        {
+            float t = (float)i / fade;
+            data[i] = raw[i] * t + raw[count + i] * (1f - t);
+        }
+
+        for (int i = 0; i < count; i++)
+            data[i] = Mathf.Clamp(data[i], -1f, 1f);
+
+        AudioClip clip = AudioClip.Create(name, count, 1, SampleRate, false);
+        clip.SetData(data, 0);
+        return clip;
     }
 
     static AudioClip Whoosh(string name, float seconds, float volume)

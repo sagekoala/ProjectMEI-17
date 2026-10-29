@@ -31,6 +31,13 @@ public class PumpkinDeliveryZone : MonoBehaviour
                 $"SCORE: {GraveyardGameManager.Instance.TotalScore}";
         }
 
+        if (GraveyardFeedback.Instance != null)
+        {
+            GraveyardFeedback.Instance.PumpkinDelivered(
+                pumpkin.transform.position
+            );
+        }
+
         Destroy(pumpkin.gameObject);
     }
 }

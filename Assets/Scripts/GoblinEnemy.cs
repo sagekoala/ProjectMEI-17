@@ -35,6 +35,9 @@ public class GoblinEnemy : MonoBehaviour
             if (GraveyardGameManager.Instance != null)
                 GraveyardGameManager.Instance.PumpkinDestroyed();
 
+            if (GraveyardFeedback.Instance != null)
+                GraveyardFeedback.Instance.PumpkinLost(target.transform.position);
+
             Destroy(target.gameObject);
             target = null;
             return;
@@ -51,6 +54,13 @@ public class GoblinEnemy : MonoBehaviour
     void Awake()
     {
         currentHealth = maxHealth;
+    }
+
+    void Start()
+    {
+        // A growl from where it appears tells the player where to look.
+        if (GraveyardFeedback.Instance != null)
+            GraveyardFeedback.Instance.GoblinAppeared(transform.position);
     }
 
     public void TakeDamage(int damage)
