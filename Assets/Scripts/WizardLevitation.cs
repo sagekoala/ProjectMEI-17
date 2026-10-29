@@ -105,6 +105,7 @@ public class WizardLevitation : MonoBehaviour
             isRotating = true;
             handRotationAtClutch = transform.rotation;
             objectRotationAtClutch = heldObject.rotation;
+            Debug.Log("WizardLevitation: wrist rotation started.", this);
         }
 
         Quaternion wristDelta =
@@ -242,17 +243,20 @@ public class WizardLevitation : MonoBehaviour
         }
     }
 
-    // Looks the provider up by type name, so this script doesn't depend
-    // on the XR Interaction Toolkit's jump namespace.
-    static Behaviour FindJumpProvider()
+    // Looks the provider up by type name among the XR rig's components
+    // (this hand is inside the rig), so this script doesn't depend on the
+    // XR Interaction Toolkit's jump namespace or on scene-wide searches.
+    Behaviour FindJumpProvider()
     {
-        foreach (MonoBehaviour behaviour in FindObjectsByType<MonoBehaviour>(
-                     FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (MonoBehaviour behaviour in
+                 transform.root.GetComponentsInChildren<MonoBehaviour>(true))
         {
-            if (behaviour.GetType().Name == "JumpProvider")
+            if (behaviour != null &&
+                behaviour.GetType().Name == "JumpProvider")
                 return behaviour;
         }
 
+        Debug.LogWarning("WizardLevitation: no JumpProvider found in the XR rig.", this);
         return null;
     }
 
