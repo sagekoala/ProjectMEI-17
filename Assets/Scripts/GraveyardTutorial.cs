@@ -141,11 +141,11 @@ public class GraveyardTutorial : MonoBehaviour
             {
                 steps.Add(new Step
                 {
-                    title = "Farol espectral",
+                    title = "Linterna anti-fantasmas",
                     body =
                         "Durante la ronda, un fantasma vendrá a por ti. Si te toca, " +
                         $"pierdes una vida (tienes {game.ghostLives}).\n\n" +
-                        "Coge el FAROL ESPECTRAL con telequinesis (está cerca de ti): " +
+                        "Coge la LINTERNA ANTI-FANTASMAS con telequinesis (está cerca de ti): " +
                         "lo sostienes como una linterna. MANTÉN Y para encender su luz " +
                         "verde y apúntala al fantasma girando la muñeca.\n\n" +
                         "A / B: haz más ancho o más estrecho.",

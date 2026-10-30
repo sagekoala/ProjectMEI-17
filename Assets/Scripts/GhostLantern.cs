@@ -50,6 +50,10 @@ public class GhostLantern : MonoBehaviour
     private float nextHitPulse;
     private InputAction shineAction;
 
+    const string GroundText =
+        "<b>LINTERNA ANTI-FANTASMAS</b>\n<size=65%>Cógela con telequinesis</size>";
+    const string HeldText = "Mantén <b>Y</b> para encender la luz";
+
 
     public Rigidbody Body => body;
     public bool IsHeld { get; private set; }
@@ -189,15 +193,15 @@ public class GhostLantern : MonoBehaviour
         BuildLabel();
     }
 
-    // "Y: encender la luz", shown above the lantern while it is held
-    // and off.
+    // A label over the lantern: what it is while it lies on the ground,
+    // and how to switch it on while it is held and off.
     void BuildLabel()
     {
         GameObject labelObject = new GameObject("Lantern Label");
         labelObject.transform.localScale = Vector3.one * 0.06f;
 
         label = labelObject.AddComponent<TextMeshPro>();
-        label.text = "Mantén <b>Y</b> para encender la luz";
+        label.text = HeldText;
         label.fontSize = 12f;
         label.alignment = TextAlignmentOptions.Center;
         label.textWrappingMode = TextWrappingModes.NoWrap;
@@ -377,12 +381,26 @@ public class GhostLantern : MonoBehaviour
 
     void UpdateLabel()
     {
-        bool show = IsHeld && !IsShining;
+        bool show = !IsShining;
         label.gameObject.SetActive(show);
         if (!show)
             return;
 
-        label.transform.position = transform.position + Vector3.up * (0.16f + 0.05f * SizeMultiplier);
+        if (IsHeld)
+        {
+            label.text = HeldText;
+            label.transform.localScale = Vector3.one * 0.06f;
+            label.transform.position =
+                transform.position + Vector3.up * (0.16f + 0.05f * SizeMultiplier);
+        }
+        else
+        {
+            // Bigger and floating gently, readable from a few meters away.
+            label.text = GroundText;
+            label.transform.localScale = Vector3.one * 0.1f;
+            label.transform.position = transform.position +
+                Vector3.up * (0.45f + 0.04f * Mathf.Sin(Time.time * 2f));
+        }
 
         if (Camera.main != null)
         {
