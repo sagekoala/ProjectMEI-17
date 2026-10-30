@@ -28,7 +28,7 @@ public class PlayAreaBounds : MonoBehaviour
     void Start()
     {
         if (xrOrigin == null)
-            xrOrigin = FindFirstObjectByType<XROrigin>();
+            xrOrigin = FindAnyObjectByType<XROrigin>();
     }
 
     void LateUpdate()

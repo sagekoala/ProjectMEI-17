@@ -49,14 +49,21 @@ public class HalloweenFontTheme : MonoBehaviour
         // their own Start/Awake.
         yield return null;
 
-        TMP_Text[] texts = FindObjectsByType<TMP_Text>(
-            FindObjectsInactive.Include, FindObjectsSortMode.None
-        );
-
-        foreach (TMP_Text text in texts)
+        // Every text in the loaded scenes, including inactive ones.
+        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
         {
-            if (UsesSpookyFont(text))
-                text.font = fontAsset;
+            var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+            if (!scene.isLoaded)
+                continue;
+
+            foreach (GameObject root in scene.GetRootGameObjects())
+            {
+                foreach (TMP_Text text in root.GetComponentsInChildren<TMP_Text>(true))
+                {
+                    if (UsesSpookyFont(text))
+                        text.font = fontAsset;
+                }
+            }
         }
     }
 

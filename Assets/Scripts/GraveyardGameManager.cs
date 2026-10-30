@@ -58,10 +58,10 @@ public class GraveyardGameManager : MonoBehaviour
         // The end-of-round screen and the cemetery limits. Added here if
         // they are not in the scene, with their default settings; add
         // them to this object in the editor to tweak them.
-        if (FindFirstObjectByType<GraveyardEndScreen>() == null)
+        if (FindAnyObjectByType<GraveyardEndScreen>() == null)
             gameObject.AddComponent<GraveyardEndScreen>();
 
-        if (FindFirstObjectByType<PlayAreaBounds>() == null)
+        if (FindAnyObjectByType<PlayAreaBounds>() == null)
             gameObject.AddComponent<PlayAreaBounds>();
     }
 

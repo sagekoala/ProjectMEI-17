@@ -39,25 +39,25 @@ public class WizardSpellCaster : MonoBehaviour
         {
             name = "Rayo", color = Color.cyan,
             damage = 1f, deliveriesToUnlock = 0,
-            description = "Daño 1",
+            description = "daño 1",
         },
         new SpellType
         {
             name = "Rayo arcano", color = new Color(0.65f, 0.25f, 1f),
             damage = 1f, speedMultiplier = 1.6f, deliveriesToUnlock = 1,
-            description = "Daño 1 · muy rápido",
+            description = "daño 1 · rápido",
         },
         new SpellType
         {
             name = "Explosivo", color = new Color(0.45f, 1f, 0.2f),
             damage = 1.5f, splashRadius = 1.5f, deliveriesToUnlock = 3,
-            description = "Daño 1,5 · explota en área",
+            description = "daño 1,5 · área",
         },
         new SpellType
         {
             name = "Bola de fuego", color = new Color(1f, 0.4f, 0.1f),
             damage = 2f, sizeMultiplier = 1.8f, deliveriesToUnlock = 5,
-            description = "Daño x2 · bola grande",
+            description = "daño x2",
         },
     };
 
@@ -202,7 +202,12 @@ public class WizardSpellCaster : MonoBehaviour
         {
             int needed = spells[i].deliveriesToUnlock;
             if (needed > lastKnownDeliveries && needed <= deliveries)
+            {
+                // The new spell is equipped right away; the grimoire can
+                // switch back to any other unlocked one.
+                currentColorIndex = i;
                 AnnounceUnlock(spells[i]);
+            }
         }
 
         lastKnownDeliveries = deliveries;
@@ -220,7 +225,7 @@ public class WizardSpellCaster : MonoBehaviour
         FloatingText message = FloatingText.Spawn(
             head.position + forward * 1.5f + Vector3.up * 0.15f,
             $"¡Nuevo hechizo: {spell.name}!\n" +
-            "<size=60%>Elígelo en el grimorio (X)</size>",
+            "<size=60%>Equipado · cámbialo en el grimorio (X)</size>",
             spell.color
         );
         message.duration = 3.5f;

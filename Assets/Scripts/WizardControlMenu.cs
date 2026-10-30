@@ -80,6 +80,7 @@ public class WizardControlMenu : MonoBehaviour
 
     private Button[] colorButtons;
     private TextMeshProUGUI[] spellLabels;
+    private Image[] spellSwatches;
     private int shownDeliveries = -1;
     private Button walkButton;
     private Button teleportButton;
@@ -275,8 +276,9 @@ public class WizardControlMenu : MonoBehaviour
         RefreshGame();
     }
 
-    // Spell list: the chosen one is outlined and marked ELEGIDO; locked
-    // ones are greyed out and say how many pumpkins are still needed.
+    // Spell list, one line each: a color swatch, the name and either its
+    // effect (unlocked) or the pumpkins still needed (locked; the next
+    // one in gold). The chosen spell has a white border and a check.
     void RefreshSpells()
     {
         if (colorButtons == null)
@@ -293,37 +295,32 @@ public class WizardControlMenu : MonoBehaviour
 
             colorButtons[i].interactable = unlocked;
             colorButtons[i].GetComponent<Outline>().enabled = chosen;
-            colorButtons[i].targetGraphic.color = unlocked
-                ? Color.Lerp(spell.color, Color.black, 0.55f)
-                : LockedColor;
+            colorButtons[i].targetGraphic.color = chosen ? SelectedColor
+                : unlocked ? ButtonColor : LockedColor;
 
-            string colorHex = ColorUtility.ToHtmlStringRGB(spell.color);
-            string name = $"<color=#{colorHex}><b>{spell.name}</b></color>";
+            // Locked spells show their color dimmed: you see what's coming.
+            spellSwatches[i].color = unlocked
+                ? spell.color
+                : Color.Lerp(spell.color, LockedColor, 0.6f);
 
-            if (chosen)
+            if (unlocked)
             {
-                spellLabels[i].text =
-                    $"{name}  — ELEGIDO\n<size=75%>{spell.description}</size>";
-            }
-            else if (unlocked)
-            {
-                spellLabels[i].text =
-                    $"{name}\n<size=75%>{spell.description} · pulsa para elegir</size>";
+                spellLabels[i].text = chosen
+                    ? $"<b>{spell.name}</b>  <size=80%>{spell.description}</size>  <b>[ELEGIDO]</b>"
+                    : $"<b>{spell.name}</b>  <size=80%>{spell.description}</size>";
             }
             else
             {
                 int needed = spell.deliveriesToUnlock;
                 int have = Mathf.Min(spellCaster.Deliveries, needed);
-                string pumpkins = needed == 1 ? "calabaza" : "calabazas";
+                string goal = $"entrega {needed} calabaza{(needed == 1 ? "" : "s")} ({have}/{needed})";
 
-                // The next spell to unlock is highlighted in gold.
-                string goal = !nextLockedShown
-                    ? $"<color=#FFD24D>Entrega {needed} {pumpkins} para desbloquear ({have}/{needed})</color>"
-                    : $"Entrega {needed} {pumpkins} para desbloquear ({have}/{needed})";
+                if (!nextLockedShown)
+                    goal = $"<color=#FFD24D>{goal}</color>";
                 nextLockedShown = true;
 
                 spellLabels[i].text =
-                    $"<b>{spell.name}</b>  — BLOQUEADO\n<size=75%>{goal}</size>";
+                    $"<color=#9A93A8><b>{spell.name}</b></color>  <size=80%>{goal}</size>";
             }
         }
     }
@@ -465,48 +462,56 @@ public class WizardControlMenu : MonoBehaviour
 
     void BuildSpellSection(Transform page)
     {
-        AddSectionTitle(page, "Hechizos");
-
         SpellType[] spells = spellCaster.spells;
         colorButtons = new Button[spells.Length];
         spellLabels = new TextMeshProUGUI[spells.Length];
+        spellSwatches = new Image[spells.Length];
 
         for (int i = 0; i < spells.Length; i++)
         {
             int index = i;
             Button button = AddButton(page, "", ButtonColor,
                 () => SelectSpellColor(index));
+            button.GetComponent<LayoutElement>().preferredHeight = 50f;
 
-            // Two lines: name and description / unlock goal.
-            button.GetComponent<LayoutElement>().preferredHeight = 78f;
+            // Color swatch on the left.
+            RectTransform swatch = CreateRect("Color", button.transform);
+            swatch.anchorMin = new Vector2(0f, 0.5f);
+            swatch.anchorMax = new Vector2(0f, 0.5f);
+            swatch.pivot = new Vector2(0f, 0.5f);
+            swatch.anchoredPosition = new Vector2(12f, 0f);
+            swatch.sizeDelta = new Vector2(30f, 30f);
+            Image swatchImage = swatch.gameObject.AddComponent<Image>();
+            swatchImage.raycastTarget = false;
 
-            TextMeshProUGUI label = AddText(button.transform, "", 24f,
+            // Kept under the Halloween theme's size limit: plain font,
+            // easier to read at this size.
+            TextMeshProUGUI label = AddText(button.transform, "", 22f,
                 FontStyles.Normal, TextAlignmentOptions.Left);
             label.richText = true;
             label.textWrappingMode = TextWrappingModes.NoWrap;
             label.enableAutoSizing = true;
-            label.fontSizeMin = 14f;
-            label.fontSizeMax = 24f;
+            label.fontSizeMin = 12f;
+            label.fontSizeMax = 22f;
 
             RectTransform labelRect = label.rectTransform;
             labelRect.anchorMin = Vector2.zero;
             labelRect.anchorMax = Vector2.one;
-            labelRect.offsetMin = new Vector2(16f, 4f);
-            labelRect.offsetMax = new Vector2(-12f, -4f);
+            labelRect.offsetMin = new Vector2(54f, 2f);
+            labelRect.offsetMax = new Vector2(-10f, -2f);
 
             // Highlights the chosen spell.
             Outline outline = button.gameObject.AddComponent<Outline>();
             outline.effectColor = Color.white;
-            outline.effectDistance = new Vector2(5f, -5f);
+            outline.effectDistance = new Vector2(4f, -4f);
 
             colorButtons[i] = button;
             spellLabels[i] = label;
+            spellSwatches[i] = swatchImage;
         }
 
-        AddText(page,
-            "Entrega calabazas en la tumba para desbloquear hechizos. " +
-            "La bolita de tu mano derecha muestra el hechizo elegido.",
-            20f, FontStyles.Italic, TextAlignmentOptions.Center);
+        AddText(page, "Entrega calabazas para desbloquear hechizos.",
+            18f, FontStyles.Italic, TextAlignmentOptions.Center);
     }
 
     void BuildLocomotionSection(Transform page)

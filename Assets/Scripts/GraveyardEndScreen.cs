@@ -60,8 +60,8 @@ public class GraveyardEndScreen : MonoBehaviour
         {
             disableWhileShown = new Behaviour[]
             {
-                FindFirstObjectByType<WizardSpellCaster>(),
-                FindFirstObjectByType<WizardLevitation>(),
+                FindAnyObjectByType<WizardSpellCaster>(),
+                FindAnyObjectByType<WizardLevitation>(),
             };
         }
 

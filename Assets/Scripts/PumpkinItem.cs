@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using UnityEngine;
 
 // A magic pumpkin. Its size matters: bigger pumpkins are worth more when
@@ -20,8 +21,22 @@ public class PumpkinItem : MonoBehaviour
     public int DeliveryPoints =>
         Mathf.Max(1, Mathf.RoundToInt(pointValue * SizeMultiplier));
 
+    // Every active pumpkin, so goblins can find them without searching
+    // the whole scene each frame.
+    public static readonly List<PumpkinItem> All = new List<PumpkinItem>();
+
     void Awake()
     {
         BaseScale = transform.localScale;
+    }
+
+    void OnEnable()
+    {
+        All.Add(this);
+    }
+
+    void OnDisable()
+    {
+        All.Remove(this);
     }
 }

@@ -77,7 +77,7 @@ Al principio hay un duende; a partir del primer minuto, dos a la vez. Cada duend
 
 #### Hechizos desbloqueables
 
-Cada ronda empieza solo con el Rayo. Entregar calabazas desbloquea hechizos más potentes, que se eligen en el grimorio (pestaña Hechizo). Al desbloquear uno aparece un mensaje delante del jugador, con campanilla y vibración.
+Cada ronda empieza solo con el Rayo. Entregar calabazas desbloquea hechizos más potentes. Al desbloquear uno **se equipa solo** y aparece un mensaje delante del jugador, con campanilla y vibración; en el grimorio (pestaña Hechizo) se puede volver a cualquier otro hechizo desbloqueado.
 
 | Hechizo | Color | Efecto | Se desbloquea |
 |---|---|---|---|
@@ -92,7 +92,7 @@ Se abre con **X** y flota sobre la mano izquierda, mirando hacia ti. Mientras es
 
 | Pestaña | Opciones |
 |---|---|
-| Hechizo | Lista de los 4 hechizos: el elegido lleva borde blanco y la marca ELEGIDO; los bloqueados aparecen en gris con las calabazas que faltan (el siguiente, en dorado) |
+| Hechizo | Lista de los 4 hechizos, una línea cada uno con su color: el elegido lleva borde blanco y [ELEGIDO]; los bloqueados aparecen en gris con las calabazas que faltan (el siguiente, en dorado) |
 | Movimiento | Stick izquierdo: caminar o teletransporte · velocidad al caminar · giro suave o por pasos · velocidad o ángulo de giro · velocidad de vuelo |
 | Partida | Puntos, energía, tiempo y resultado · **Pausar / Reanudar** · **Reiniciar** |
 | Ayuda | Objetivo, puntuación y controles (los valores se leen del juego) |

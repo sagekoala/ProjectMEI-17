@@ -121,16 +121,12 @@ public class GoblinEnemy : MonoBehaviour
 
     void FindTarget()
     {
-        PumpkinItem[] pumpkins = FindObjectsByType<PumpkinItem>(
-            FindObjectsSortMode.None
-        );
-
         float closestDistance = float.MaxValue;
         PumpkinItem closest = null;
 
-        foreach (PumpkinItem pumpkin in pumpkins)
+        foreach (PumpkinItem pumpkin in PumpkinItem.All)
         {
-            if (!pumpkin.gameObject.activeInHierarchy)
+            if (pumpkin == null)
                 continue;
 
             float distance = Vector3.Distance(
