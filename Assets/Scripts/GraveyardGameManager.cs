@@ -52,6 +52,15 @@ public class GraveyardGameManager : MonoBehaviour
         RoundStarted = !waitForStart;
         CurrentEnergy = startingEnergy;
         remainingTime = roundDuration;
+
+        // The end-of-round screen and the cemetery limits. Added here if
+        // they are not in the scene, with their default settings; add
+        // them to this object in the editor to tweak them.
+        if (FindFirstObjectByType<GraveyardEndScreen>() == null)
+            gameObject.AddComponent<GraveyardEndScreen>();
+
+        if (FindFirstObjectByType<PlayAreaBounds>() == null)
+            gameObject.AddComponent<PlayAreaBounds>();
     }
 
     void Start()
