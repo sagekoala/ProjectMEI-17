@@ -11,6 +11,7 @@ Eres un mago que protege un cementerio colonial en la noche de Halloween. Unos d
 
 - **Llevar las calabazas** con telequinesis hasta la **tumba iluminada**. Cada entrega da puntos y energía.
 - **Eliminar a los duendes** con tus hechizos antes de que lleguen a las calabazas. Al morir, explotan.
+- **Protegerte del fantasma**: flota hacia ti por encima del cementerio. Se destierra apuntándole con la luz del **farol espectral**, que se coge con telequinesis.
 - **Mantener la energía** del cementerio por encima del 10% hasta que acabe el tiempo de la ronda (7 minutos). Las luces protectoras se apagan a medida que baja la energía. Si llega a 0, pierdes.
 
 Antes de cada ronda, un **tutorial interactivo** enseña a jugar.
@@ -21,6 +22,7 @@ Todas las metáforas de interacción se eligieron para que encajen con la fantas
 
 | Tarea | Metáfora | Por qué |
 |---|---|---|
+| Manipulación con propósito | **Farol espectral**: se levita y su luz se apunta **girándolo** (Y + muñeca); su **tamaño** cambia el haz (grande: largo y estrecho; pequeño: corto y ancho) | Cada transformación tiene un uso en el juego: traslación para llevar calabazas, rotación para apuntar el farol, escalado para decidir entre valor y peso (calabazas) o entre alcance y amplitud (farol) |
 | Selección y manipulación | **Telequinesis**: un rayo mágico desde la mano izquierda selecciona a distancia; el objeto se queda a la distancia donde se cogió, se aleja o acerca estirando el brazo (Go-Go), rota con la muñeca y se escala con A / B | Selección a distancia por rayo, natural para "mover cosas con la mente". El tamaño tiene efecto en el juego: más valor y más resistencia contra los duendes, pero más peso |
 | Navegación propia | **Vuelo mágico**: mantener el grip derecho y volar hacia donde apunta la mano, con la velocidad según la presión | Es el desplazamiento propio de un mago. Se controla con una sola mano, así que se puede volar y lanzar hechizos a la vez |
 | Navegación estándar | Caminar con el stick y teletransporte (plantilla XRI) | Opciones de confort conocidas, configurables en el grimorio |
@@ -58,7 +60,7 @@ Las interfaces (tutorial y grimorio) se usan apuntando con el **rayo de la mano 
 
 ### 4.2 Tutorial
 
-Aparece al empezar y cada vez que se reinicia la partida. Mientras dura, el tiempo no corre y no salen duendes, pero hay calabazas para practicar (no puntúan). Los pasos son: objetivo, telequinesis, hechizos, vuelo y grimorio. Cada paso **se completa al hacer la acción** ("¡Bien hecho!"), y se puede saltar un paso o el tutorial entero. El último paso, **EMPEZAR RONDA**, lanza una cuenta atrás 3-2-1 y la ronda empieza.
+Aparece al empezar y cada vez que se reinicia la partida. Mientras dura, el tiempo no corre y no salen duendes, pero hay calabazas para practicar (no puntúan). Los pasos son: objetivo, telequinesis, farol espectral, hechizos, vuelo y grimorio. Cada paso **se completa al hacer la acción** ("¡Bien hecho!"), y se puede saltar un paso o el tutorial entero. El último paso, **EMPEZAR RONDA**, lanza una cuenta atrás 3-2-1 y la ronda empieza.
 
 ### 4.3 Reglas y puntuación
 
@@ -67,11 +69,15 @@ Aparece al empezar y cada vez que se reinicia la partida. Mientras dura, el tiem
 | Entregar una calabaza en la tumba iluminada | +10 puntos y +15% de energía a tamaño normal; se multiplica por su tamaño (0,5× → +5 puntos, 2× → +20 puntos y +30%) |
 | Tamaño de la calabaza | Las grandes valen más pero pesan más (siguen la mano más despacio); las pequeñas, al revés |
 | Calabaza levitada en alto | Fuera del alcance de los duendes: esperan debajo |
+| Desterrar al fantasma (1,5 s de luz del farol) | +10 puntos; vuelve a aparecer a los 8 s en el lado opuesto del cementerio |
+| El fantasma te toca | −1 vida (hay 10); reaparece en el lado opuesto |
 | Eliminar un duende (6 de vida) | +5 puntos |
 | Un duende destruye una calabaza | −10% de energía |
 | Energía al empezar | 70% |
 | Victoria | Acabar los 7 minutos con más del 10% de energía |
-| Derrota | Energía al 0% |
+| Derrota | Energía al 0%, o perder las 10 vidas contra el fantasma |
+
+El fantasma aparece a los 20 s de empezar la ronda, en la esquina del cementerio más lejana al jugador, flota a 0,8 m/s hacia la cabeza y, mientras le da la luz, se ralentiza, parpadea y encoge. El **farol espectral** está cerca del punto de inicio y solo ilumina mientras se levita. Al cogerlo apunta hacia donde apunta la mano; después mantiene su dirección y se apunta con **Y + muñeca**. A tamaño normal el haz mide 4 m y 22°; a 2× mide 8 m y 11°; a 0,5×, 2 m y 40° (máximo). Como solo hay una mano de telequinesis, hay que elegir entre llevar una calabaza o protegerse con el farol.
 
 Al principio hay un duende; a partir del primer minuto, dos a la vez. Cada duende eliminado reaparece a los 8 s. Siempre hay hasta 3 calabazas en el cementerio.
 
@@ -111,6 +117,10 @@ Encima de la mano izquierda se ven siempre los **puntos**, la **energía** y el 
 | Hechizo aún recargando | La bolita de la mano derecha está creciendo | — | Toque muy suave |
 | Impacto | Destello del color del hechizo (el Explosivo muestra el tamaño de la explosión) | Golpe (explosión en el Explosivo) | — |
 | Nuevo hechizo desbloqueado | Mensaje de su color delante del jugador | Campanilla | Pulso en el mando derecho |
+| Aparece el fantasma | Fantasma translúcido con luz pálida | Silbido 3D | Toque en ambos mandos |
+| El farol ilumina al fantasma | Cono de luz visible; el fantasma parpadea, brilla y encoge | — | — |
+| Fantasma desterrado | Destello y texto "+10 pts" | Campanilla | — |
+| El fantasma te toca | Mensaje "¡El fantasma te atrapó! Vidas: N" | Zumbido | Fuerte en ambos mandos |
 | Golpear a un duende | Parpadeo rojo y barra de vida (verde → rojo) | Golpe seco | — |
 | Eliminar a un duende | Explosión: destello, luz naranja y trozos | Estallido | — |
 | Aparece un duende | — | Gruñido 3D: se oye de dónde viene | — |
@@ -131,6 +141,7 @@ Scripts en `Assets/Scripts/`:
 | `GraveyardGameManager` | Reglas de la ronda: energía, puntos, tiempo, inicio, victoria y derrota |
 | `GraveyardTutorial` | Tutorial interactivo antes de cada ronda y cuenta atrás |
 | `GoblinEnemy`, `GoblinSpawner` | Duendes: buscan la calabaza más cercana, reciben daño y reaparecen |
+| `GhostSystem`, `GhostEnemy`, `GhostLantern` | Fantasma (aparición, persecución, vidas) y farol espectral (haz según tamaño y rotación) |
 | `GoblinHealthBar`, `GoblinExplosion`, `FadingLight` | Barra de vida, parpadeo al recibir daño y explosión al morir |
 | `PumpkinItem`, `PumpkinSpawner`, `PumpkinDeliveryZone` | Calabazas, su aparición y la tumba de entrega |
 | `GraveyardLightingController` | Luces protectoras que se apagan con la energía |
@@ -170,6 +181,7 @@ Scripts en `Assets/Scripts/`:
   - la rotación de la telequinesis con la muñeca, el empuje / atracción Go-Go, su alcance de 8 m, el bloqueo del salto mientras se levita y el arreglo de los límites de escalado (`WizardLevitation`);
   - el efecto del tamaño de las calabazas (puntos, energía y peso), las calabazas fuera del alcance de los duendes y los textos flotantes (`PumpkinItem`, `PumpkinDeliveryZone`, `GoblinEnemy`, `FloatingText`);
   - los hechizos desbloqueables y su pestaña del grimorio (`WizardSpellCaster`, `MagicProjectile`, `WizardControlMenu`);
+  - el fantasma, el farol espectral y las vidas (`GhostSystem`, `GhostEnemy`, `GhostLantern`, cambios en `GraveyardGameManager`, `GraveyardFeedback`, `GraveyardWristHud`, `GraveyardEndScreen` y el tutorial);
   - los hechizos brillantes, la pantalla de fin de partida y los límites del cementerio (`GlowSphere`, `GraveyardEndScreen`, `PlayAreaBounds`);
   - la escena de inicio de la build y este documento.
 

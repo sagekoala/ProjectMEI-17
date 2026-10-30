@@ -51,6 +51,21 @@ public class GraveyardFeedback : MonoBehaviour
         PulseBoth(0.6f, 0.3f);
     }
 
+    // A ghost appeared: a whoosh is played where it is; a light tick on
+    // both hands so the wizard looks around.
+    public void GhostAppeared(Vector3 position)
+    {
+        PulseBoth(0.2f, 0.1f);
+    }
+
+    // The ghost caught the wizard: strong on both hands, and a pale flash.
+    public void PlayerCaught(Vector3 position)
+    {
+        MagicFeedback.Play(MagicFeedback.FailSound, position, 1f);
+        SpawnFlash(position, 0.6f, new Color(0.7f, 0.95f, 1f), 0.25f);
+        PulseBoth(0.9f, 0.4f);
+    }
+
     public void PumpkinDelivered(Vector3 position)
     {
         MagicFeedback.Play(MagicFeedback.ChimeSound, position, 1f);

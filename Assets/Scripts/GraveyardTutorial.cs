@@ -135,6 +135,22 @@ public class GraveyardTutorial : MonoBehaviour
                     "comérselas, pero pesan más.",
                 isDone = () => levitation.HeldObject != null,
             });
+
+            GhostSystem ghosts = GhostSystem.Instance;
+            if (ghosts != null && ghosts.Lantern != null)
+            {
+                steps.Add(new Step
+                {
+                    title = "Farol espectral",
+                    body =
+                        "Durante la ronda, un fantasma vendrá a por ti. Si te toca, " +
+                        $"pierdes una vida (tienes {game.ghostLives}).\n\n" +
+                        "Coge el FAROL ESPECTRAL con telequinesis (está cerca de ti) " +
+                        "y apunta su luz al fantasma girándolo con Y + la muñeca.\n\n" +
+                        "Grande: luz más larga y estrecha. Pequeño: más corta y ancha.",
+                    isDone = () => levitation.HeldObject == ghosts.Lantern.Body,
+                });
+            }
         }
 
         if (spellCaster != null)

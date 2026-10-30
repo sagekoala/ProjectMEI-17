@@ -339,13 +339,14 @@ public class WizardControlMenu : MonoBehaviour
         string stats =
             $"Puntos: {game.TotalScore}\n" +
             $"Energía: {game.CurrentEnergy:0}%\n" +
+            $"Vidas: {game.GhostLivesLeft}/{game.ghostLives}\n" +
             $"Tiempo: {seconds / 60}:{seconds % 60:00}";
 
         if (game.GameOver)
         {
             string result = game.Victory
                 ? "¡VICTORIA! Cementerio salvado"
-                : "DERROTA: las luces se han apagado";
+                : "DERROTA: " + game.DefeatReason;
             gameStatus.text = $"<b>{result}</b>\n{stats}";
             gameStatus.color = game.Victory ? VictoryColor : DefeatColor;
         }
@@ -588,6 +589,8 @@ public class WizardControlMenu : MonoBehaviour
                 $"Calabaza entregada: {pumpkinPoints}+{game.energyPerDelivery:0}% energía " +
                 "(más si es grande)\n" +
                 $"Duende eliminado: +{game.pointsPerGoblin} puntos\n" +
+                $"Fantasma desterrado: +{game.pointsPerGhost} puntos\n" +
+                $"Si el fantasma te toca: −1 vida (tienes {game.ghostLives})\n" +
                 $"Calabaza destruida: −{game.energyLostPerPumpkin:0}% energía\n";
         }
 
@@ -597,6 +600,7 @@ public class WizardControlMenu : MonoBehaviour
             "Estirar / recoger el brazo: alejar / acercar el objeto\n" +
             "Y + girar la muñeca: rotar el objeto levitado\n" +
             "A / B: agrandar / encoger\n" +
+            "Farol: levítalo y apunta su luz al fantasma (Y + muñeca)\n" +
             "Gatillo der.: lanzar hechizo\n" +
             "Grip der.: volar hacia donde apunta la mano\n" +
             "Stick izq.: moverse · Stick der.: girar / teletransporte\n" +

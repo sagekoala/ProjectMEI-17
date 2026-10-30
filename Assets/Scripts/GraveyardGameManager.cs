@@ -18,6 +18,11 @@ public class GraveyardGameManager : MonoBehaviour
     [Header("Round")]
     public float roundDuration = 300f;
 
+    [Header("Ghost")]
+    [Tooltip("Times the ghost can catch the wizard before the round is lost.")]
+    public int ghostLives = 10;
+    public int pointsPerGhost = 10;
+
     [Range(0f, 100f)]
     public float minimumVictoryEnergy = 10f;
 
@@ -34,6 +39,9 @@ public class GraveyardGameManager : MonoBehaviour
     public int TotalScore { get; private set; }
     // Pumpkins delivered this round (unlocks spells).
     public int PumpkinsDelivered { get; private set; }
+    public int GhostLivesLeft { get; private set; }
+    // Why the round was lost (empty on victory).
+    public string DefeatReason { get; private set; } = "";
     [Header("Round Start")]
     [Tooltip("If true, the round waits for StartRound() (e.g. after the tutorial).")]
     public bool waitForStart = false;
@@ -54,6 +62,7 @@ public class GraveyardGameManager : MonoBehaviour
         RoundStarted = !waitForStart;
         CurrentEnergy = startingEnergy;
         remainingTime = roundDuration;
+        GhostLivesLeft = ghostLives;
 
         // The end-of-round screen and the cemetery limits. Added here if
         // they are not in the scene, with their default settings; add
@@ -63,6 +72,9 @@ public class GraveyardGameManager : MonoBehaviour
 
         if (FindAnyObjectByType<PlayAreaBounds>() == null)
             gameObject.AddComponent<PlayAreaBounds>();
+
+        if (FindAnyObjectByType<GhostSystem>() == null)
+            gameObject.AddComponent<GhostSystem>();
     }
 
     void Start()
@@ -88,6 +100,8 @@ public class GraveyardGameManager : MonoBehaviour
             remainingTime = 0f;
 
             // Victory requires more than the minimum energy.
+            if (CurrentEnergy <= minimumVictoryEnergy)
+                DefeatReason = "Se acabó el tiempo con poca energía";
             EndRound(CurrentEnergy > minimumVictoryEnergy);
         }
 
@@ -135,6 +149,31 @@ public class GraveyardGameManager : MonoBehaviour
         Debug.Log($"Goblin defeated! Score: {TotalScore}");
     }
 
+    // The ghost touched the wizard: one life less.
+    public void GhostCaughtPlayer()
+    {
+        if (!IsPlaying)
+            return;
+
+        GhostLivesLeft = Mathf.Max(0, GhostLivesLeft - 1);
+        UpdateDisplay();
+
+        if (GhostLivesLeft == 0)
+        {
+            DefeatReason = "El fantasma te ha atrapado demasiadas veces";
+            EndRound(false);
+        }
+    }
+
+    public void GhostBanished()
+    {
+        if (!IsPlaying)
+            return;
+
+        TotalScore += pointsPerGhost;
+        UpdateDisplay();
+    }
+
     // Starts a round that was waiting (see waitForStart).
     public void StartRound()
     {
@@ -154,7 +193,10 @@ public class GraveyardGameManager : MonoBehaviour
         );
 
         if (CurrentEnergy <= 0f)
+        {
+            DefeatReason = "Los duendes han apagado todas las luces";
             EndRound(false);
+        }
     }
 
     void EndRound(bool victory)

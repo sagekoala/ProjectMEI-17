@@ -89,12 +89,9 @@ public class GraveyardEndScreen : MonoBehaviour
         titleText.text = victory ? "¡VICTORIA!" : "FIN DE LA PARTIDA";
         titleText.color = victory ? VictoryColor : DefeatColor;
 
-        if (victory)
-            reasonText.text = "¡Has salvado el cementerio!";
-        else if (game.CurrentEnergy <= 0f)
-            reasonText.text = "Los goblins han apagado todas las luces";
-        else
-            reasonText.text = "Se acabó el tiempo con poca energía";
+        reasonText.text = victory
+            ? "¡Has salvado el cementerio!"
+            : game.DefeatReason;
 
         int survived = Mathf.FloorToInt(
             Mathf.Max(0f, game.roundDuration - game.RemainingTime));
@@ -102,6 +99,7 @@ public class GraveyardEndScreen : MonoBehaviour
         statsText.text =
             $"Puntos: <b>{game.TotalScore}</b>\n" +
             $"Energía final: <b>{game.CurrentEnergy:0}%</b>\n" +
+            $"Vidas restantes: <b>{game.GhostLivesLeft}/{game.ghostLives}</b>\n" +
             $"Tiempo resistido: <b>{survived / 60}:{survived % 60:00}</b>";
 
         PlaceInFrontOfPlayer();

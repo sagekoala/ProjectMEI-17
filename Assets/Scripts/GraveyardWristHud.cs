@@ -76,13 +76,14 @@ public class GraveyardWristHud : MonoBehaviour
         string stats =
             $"PUNTOS {game.TotalScore}   " +
             $"ENERGÍA {game.CurrentEnergy:0}%   " +
+            $"VIDAS {game.GhostLivesLeft}   " +
             $"{seconds / 60}:{seconds % 60:00}";
 
         if (game.GameOver)
         {
             hudText.text = (game.Victory
                 ? "¡VICTORIA! CEMENTERIO SALVADO"
-                : "DERROTA: LAS LUCES SE APAGARON") + "\n" + stats;
+                : "DERROTA: " + game.DefeatReason.ToUpper()) + "\n" + stats;
             hudText.color = game.Victory ? victoryColor : lowEnergyColor;
             return;
         }
