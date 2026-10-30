@@ -75,6 +75,8 @@ Aparece al empezar y cada vez que se reinicia la partida. Mientras dura, el tiem
 
 Al principio hay un duende; a partir del primer minuto, dos a la vez. Cada duende eliminado reaparece a los 8 s. Siempre hay hasta 3 calabazas en el cementerio.
 
+**Oleada final:** en el último minuto de la ronda suena un cuerno, aparece el cartel "¡OLEADA FINAL!" y llegan **duendes arqueros**, además de los normales: hasta 3 a la vez, el doble de rápidos que un duende normal pero con solo 2 de vida, y reaparecen a los 3 s. Los duendes normales usan el modelo *Basic Goblin* del pack y los arqueros el *Goblin Archer*, para distinguirlos de un vistazo.
+
 #### Hechizos desbloqueables
 
 Cada ronda empieza solo con el Rayo. Entregar calabazas desbloquea hechizos más potentes. Al desbloquear uno **se equipa solo** y aparece un mensaje delante del jugador, con campanilla y vibración; en el grimorio (pestaña Hechizo) se puede volver a cualquier otro hechizo desbloqueado.
@@ -114,6 +116,7 @@ Encima de la mano izquierda se ven siempre los **puntos**, la **energía** y el 
 | Golpear a un duende | Parpadeo rojo y barra de vida (verde → rojo) | Golpe seco | — |
 | Eliminar a un duende | Explosión: destello, luz naranja y trozos | Estallido | — |
 | Aparece un duende | — | Gruñido 3D: se oye de dónde viene | — |
+| Empieza la oleada final | Cartel "¡OLEADA FINAL!" delante del jugador | Cuerno | Vibración fuerte en ambos mandos |
 | Un duende destruye una calabaza | Destello rojo; marcador en rojo | Zumbido 3D | Ambos mandos |
 | Entregar una calabaza | Destello dorado; marcador en verde | Campanilla | Ambos mandos |
 | Volar | — | — | Vibración que crece con la velocidad |
@@ -130,7 +133,7 @@ Scripts en `Assets/Scripts/`:
 |---|---|
 | `GraveyardGameManager` | Reglas de la ronda: energía, puntos, tiempo, inicio, victoria y derrota |
 | `GraveyardTutorial` | Tutorial interactivo antes de cada ronda y cuenta atrás |
-| `GoblinEnemy`, `GoblinSpawner` | Duendes: buscan la calabaza más cercana, reciben daño y reaparecen |
+| `GoblinEnemy`, `GoblinSpawner` | Duendes: buscan la calabaza más cercana, reciben daño y reaparecen; oleada final de arqueros (prefabs `Goblin` y `GoblinArcher`) |
 | `GoblinHealthBar`, `GoblinExplosion`, `FadingLight` | Barra de vida, parpadeo al recibir daño y explosión al morir |
 | `PumpkinItem`, `PumpkinSpawner`, `PumpkinDeliveryZone` | Calabazas, su aparición y la tumba de entrega |
 | `GraveyardLightingController` | Luces protectoras que se apagan con la energía |
@@ -171,6 +174,7 @@ Scripts en `Assets/Scripts/`:
   - el efecto del tamaño de las calabazas (puntos, energía y peso), las calabazas fuera del alcance de los duendes y los textos flotantes (`PumpkinItem`, `PumpkinDeliveryZone`, `GoblinEnemy`, `FloatingText`);
   - los hechizos desbloqueables y su pestaña del grimorio (`WizardSpellCaster`, `MagicProjectile`, `WizardControlMenu`);
   - los hechizos brillantes, la pantalla de fin de partida y los límites del cementerio (`GlowSphere`, `GraveyardEndScreen`, `PlayAreaBounds`);
+  - la oleada final de duendes arqueros (`GoblinSpawner`, prefab `GoblinArcher`, aviso en `GraveyardFeedback`);
   - la escena de inicio de la build y este documento.
 
   El detalle está en el historial de commits de la rama. [COMPLETAR: confirmar que el grupo ha revisado y probado estos cambios.]
