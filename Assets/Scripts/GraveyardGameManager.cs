@@ -73,6 +73,9 @@ public class GraveyardGameManager : MonoBehaviour
 
         if (FindAnyObjectByType<GhostSystem>() == null)
             gameObject.AddComponent<GhostSystem>();
+
+        if (FindAnyObjectByType<EyeHeight>() == null)
+            gameObject.AddComponent<EyeHeight>();
     }
 
     void Start()

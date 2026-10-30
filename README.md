@@ -136,7 +136,7 @@ Todos están en `Assets/Scripts/`:
 
 ## 9. Limitaciones
 
-- La altura de los ojos es fija (1,36 m), no es la altura real del jugador.
+- La altura de los ojos es fija (1,36 m), no es la altura real del jugador. Se ajusta al empezar y al recentrar las gafas (mantener el botón Meta).
 - El panel de control antiguo sigue en la escena, pero está desactivado.
 
 ## 10. Uso de IA (disclosure)
