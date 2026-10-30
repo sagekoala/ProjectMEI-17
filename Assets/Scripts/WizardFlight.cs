@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Gravity;
+using UnityEngine.XR.Interaction.Toolkit.Locomotion.Comfort;
 
 // Magic flight (custom navigation): hold the right grip to fly where the
 // right hand points; squeezing harder flies faster. The XR rig's character
@@ -30,6 +31,27 @@ public class WizardFlight : LocomotionProvider, IGravityController
     [Tooltip("Haptics of the steering controller.")]
     public HapticImpulsePlayer haptics;
     public float pulseInterval = 0.2f;
+
+    [Header("Comfort")]
+    [Tooltip("Darkens the edges of the view while flying, which reduces " +
+             "motion sickness. Can be switched in the grimoire.")]
+    [SerializeField] private bool comfortVignette = true;
+
+    [Tooltip("The rig's tunneling vignette. Found automatically if empty.")]
+    public TunnelingVignetteController vignette;
+
+    private LocomotionVignetteProvider vignetteProvider;
+
+    public bool ComfortVignette
+    {
+        get => comfortVignette;
+        set
+        {
+            comfortVignette = value;
+            if (vignetteProvider != null)
+                vignetteProvider.enabled = value;
+        }
+    }
 
     private InputAction throttleAction;
     private readonly XROriginMovement movement = new XROriginMovement();
@@ -73,6 +95,28 @@ public class WizardFlight : LocomotionProvider, IGravityController
         throttleAction = new InputAction(
             "Flight Throttle", InputActionType.Value, throttleBinding
         );
+    }
+
+    // Registers the flight with the rig's tunneling vignette, so the
+    // vignette also reacts to flying (the template only lists its own
+    // move, turn and teleport providers).
+    protected void Start()
+    {
+        if (vignette == null)
+            vignette = FindAnyObjectByType<TunnelingVignetteController>();
+
+        if (vignette == null)
+        {
+            Debug.LogWarning("WizardFlight: no TunnelingVignetteController found.", this);
+            return;
+        }
+
+        vignetteProvider = new LocomotionVignetteProvider
+        {
+            locomotionProvider = this,
+            enabled = comfortVignette,
+        };
+        vignette.locomotionVignetteProviders.Add(vignetteProvider);
     }
 
     protected void OnEnable()

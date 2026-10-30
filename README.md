@@ -22,7 +22,7 @@ Todas las metáforas de interacción se eligieron para que encajen con la fantas
 | Tarea | Metáfora | Por qué |
 |---|---|---|
 | Selección y manipulación | **Telequinesis**: un rayo mágico desde la mano izquierda selecciona a distancia; el objeto se queda a la distancia donde se cogió, se aleja o acerca estirando el brazo (Go-Go), rota con la muñeca y se escala con A / B | Selección a distancia por rayo, natural para "mover cosas con la mente". El tamaño tiene efecto en el juego: más valor y más resistencia contra los duendes, pero más peso |
-| Navegación propia | **Vuelo mágico**: mantener el grip derecho y volar hacia donde apunta la mano, con la velocidad según la presión | Es el desplazamiento propio de un mago. Se controla con una sola mano, así que se puede volar y lanzar hechizos a la vez |
+| Navegación propia | **Vuelo mágico**: mantener el grip derecho y volar hacia donde apunta la mano, con la velocidad según la presión | Es el desplazamiento propio de un mago. Se controla con una sola mano, así que se puede volar y lanzar hechizos a la vez. Una viñeta de confort oscurece los bordes de la vista al volar (se puede desactivar) |
 | Navegación estándar | Caminar con el stick y teletransporte (plantilla XRI) | Opciones de confort conocidas, configurables en el grimorio |
 | Acción | **Hechizos** con el gatillo derecho | La mano derecha "ataca" y la izquierda "manipula": cada mano tiene un papel claro |
 | Control | **Grimorio**: libro de hechizos que flota sobre la mano izquierda | Un mago consulta su grimorio. Va en la muñeca y no pegado a la cara, que en VR es incómodo |
@@ -93,7 +93,7 @@ Se abre con **X** y flota sobre la mano izquierda, mirando hacia ti. Mientras es
 | Pestaña | Opciones |
 |---|---|
 | Hechizo | Lista de los 4 hechizos, una línea cada uno con su color: el elegido lleva borde blanco y [ELEGIDO]; los bloqueados aparecen en gris con las calabazas que faltan (el siguiente, en dorado) |
-| Movimiento | Stick izquierdo: caminar o teletransporte · velocidad al caminar · giro suave o por pasos · velocidad o ángulo de giro · velocidad de vuelo |
+| Movimiento | Stick izquierdo: caminar o teletransporte · velocidad al caminar · giro suave o por pasos · velocidad o ángulo de giro · velocidad de vuelo · viñeta de confort al volar (sí / no) |
 | Partida | Puntos, energía, tiempo y resultado · **Pausar / Reanudar** · **Reiniciar** |
 | Ayuda | Objetivo, puntuación y controles (los valores se leen del juego) |
 
@@ -170,6 +170,7 @@ Scripts en `Assets/Scripts/`:
   - la rotación de la telequinesis con la muñeca, el empuje / atracción Go-Go, su alcance de 8 m, el bloqueo del salto mientras se levita y el arreglo de los límites de escalado (`WizardLevitation`);
   - el efecto del tamaño de las calabazas (puntos, energía y peso), las calabazas fuera del alcance de los duendes y los textos flotantes (`PumpkinItem`, `PumpkinDeliveryZone`, `GoblinEnemy`, `FloatingText`);
   - los hechizos desbloqueables y su pestaña del grimorio (`WizardSpellCaster`, `MagicProjectile`, `WizardControlMenu`);
+  - la viñeta de confort durante el vuelo y su opción en el grimorio (`WizardFlight`, `WizardControlMenu`);
   - los hechizos brillantes, la pantalla de fin de partida y los límites del cementerio (`GlowSphere`, `GraveyardEndScreen`, `PlayAreaBounds`);
   - la escena de inicio de la build y este documento.
 
