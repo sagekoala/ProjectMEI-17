@@ -69,7 +69,7 @@ Aparece al empezar y cada vez que se reinicia la partida. Mientras dura, el tiem
 | Entregar una calabaza en la tumba iluminada | +10 puntos y +15% de energía a tamaño normal; se multiplica por su tamaño (0,5× → +5 puntos, 2× → +20 puntos y +30%) |
 | Tamaño de la calabaza | Las grandes valen más pero pesan más (siguen la mano más despacio); las pequeñas, al revés |
 | Calabaza levitada en alto | Fuera del alcance de los duendes: esperan debajo |
-| Desterrar al fantasma (1,5 s de luz del farol) | +10 puntos; vuelve a aparecer a los 8 s en el lado opuesto del cementerio |
+| Desterrar al fantasma (2 s de luz del farol; su barra de vida se vacía mientras le da la luz) | +10 puntos; vuelve a aparecer a los 8 s en el lado opuesto del cementerio |
 | El fantasma te toca | −1 vida (hay 10); reaparece en el lado opuesto |
 | Eliminar un duende (6 de vida) | +5 puntos |
 | Un duende destruye una calabaza | −10% de energía |
@@ -118,7 +118,9 @@ Encima de la mano izquierda se ven siempre los **puntos**, la **energía** y el 
 | Impacto | Destello del color del hechizo (el Explosivo muestra el tamaño de la explosión) | Golpe (explosión en el Explosivo) | — |
 | Nuevo hechizo desbloqueado | Mensaje de su color delante del jugador | Campanilla | Pulso en el mando derecho |
 | Aparece el fantasma | Fantasma translúcido con luz pálida | Silbido 3D | Toque en ambos mandos |
-| El farol ilumina al fantasma | Cono de luz visible; el fantasma parpadea, brilla y encoge | — | — |
+| El farol en la mano, apagado | Texto "Mantén Y para encender la luz" sobre el farol | — | — |
+| El farol encendido | Haz verde con niebla, destello en la boca del farol y mancha de luz donde el haz choca | — | — |
+| El farol ilumina al fantasma | El fantasma parpadea, brilla y encoge; su barra de vida baja | — | Vibración suave en el mando izquierdo |
 | Fantasma desterrado | Destello y texto "+10 pts" | Campanilla | — |
 | El fantasma te toca | Mensaje "¡El fantasma te atrapó! Vidas: N" | Zumbido | Fuerte en ambos mandos |
 | Golpear a un duende | Parpadeo rojo y barra de vida (verde → rojo) | Golpe seco | — |

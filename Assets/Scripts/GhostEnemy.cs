@@ -20,6 +20,7 @@ public class GhostEnemy : MonoBehaviour
     private Light glow;
     private Vector3 visualScale = Vector3.one;
 
+    private GoblinHealthBar healthBar;
     private float exposure;
     private bool litThisFrame;
     private float bobOffset;
@@ -74,6 +75,10 @@ public class GhostEnemy : MonoBehaviour
         glow.shadows = LightShadows.None;
 
         bobOffset = Random.value * 10f;
+
+        // Same health bar as the goblins: it drains while the light is on
+        // the ghost, and refills slowly when it isn't.
+        healthBar = gameObject.AddComponent<GoblinHealthBar>();
     }
 
     GameObject MakePart(string name, PrimitiveType type, Vector3 localPosition,
@@ -131,6 +136,7 @@ public class GhostEnemy : MonoBehaviour
 
         Move(lit);
         UpdateLook(lit);
+        healthBar.SetHealth(1f - lit);
 
         litThisFrame = false;
 

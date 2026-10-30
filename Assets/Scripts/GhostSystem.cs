@@ -19,7 +19,7 @@ public class GhostSystem : MonoBehaviour
     public float ghostSpeed = 0.8f;
     public float spawnHeight = 3f;
     [Tooltip("Seconds of light needed to banish the ghost.")]
-    public float banishTime = 1.5f;
+    public float banishTime = 2f;
 
     [Header("Lantern")]
     public Vector3 lanternPosition = new Vector3(1.3f, 1.2f, -11.6f);

@@ -1,4 +1,5 @@
 
+using TMPro;
 using UnityEngine;
 
 // Spectral lantern. It is picked up with telekinesis and then held like a
@@ -13,17 +14,20 @@ public class GhostLantern : MonoBehaviour
     const float MaxBeamAngle = 35f;
     const int MistPuffs = 8;
 
-    static readonly Color BeamColor = new Color(0.45f, 1f, 0.55f, 1f);
+    static readonly Color BeamColor = new Color(0.5f, 1f, 0.6f, 1f);
     static readonly Color LensOn = new Color(0.6f, 1f, 0.65f);
     static readonly Color LensReady = new Color(0.25f, 0.55f, 0.3f);
     static readonly Color LensOff = new Color(0.15f, 0.25f, 0.17f);
 
-    // Layered cones: (relative radius, alpha). Denser in the middle.
+    // Layered cones: (relative radius, alpha). Denser in the middle, with
+    // a bright core, so the beam is clearly visible even when looking
+    // along it from behind.
     static readonly Vector2[] ConeLayers =
     {
-        new Vector2(1f, 0.05f),
-        new Vector2(0.65f, 0.07f),
-        new Vector2(0.3f, 0.10f),
+        new Vector2(1f, 0.12f),
+        new Vector2(0.65f, 0.18f),
+        new Vector2(0.35f, 0.28f),
+        new Vector2(0.12f, 0.5f),
     };
 
     private GhostSystem system;
@@ -38,10 +42,12 @@ public class GhostLantern : MonoBehaviour
     private Renderer[] puffRenderers;
     private Light beamLight;
     private Renderer lensRenderer;
+    private Transform flare;
+    private Transform hitSpot;
+    private Renderer hitSpotRenderer;
+    private TextMeshPro label;
+    private float nextHitPulse;
 
-    private bool wasHeld;
-    private float grabTime;
-    private bool hintShown;
 
     public Rigidbody Body => body;
     public bool IsHeld { get; private set; }
@@ -143,6 +149,27 @@ public class GhostLantern : MonoBehaviour
             puffRenderers[i] = renderer;
         }
 
+        // A bright glow at the mouth of the lantern.
+        GameObject flareObject = GlowSphere.Create("Flare", beamRoot.position, 0.1f,
+            new Color(0.8f, 1f, 0.8f));
+        flareObject.transform.SetParent(beamRoot, false);
+        flare = flareObject.transform;
+
+        // Where the beam hits something: a glowing green splash.
+        GameObject spot = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        spot.name = "Beam Hit";
+        Destroy(spot.GetComponent<Collider>());
+        spot.transform.SetParent(beamRoot, false);
+        hitSpotRenderer = spot.GetComponent<Renderer>();
+        hitSpotRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        hitSpotRenderer.receiveShadows = false;
+        if (translucent != null)
+            hitSpotRenderer.sharedMaterial = translucent;
+        Color spotColor = BeamColor;
+        spotColor.a = 0.45f;
+        GlowSphere.SetColor(hitSpotRenderer, spotColor);
+        hitSpot = spot.transform;
+
         GameObject lightObject = new GameObject("Lantern Light");
         lightObject.transform.SetParent(beamRoot, false);
         beamLight = lightObject.AddComponent<Light>();
@@ -152,6 +179,26 @@ public class GhostLantern : MonoBehaviour
         beamLight.shadows = LightShadows.None;
 
         root.SetActive(false);
+
+        BuildLabel();
+    }
+
+    // "Y: encender la luz", shown above the lantern while it is held
+    // and off.
+    void BuildLabel()
+    {
+        GameObject labelObject = new GameObject("Lantern Label");
+        labelObject.transform.localScale = Vector3.one * 0.06f;
+
+        label = labelObject.AddComponent<TextMeshPro>();
+        label.text = "Mantén <b>Y</b> para encender la luz";
+        label.fontSize = 12f;
+        label.alignment = TextAlignmentOptions.Center;
+        label.textWrappingMode = TextWrappingModes.NoWrap;
+        label.color = new Color(0.65f, 1f, 0.7f);
+        label.rectTransform.sizeDelta = new Vector2(30f, 4f);
+
+        labelObject.SetActive(false);
     }
 
     // Apex at the origin, open base of radius 1 at z = 1.
@@ -188,6 +235,8 @@ public class GhostLantern : MonoBehaviour
     {
         if (beamRoot != null)
             Destroy(beamRoot.gameObject);
+        if (label != null)
+            Destroy(label.gameObject);
     }
 
     // 1 = normal size.
@@ -209,26 +258,13 @@ public class GhostLantern : MonoBehaviour
     void LateUpdate()
     {
         IsHeld = levitation != null && levitation.HeldObject == body;
-        IsShining = IsHeld && ShineButtonPressed;
+        bool shining = IsHeld && ShineButtonPressed;
 
-        if (IsHeld && !wasHeld)
-        {
-            grabTime = Time.time;
-            hintShown = false;
-        }
-        wasHeld = IsHeld;
+        if (shining && !IsShining)
+            Debug.Log("GhostLantern: light on.", this);
+        IsShining = shining;
 
-        // A reminder if the lantern is held but not lit.
-        if (IsHeld && !IsShining && !hintShown && Time.time - grabTime > 0.6f)
-        {
-            hintShown = true;
-            FloatingText hint = FloatingText.Spawn(
-                transform.position + Vector3.up * 0.2f,
-                "Mantén Y para encender la luz",
-                new Color(0.6f, 1f, 0.65f));
-            hint.duration = 2.5f;
-            hint.riseDistance = 0.1f;
-        }
+        UpdateLabel();
 
         beamRoot.gameObject.SetActive(IsShining);
         GlowSphere.SetColor(lensRenderer,
@@ -257,6 +293,8 @@ public class GhostLantern : MonoBehaviour
         }
 
         UpdateMist(range, radius);
+        UpdateHitSpot(origin, range, radius);
+        flare.localScale = Vector3.one * (0.09f + 0.03f * Mathf.Sin(Time.time * 12f)) * SizeMultiplier;
 
         beamLight.range = range * 1.2f;
         beamLight.spotAngle = angle * 2f;
@@ -282,8 +320,39 @@ public class GhostLantern : MonoBehaviour
             puffs[i].localScale = new Vector3(size, size, size * 1.6f);
 
             Color color = BeamColor;
-            color.a = 0.10f * Mathf.Sin(Mathf.PI * t);
+            color.a = 0.22f * Mathf.Sin(Mathf.PI * t);
             GlowSphere.SetColor(puffRenderers[i], color);
+        }
+    }
+
+    // A splash of light where the beam meets the ground, a grave or a
+    // wall; at the end of the beam if it hits nothing.
+    void UpdateHitSpot(Vector3 origin, float range, float radius)
+    {
+        float distance = range;
+        if (Physics.Raycast(origin, transform.forward, out RaycastHit hit, range,
+                Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+            distance = hit.distance;
+
+        float size = Mathf.Max(0.12f, radius * (distance / range) * 1.6f);
+        hitSpot.localPosition = new Vector3(0f, 0f, distance);
+        hitSpot.localScale = new Vector3(size, size, size * 0.35f);
+    }
+
+    void UpdateLabel()
+    {
+        bool show = IsHeld && !IsShining;
+        label.gameObject.SetActive(show);
+        if (!show)
+            return;
+
+        label.transform.position = transform.position + Vector3.up * (0.16f + 0.05f * SizeMultiplier);
+
+        if (Camera.main != null)
+        {
+            Vector3 away = label.transform.position - Camera.main.transform.position;
+            if (away.sqrMagnitude > 0.0001f)
+                label.transform.rotation = Quaternion.LookRotation(away, Vector3.up);
         }
     }
 
@@ -301,7 +370,16 @@ public class GhostLantern : MonoBehaviour
         // The ghost's size counts, so grazing it with the edge works too.
         float allowance = Mathf.Atan2(ghost.Radius, distance) * Mathf.Rad2Deg;
         if (Vector3.Angle(transform.forward, toGhost) <= angle + allowance)
+        {
             ghost.Expose(Time.deltaTime);
+
+            // A soft buzz in the hand while the light is on the ghost.
+            if (Time.time >= nextHitPulse && GraveyardFeedback.Instance != null)
+            {
+                nextHitPulse = Time.time + 0.15f;
+                MagicFeedback.Pulse(GraveyardFeedback.Instance.leftHaptics, 0.2f, 0.06f);
+            }
+        }
     }
 
     // If it falls out of the world or over the walls, it comes back.
