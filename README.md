@@ -20,6 +20,21 @@ Pierdes si la energía llega a 0% o si el fantasma te toca 10 veces.
 
 Antes de la ronda hay un tutorial. Al final sale una pantalla con el resultado.
 
+### Por qué estas interacciones
+
+Todas las formas de interactuar se han elegido para que encajen con ser un mago:
+
+| Tarea | Cómo se hace | Por qué |
+|---|---|---|
+| Seleccionar y manipular | **Telequinesis**: un rayo desde la mano izquierda coge objetos a distancia. Se alejan o acercan estirando el brazo (Go-Go), giran con la muñeca y se escalan con A / B | Mover cosas con la mente es lo que haría un mago. El tamaño importa en el juego: una calabaza grande vale más pero pesa más |
+| Navegación propia | **Vuelo**: mantener el grip derecho y volar hacia donde apunta la mano | Es la forma de moverse de un mago. Va con una mano, así que se puede volar y lanzar hechizos a la vez |
+| Navegación estándar | Caminar con el stick y teletransporte | Opciones conocidas y cómodas, que se configuran en el grimorio |
+| Atacar | **Hechizos** con el gatillo derecho | Cada mano tiene un papel: la derecha ataca y la izquierda manipula |
+| Manipular con un objetivo | **Linterna anti-fantasmas**: se coge con telequinesis y se apunta girando la muñeca | Obliga a usar la rotación para algo útil: apuntar la luz al fantasma |
+| Control | **Grimorio**: un libro de hechizos que flota sobre la mano izquierda | Un mago consulta su grimorio. Va en la mano y no pegado a la cara, que en VR es incómodo |
+
+Además, todos los menús y paneles están en el mundo o en la mano, nunca fijos a la vista, y cada acción importante se nota con la vista, el sonido y la vibración.
+
 ## 2. Cómo ejecutar el proyecto
 
 1. Abrir el proyecto con **Unity 6000.5.0f1** (no actualizar la versión).
@@ -141,12 +156,9 @@ Todos están en `Assets/Scripts/`:
 
 ## 10. Uso de IA (disclosure)
 
-[COMPLETAR]
+En este proyecto hemos usado estas herramientas de IA:
 
-<!--
-Borrador (borrar este comentario al completar):
 - ChatGPT (OpenAI): como guía para configurar el proyecto de Unity y los assets (importar los paquetes del Asset Store, materiales, iluminación y ajustes de XR).
 - Claude Code (Anthropic): para escribir y cambiar código durante el desarrollo: vuelo, grimorio de muñeca y marcador, tutorial, explosión y barra de vida de los duendes, feedback de sonido y vibración, letra de Halloween, iluminación, la oleada final de arqueros y el sonido de aviso del fantasma.
 - Claude (Anthropic, chat): para revisar el proyecto con los requisitos de la práctica, resolver problemas de la build para Meta Quest (ajustes de OpenXR, nombre del paquete, espacio en disco del PC) y escribir código de estas partes: hechizos que brillan, pantalla final, límites del cementerio, telequinesis con Go-Go y giro con la muñeca, efecto del tamaño de las calabazas, hechizos desbloqueables, fantasma y linterna, y este documento.
 - Las ideas del juego y las decisiones son nuestras. Todo el código hecho con IA lo hemos revisado y probado en el editor y en las Meta Quest 3.
--->
