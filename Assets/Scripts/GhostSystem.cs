@@ -40,6 +40,9 @@ public class GhostSystem : MonoBehaviour
     {
         game = GraveyardGameManager.Instance;
         bounds = FindAnyObjectByType<PlayAreaBounds>();
+
+        // generate the wail now, not when the first ghost appears (hitch)
+        _ = MagicFeedback.GhostWailLoop;
     }
 
     void OnDestroy()
