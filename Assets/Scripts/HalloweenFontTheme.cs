@@ -11,10 +11,14 @@ public class HalloweenFontTheme : MonoBehaviour
     public Font font;
 
     [Tooltip("Seconds between checks for new texts without the spooky font")]
-    public float recheckInterval = 0.25f;
+    public float recheckInterval = 1f;
 
     private TMP_FontAsset fontAsset;
     private float nextCheckTime;
+
+    // reused lists, so the periodic check doesn't allocate (GC hitches on Quest)
+    private readonly List<GameObject> roots = new List<GameObject>();
+    private readonly List<TMP_Text> texts = new List<TMP_Text>();
 
     // The spooky font, for texts created later in the game (null if none).
     public static TMP_FontAsset Current { get; private set; }
@@ -79,9 +83,11 @@ public class HalloweenFontTheme : MonoBehaviour
             if (!scene.isLoaded)
                 continue;
 
-            foreach (GameObject root in scene.GetRootGameObjects())
+            scene.GetRootGameObjects(roots);
+            foreach (GameObject root in roots)
             {
-                foreach (TMP_Text text in root.GetComponentsInChildren<TMP_Text>(true))
+                root.GetComponentsInChildren(true, texts);
+                foreach (TMP_Text text in texts)
                 {
                     if (text.font != fontAsset)
                         text.font = fontAsset;

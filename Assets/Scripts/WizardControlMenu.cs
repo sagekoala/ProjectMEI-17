@@ -479,7 +479,6 @@ public class WizardControlMenu : MonoBehaviour
             Image swatchImage = swatch.gameObject.AddComponent<Image>();
             swatchImage.raycastTarget = false;
 
-            // under 24 so it keeps the normal font
             TextMeshProUGUI label = AddText(button.transform, "", 22f,
                 FontStyles.Normal, TextAlignmentOptions.Left);
             label.richText = true;
