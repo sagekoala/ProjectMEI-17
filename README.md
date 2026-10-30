@@ -123,27 +123,30 @@ Todos están en `Assets/Scripts/`:
 - `GraveyardFeedback`, `MagicFeedback`, `FloatingText`, `GlowSphere`: feedback, sonidos, textos flotantes y efectos de luz.
 - `HalloweenFontTheme`: letra de Halloween.
 
-## 8. Recursos externos y uso de IA (disclosure)
+## 8. Recursos externos
 
 ### Recursos de terceros
 - **Unity VR Template** y samples de **XR Interaction Toolkit 3.5.1**: rig XR, caminar, teletransporte y giro.
-- **Colonial City LittlePack – Church Graveyard Environment**, de 3DShapes (Unity Asset Store): el cementerio.
-- **LOWPO: Low-Poly Goblin Pack**, de Standout 7 (Unity Asset Store): los duendes.
-- **WizardPBR** (Unity Asset Store), de [COMPLETAR: autor]: el mago.
-- **Spooky pumpkins**, de [COMPLETAR: autor y origen]: las calabazas.
+- **Colonial City LittlePack – Church Graveyard Environment**, de 3DShapes (Unity Asset Store, gratis): el cementerio. https://assetstore.unity.com/packages/3d/environments/urban/colonial-city-littlepack-church-graveyard-environment-163089
+- **Breakable Spooky Pumpkins**, de 3d.rina (Unity Asset Store, gratis): las calabazas. https://assetstore.unity.com/packages/3d/props/food/breakable-spooky-pumpkins-12060
+- **LOWPO: Low-Poly Goblin Pack Free Sample**, de Standout 7 (Unity Asset Store, gratis): los duendes. https://assetstore.unity.com/packages/3d/characters/creatures/lowpo-low-poly-goblin-pack-free-sample-332200
+- **WizardPBR** (Unity Asset Store), de [COMPLETAR: autor y enlace]: el mago.
 - **Creepster**, de Font Diner (Google Fonts), licencia SIL Open Font License 1.1 (`Assets/Fonts/Creepster/OFL.txt`).
 - Apuntes de la asignatura y documentación de Unity y Meta.
-
-### Uso de IA
-Hemos usado estas herramientas de IA:
-
-- **ChatGPT (OpenAI):** como guía para configurar el proyecto de Unity y los assets (importar los paquetes del Asset Store, materiales, iluminación y ajustes de XR).
-- **Claude Code (Anthropic):** para escribir y cambiar código durante el desarrollo: vuelo, grimorio de muñeca y marcador, tutorial, explosión y barra de vida de los duendes, feedback de sonido y vibración, letra de Halloween, iluminación y la oleada final de arqueros.
-- **Claude (Anthropic, chat):** para revisar el proyecto con los requisitos de la práctica, resolver problemas de la build para Meta Quest (ajustes de OpenXR, nombre del paquete, espacio en disco del PC) y escribir código de estas partes: hechizos que brillan, pantalla final, límites del cementerio, telequinesis con Go-Go y giro con la muñeca, efecto del tamaño de las calabazas, hechizos desbloqueables, fantasma y linterna, y este documento.
-
-Las ideas del juego y las decisiones son nuestras (qué añadir, qué cambiar y qué quitar). Todo el código hecho con IA lo hemos revisado y probado en el editor y en las Meta Quest 3.
 
 ## 9. Limitaciones
 
 - La altura de los ojos es fija (1,36 m), no es la altura real del jugador.
 - El panel de control antiguo sigue en la escena, pero está desactivado.
+
+## 10. Uso de IA (disclosure)
+
+[COMPLETAR]
+
+<!--
+Borrador (borrar este comentario al completar):
+- ChatGPT (OpenAI): como guía para configurar el proyecto de Unity y los assets (importar los paquetes del Asset Store, materiales, iluminación y ajustes de XR).
+- Claude Code (Anthropic): para escribir y cambiar código durante el desarrollo: vuelo, grimorio de muñeca y marcador, tutorial, explosión y barra de vida de los duendes, feedback de sonido y vibración, letra de Halloween, iluminación y la oleada final de arqueros.
+- Claude (Anthropic, chat): para revisar el proyecto con los requisitos de la práctica, resolver problemas de la build para Meta Quest (ajustes de OpenXR, nombre del paquete, espacio en disco del PC) y escribir código de estas partes: hechizos que brillan, pantalla final, límites del cementerio, telequinesis con Go-Go y giro con la muñeca, efecto del tamaño de las calabazas, hechizos desbloqueables, fantasma y linterna, y este documento.
+- Las ideas del juego y las decisiones son nuestras. Todo el código hecho con IA lo hemos revisado y probado en el editor y en las Meta Quest 3.
+-->
