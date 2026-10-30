@@ -40,6 +40,13 @@ public class WizardFlight : LocomotionProvider, IGravityController
     [Tooltip("The rig's tunneling vignette. Found automatically if empty.")]
     public TunnelingVignetteController vignette;
 
+    [Tooltip("Visible part of the view while flying (1 = no vignette).")]
+    [Range(0.3f, 1f)] public float vignetteAperture = 0.5f;
+
+    [Tooltip("Edge color. A deep magic purple: a black edge is almost " +
+             "invisible in the dark graveyard.")]
+    public Color vignetteColor = new Color(0.12f, 0.03f, 0.22f, 1f);
+
     private LocomotionVignetteProvider vignetteProvider;
 
     public bool ComfortVignette
@@ -111,12 +118,27 @@ public class WizardFlight : LocomotionProvider, IGravityController
             return;
         }
 
+        // Own parameters: a narrower opening and a purple edge, so the
+        // effect is clearly visible at night.
+        var parameters = new VignetteParameters();
+        parameters.CopyFrom(vignette.defaultParameters);
+        parameters.apertureSize = vignetteAperture;
+        parameters.featheringEffect = 0.25f;
+        parameters.easeInTime = 0.25f;
+        parameters.easeOutTime = 0.35f;
+        parameters.vignetteColor = vignetteColor;
+        parameters.vignetteColorBlend = vignetteColor;
+
         vignetteProvider = new LocomotionVignetteProvider
         {
             locomotionProvider = this,
             enabled = comfortVignette,
+            overrideDefaultParameters = true,
+            overrideParameters = parameters,
         };
         vignette.locomotionVignetteProviders.Add(vignetteProvider);
+
+        Debug.Log($"WizardFlight: comfort vignette registered on '{vignette.name}'.", this);
     }
 
     protected void OnEnable()

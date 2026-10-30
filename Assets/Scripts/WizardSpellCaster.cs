@@ -224,8 +224,7 @@ public class WizardSpellCaster : MonoBehaviour
 
         FloatingText message = FloatingText.Spawn(
             head.position + forward * 1.5f + Vector3.up * 0.15f,
-            $"¡Nuevo hechizo: {spell.name}!\n" +
-            "<size=60%>Equipado · cámbialo en el grimorio (X)</size>",
+            $"¡Nuevo hechizo desbloqueado!\n{spell.name}",
             spell.color
         );
         message.duration = 3.5f;
