@@ -182,7 +182,9 @@ public class GraveyardTutorial : MonoBehaviour
         {
             title = "¿Preparado?",
             body =
-                "Los duendes aparecerán en cuanto empiece la ronda.\n\n" +
+                "Los duendes aparecerán en cuanto empiece la ronda. " +
+                "Al final llega la OLEADA FINAL: arqueros rápidos pero " +
+                "débiles.\n\n" +
                 "Cierra el grimorio si lo tienes abierto y pulsa " +
                 "EMPEZAR RONDA.",
         });

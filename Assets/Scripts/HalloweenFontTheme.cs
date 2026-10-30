@@ -19,6 +19,9 @@ public class HalloweenFontTheme : MonoBehaviour
 
     private TMP_FontAsset fontAsset;
 
+    // The spooky font, for texts created later in the game (null if none).
+    public static TMP_FontAsset Current { get; private set; }
+
     void Awake()
     {
         if (font == null)
@@ -38,6 +41,8 @@ public class HalloweenFontTheme : MonoBehaviour
 
             fontAsset.fallbackFontAssetTable.Add(TMP_Settings.defaultFontAsset);
         }
+
+        Current = fontAsset;
     }
 
     IEnumerator Start()
@@ -81,6 +86,9 @@ public class HalloweenFontTheme : MonoBehaviour
 
     void OnDestroy()
     {
+        if (Current == fontAsset)
+            Current = null;
+
         if (fontAsset != null)
             Destroy(fontAsset);
     }

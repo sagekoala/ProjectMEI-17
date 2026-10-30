@@ -4657,6 +4657,7 @@ MonoBehaviour:
   - {fileID: 827222532}
   secondGoblinDelay: 60
   respawnDelay: 8
+  finalWavePrefab: {fileID: 5215810559370997148, guid: 1b4e44c81bb54018bb1f68ca917f9aab, type: 3}
 --- !u!1001 &463200948
 PrefabInstance:
   m_ObjectHideFlags: 0

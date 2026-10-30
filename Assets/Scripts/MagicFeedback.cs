@@ -22,6 +22,7 @@ public static class MagicFeedback
     static AudioClip growlSound;
     static AudioClip hitSound;
     static AudioClip windLoop;
+    static AudioClip hornSound;
 
     // Rising tone.
     public static AudioClip CastSound =>
@@ -83,6 +84,11 @@ public static class MagicFeedback
     public static AudioClip WindLoop =>
         windLoop != null ? windLoop :
         (windLoop = Wind("Wind Loop", 8f, 0.5f));
+
+    // Long, low rising call: the final wave is coming.
+    public static AudioClip HornSound =>
+        hornSound != null ? hornSound :
+        (hornSound = Growl("Horn", 1.6f, 0.7f));
 
     // Plays a 3D sound at a world position.
     public static void Play(AudioClip clip, Vector3 position, float volume = 1f)

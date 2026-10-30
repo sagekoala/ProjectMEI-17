@@ -577,7 +577,8 @@ public class WizardControlMenu : MonoBehaviour
         string help =
             "<b>OBJETIVO</b>\n" +
             "Lleva las calabazas levitando hasta el altar iluminado y " +
-            "elimina a los duendes antes de que las destruyan.\n";
+            "elimina a los duendes antes de que las destruyan. Al final " +
+            "de la ronda llega la oleada final: arqueros rápidos pero débiles.\n";
 
         if (game != null)
         {
