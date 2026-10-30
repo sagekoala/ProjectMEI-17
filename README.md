@@ -1,223 +1,149 @@
-# Guardián del Cementerio — SGI-MIRI VR Project
+# Guardián del Cementerio
 
-Juego de Realidad Virtual para **Meta Quest 3** hecho con **Unity + OpenXR**, para la práctica de SGI (MIRI, Q1).
+Juego de Realidad Virtual para **Meta Quest 3**, hecho con **Unity + OpenXR**. Práctica de SGI (MIRI, Q1).
 
-- **Autores:** [COMPLETAR: nombres del grupo]
-- **Vídeo de demostración:** [COMPLETAR: enlace o nombre del fichero entregado]
+- **Autores:** Brandon Dukes y Adrià Galdón
+- **Vídeo:** [COMPLETAR: enlace al vídeo]
 
-## 1. Objetivo de la aplicación
+## 1. Objetivo
 
-Eres un mago que protege un cementerio colonial en la noche de Halloween. Unos duendes quieren destruir las calabazas mágicas que mantienen encendidas las luces protectoras del cementerio. Para salvarlo tienes que:
+Eres un mago que protege un cementerio en la noche de Halloween. Las calabazas mágicas mantienen encendidas las luces del cementerio, y unos duendes quieren destruirlas.
 
-- **Llevar las calabazas** con telequinesis hasta la **tumba iluminada**. Cada entrega da puntos y energía.
-- **Eliminar a los duendes** con tus hechizos antes de que lleguen a las calabazas. Al morir, explotan.
-- **Protegerte del fantasma**: flota hacia ti por encima del cementerio. Se destierra apuntándole con la luz de la **linterna anti-fantasmas**, que se coge con telequinesis.
-- **Mantener la energía** del cementerio por encima del 10% hasta que acabe el tiempo de la ronda (7 minutos). Las luces protectoras se apagan a medida que baja la energía. Si llega a 0, pierdes.
+Para ganar tienes que:
 
-Entregar calabazas **desbloquea hechizos más potentes**, y el último minuto es una **oleada final** de duendes arqueros. Antes de cada ronda, un **tutorial interactivo** enseña a jugar, y al terminar una **pantalla de fin de ronda** muestra el resultado y permite volver a jugar.
+- Llevar las calabazas con telequinesis hasta la tumba iluminada. Cada calabaza da puntos y energía.
+- Matar a los duendes con hechizos antes de que lleguen a las calabazas.
+- Protegerte del fantasma con la linterna anti-fantasmas.
+- Tener más del 10% de energía cuando acaba la ronda (7 minutos).
 
-**Duración de una partida:** la ronda dura **7 minutos** de juego, o menos si la energía llega a 0 o se pierden las 10 vidas contra el fantasma. A eso se suma el tutorial previo, de 1 a 2 minutos si se hacen todos los pasos o unos segundos si se salta. En total, unos **8–9 minutos**.
+Pierdes si la energía llega a 0% o si el fantasma te toca 10 veces.
 
-## 2. Decisiones de diseño
+Antes de la ronda hay un tutorial. Al final sale una pantalla con el resultado.
 
-Todas las metáforas de interacción se eligieron para que encajen con la fantasía de ser un mago:
+## 2. Cómo ejecutar el proyecto
 
-| Tarea | Metáfora | Por qué |
-|---|---|---|
-| Manipulación con propósito | **Linterna anti-fantasmas**: se coge con telequinesis y se sostiene en la mano; manteniendo **Y** emite una luz verde con niebla que se apunta **girando la muñeca**; su **tamaño** cambia el radio del haz | Cada transformación tiene un uso en el juego: traslación para llevar calabazas, rotación para apuntar la linterna, escalado para decidir entre valor y peso (calabazas) o la anchura del haz (linterna) |
-| Selección y manipulación | **Telequinesis**: un rayo mágico desde la mano izquierda selecciona a distancia; el objeto se queda a la distancia donde se cogió, se aleja o acerca estirando el brazo (Go-Go), rota con la muñeca y se escala con A / B | Selección a distancia por rayo, natural para "mover cosas con la mente". El tamaño tiene efecto en el juego: más valor y más resistencia contra los duendes, pero más peso |
-| Navegación propia | **Vuelo mágico**: mantener el grip derecho y volar hacia donde apunta la mano, con la velocidad según la presión | Es el desplazamiento propio de un mago. Se controla con una sola mano, así que se puede volar y lanzar hechizos a la vez |
-| Navegación estándar | Caminar con el stick y teletransporte (plantilla XRI) | Opciones de confort conocidas, configurables en el grimorio |
-| Acción | **Hechizos** con el gatillo derecho | La mano derecha "ataca" y la izquierda "manipula": cada mano tiene un papel claro |
-| Control | **Grimorio**: libro de hechizos que flota sobre la mano izquierda | Un mago consulta su grimorio. Va en la muñeca y no pegado a la cara, que en VR es incómodo |
+1. Abrir el proyecto con **Unity 6000.5.0f1** (no actualizar la versión).
+2. La escena del juego es `Assets/Scenes/Colonial_Graveyard.unity`.
+3. Para las gafas: en *Build Profiles* elegir **Meta Quest**, conectar las Quest 3 por cable y pulsar **Build And Run**. La app se llama "Guardian del Cementerio".
 
-Otras decisiones:
-- **Interfaces en el mundo.** El grimorio, el marcador y el tutorial están colocados en el mundo o en la mano, nunca fijos a la vista. El tutorial flota delante y se recoloca solo si giras la cabeza.
-- **Feedback multisensorial.** Cada acción importante se nota con la vista, el oído y el tacto (sección 4.7).
-- **Ambiente de Halloween.** Noche con niebla, tipografía de terror (Creepster) y viento de fondo.
-- **Límites del cementerio.** Paredes invisibles y un techo impiden salir del cementerio volando o teletransportándose, para que la navegación libre no rompa el juego.
+Importante: en *Project Settings → XR Plug-in Management → OpenXR*, en la pestaña de Android solo tiene que estar activado **Meta Quest Support**. Si se activa "Android XR Support", el juego se abre como una ventana plana y no en VR.
 
-## 3. Cómo abrir y ejecutar el proyecto
+## 3. Controles
 
-1. Abrir la carpeta del proyecto con **Unity 6000.5.0f1**. Los paquetes (XR Interaction Toolkit 3.5.1, OpenXR, Meta OpenXR, Input System, URP) se resuelven desde `Packages/manifest.json`.
-2. La escena del juego es `Assets/Scenes/Colonial_Graveyard.unity`, que es la escena inicial de la build.
-3. Para las gafas: plataforma **Android**, con las Meta Quest 3 conectadas, **Build And Run**. La app se instala como `com.mei17.guardiancementerio` ("Guardian del Cementerio").
+**Mano izquierda**
+- **Gatillo (mantener):** telequinesis. Coge el objeto al que apuntas, hasta 8 m.
+- **Mover el brazo (con un objeto cogido):** estirar el brazo aleja el objeto, recoger el brazo lo acerca (técnica Go-Go).
+- **Y (mantener, con un objeto cogido):** el objeto gira igual que tu muñeca.
+- **Y (con la linterna):** encender la luz.
+- **Stick:** caminar o teletransporte (se elige en el grimorio).
+- **X:** abrir o cerrar el grimorio.
 
-En *Project Settings → XR Plug-in Management → OpenXR*, pestaña de Android, solo debe estar activado **Meta Quest Support** (no "Android XR Support"). Si no, las Quest abren la app como una ventana plana en lugar de en VR.
+**Mano derecha**
+- **Gatillo:** lanzar un hechizo.
+- **Grip (mantener):** volar hacia donde apunta la mano. Más presión, más velocidad.
+- **A / B (con un objeto cogido):** hacer el objeto más grande o más pequeño (de 0,5× a 2×).
+- **Stick:** girar y teletransporte.
 
-## 4. Manual de uso
+Los menús se usan con el rayo de la mano derecha y el gatillo.
 
-### 4.1 Controles
+## 4. Cómo se juega
 
-| Mando | Control | Acción |
-|---|---|---|
-| Izquierdo | **Gatillo** (mantener) | Telequinesis: levitar el objeto al que apuntas (hasta 8 m) |
-| Izquierdo | **Estirar / recoger el brazo** (mientras levitas) | Alejar / acercar el objeto (técnica Go-Go: cuanto más lejos está, más rápido se mueve) |
-| Izquierdo | **Y** (mantener, mientras levitas) | Rotar el objeto girando la muñeca, en cualquier eje. Al soltar Y se queda como está |
-| Derecho | **A / B** (mientras levitas) | Agrandar / encoger el objeto (entre 0,5× y 2× de su tamaño original). Mientras levitas, A no salta |
-| Derecho | **Gatillo** | Lanzar un hechizo (se recarga en 0,35 s) |
-| Derecho | **Grip** (mantener) | Volar hacia donde apunta la mano; más presión, más velocidad |
-| Izquierdo | **Stick** | Caminar (o teletransporte, según el grimorio) |
-| Derecho | **Stick** adelante / lados | Teletransporte (plantilla XRI) / girar |
-| Izquierdo | **X** | Abrir / cerrar el grimorio |
+### Calabazas
+- Hay hasta 3 calabazas en el cementerio.
+- Entregar una calabaza normal da +10 puntos y +15% de energía.
+- El tamaño importa: una calabaza grande vale más (2× da +20 puntos y +30%), pero pesa más y sigue la mano más despacio. Una pequeña vale menos.
+- Si levantas una calabaza muy alto, los duendes no llegan y esperan debajo.
 
-Las interfaces (tutorial y grimorio) se usan apuntando con el **rayo de la mano derecha + gatillo**, o tocándolas con el dedo.
+### Duendes
+- Buscan la calabaza más cercana. Si se la comen, pierdes 10% de energía.
+- Tienen 6 de vida. Matar a uno da +5 puntos.
+- En el último minuto llega la **oleada final**: suena un cuerno y llegan duendes arqueros, más rápidos pero con solo 2 de vida.
 
-### 4.2 Tutorial
+### Hechizos
+Al principio solo tienes el Rayo. Al entregar calabazas se desbloquean hechizos nuevos, y el nuevo se pone solo. En el grimorio puedes volver a cualquier hechizo desbloqueado.
 
-Aparece al empezar y cada vez que se reinicia la partida. Mientras dura, el tiempo no corre y no salen duendes, pero hay calabazas para practicar (no puntúan). Los pasos son: objetivo, telequinesis, linterna anti-fantasmas, hechizos, vuelo y grimorio. Cada paso **se completa al hacer la acción** ("¡Bien hecho!"), y se puede saltar un paso o el tutorial entero. El último paso, **EMPEZAR RONDA**, lanza una cuenta atrás 3-2-1 y la ronda empieza.
+- **Rayo** (cian): daño 1. Desde el principio.
+- **Rayo arcano** (morado): daño 1, más rápido. Con 1 calabaza.
+- **Explosivo** (verde): daño 1,5 a todos los duendes cerca del impacto. Con 3 calabazas.
+- **Bola de fuego** (naranja): daño 2. Con 5 calabazas.
 
-### 4.3 Reglas y puntuación
+### Fantasma y linterna
+- A los 20 s de empezar sale un fantasma por el lado más lejano del cementerio. Vuela hacia ti.
+- Si te toca, pierdes una vida (tienes 10) y vuelve a salir por el otro lado.
+- Cerca del inicio está la **linterna anti-fantasmas**, con un cartel encima.
+- Cógela con telequinesis: se queda en tu mano y apunta hacia delante.
+- Mantén **Y** para encender la luz verde y apunta al fantasma girando la muñeca.
+- Con 2 s de luz el fantasma muere (+10 puntos). Su barra de vida baja mientras le da la luz.
+- El tamaño de la linterna cambia el ancho de la luz: más grande, luz más ancha y más fácil de acertar.
+- Solo tienes una mano para la telequinesis, así que tienes que elegir: llevar una calabaza o tener la linterna.
 
-| Evento | Efecto |
-|---|---|
-| Entregar una calabaza en la tumba iluminada | +10 puntos y +15% de energía a tamaño normal; se multiplica por su tamaño (0,5× → +5 puntos, 2× → +20 puntos y +30%) |
-| Tamaño de la calabaza | Las grandes valen más pero pesan más (siguen la mano más despacio); las pequeñas, al revés |
-| Calabaza levitada en alto | Fuera del alcance de los duendes: esperan debajo |
-| Desterrar al fantasma (2 s de luz de la linterna; su barra de vida se vacía mientras le da la luz) | +10 puntos; vuelve a aparecer a los 8 s en el lado opuesto del cementerio |
-| El fantasma te toca | −1 vida (hay 10); reaparece en el lado opuesto |
-| Eliminar un duende (6 de vida) | +5 puntos |
-| Un duende destruye una calabaza | −10% de energía |
-| Energía al empezar | 70% |
-| Victoria | Acabar los 7 minutos con más del 10% de energía |
-| Derrota | Energía al 0%, o perder las 10 vidas contra el fantasma |
+### Límites
+No se puede salir del cementerio. Hay paredes invisibles y un techo, también volando.
 
-El fantasma aparece a los 20 s de empezar la ronda, en la esquina del cementerio más lejana al jugador, flota a 0,8 m/s hacia la cabeza y, mientras le da la luz, se ralentiza, parpadea y encoge. La **linterna anti-fantasmas** está cerca del punto de inicio, con un cartel flotante que la identifica. Al cogerla con telequinesis se queda delante de la mano y apunta hacia donde apunta la mano; **manteniendo Y** emite una luz verde con niebla, y se apunta girando la muñeca (si se coge y no se enciende, aparece el recordatorio "Mantén Y para encender la luz"). El haz mide siempre 8 m; su anchura depende del tamaño de la linterna: 15° a tamaño normal, 30° a 2× (más fácil acertar) y 7,5° a 0,5×. Como solo hay una mano de telequinesis, hay que elegir entre llevar una calabaza o protegerse con la linterna.
+## 5. Grimorio (menú)
 
-Al principio hay un duende; a partir del primer minuto, dos a la vez. Cada duende eliminado reaparece a los 8 s. Siempre hay hasta 3 calabazas en el cementerio.
+Se abre con **X** y sale encima de la mano izquierda. Mientras está abierto, los hechizos, la telequinesis y el vuelo se pausan.
 
-**Oleada final:** en el último minuto de la ronda suena un cuerno, aparece el cartel "¡OLEADA FINAL!" y llegan **duendes arqueros**, además de los normales: hasta 3 a la vez, el doble de rápidos que un duende normal pero con solo 2 de vida, y reaparecen a los 3 s. Los duendes normales usan el modelo *Basic Goblin* del pack y los arqueros el *Goblin Archer*, para distinguirlos de un vistazo.
+- **Hechizo:** lista de hechizos con su color. El elegido pone [ELEGIDO]. Los bloqueados dicen cuántas calabazas faltan.
+- **Movimiento:** caminar o teletransporte, velocidad al caminar, giro suave o por pasos, velocidad de giro y velocidad de vuelo.
+- **Partida:** puntos, energía, vidas y tiempo. Pausar, reanudar y reiniciar.
+- **Ayuda:** resumen de las reglas y los controles.
 
-#### Hechizos desbloqueables
+En la muñeca izquierda también hay un marcador con puntos, energía, vidas y tiempo.
 
-Cada ronda empieza solo con el Rayo. Entregar calabazas desbloquea hechizos más potentes. Al desbloquear uno **se equipa solo** y aparece un mensaje delante del jugador, con campanilla y vibración; en el grimorio (pestaña Hechizo) se puede volver a cualquier otro hechizo desbloqueado.
+## 6. Feedback
 
-| Hechizo | Color | Efecto | Se desbloquea |
-|---|---|---|---|
-| Rayo | Cian | Daño 1 (6 impactos por duende) | Desde el principio |
-| Rayo arcano | Morado | Daño 1, vuela 1,6× más rápido (más fácil acertar de lejos) | 1 calabaza entregada |
-| Explosivo | Verde | Daño 1,5 a todos los duendes en 1,5 m | 3 calabazas entregadas |
-| Bola de fuego | Naranja | Daño 2, bola más grande (3 impactos por duende) | 5 calabazas entregadas |
+Casi todas las acciones tienen respuesta visual, sonido y vibración:
 
-### 4.4 El grimorio (control)
+- **Telequinesis:** rayo cian al apuntar y dorado al coger; vibración en la mano izquierda.
+- **Hechizos:** bola brillante con estela; sonido al lanzar; vibración en la mano derecha. La bolita de la mano derecha muestra si el hechizo está listo.
+- **Duendes:** parpadean en rojo al recibir daño, tienen barra de vida y explotan al morir. Se oye un gruñido cuando salen.
+- **Calabazas:** destello dorado y texto "+puntos" al entregar; destello rojo si un duende se la come.
+- **Fantasma:** silbido al salir. Con la luz parpadea, encoge y la mano vibra. Mensaje y vibración fuerte si te toca.
+- **Linterna:** cartel en el suelo, aviso "Mantén Y para encender la luz" en la mano, y luz verde que ilumina la escena.
+- **Hechizo nuevo y oleada final:** mensaje delante del jugador, sonido y vibración.
+- **Ambiente:** niebla, viento y letra de Halloween.
 
-Se abre con **X** y flota sobre la mano izquierda, mirando hacia ti. Mientras está abierto se pausan los hechizos, la telequinesis y el vuelo, para que los clics no los activen.
+Los sonidos se generan por código (`MagicFeedback`).
 
-| Pestaña | Opciones |
-|---|---|
-| Hechizo | Lista de los 4 hechizos, una línea cada uno con su color: el elegido lleva borde blanco y [ELEGIDO]; los bloqueados aparecen en gris con las calabazas que faltan (el siguiente, en dorado) |
-| Movimiento | Stick izquierdo: caminar o teletransporte · velocidad al caminar · giro suave o por pasos · velocidad o ángulo de giro · velocidad de vuelo |
-| Partida | Puntos, energía, tiempo y resultado · **Pausar / Reanudar** · **Reiniciar** |
-| Ayuda | Objetivo, puntuación y controles (los valores se leen del juego) |
+## 7. Scripts principales
 
-### 4.5 Marcador
+Todos están en `Assets/Scripts/`:
 
-Encima de la mano izquierda se ven siempre los **puntos**, la **energía** y el **tiempo**. Se pone en rojo con poca energía, parpadea en rojo al perder energía y en verde al ganarla, y muestra el resultado al acabar la ronda.
+- `GraveyardGameManager`: reglas de la ronda (energía, puntos, tiempo, vidas, victoria y derrota).
+- `GraveyardTutorial`, `GraveyardEndScreen`: tutorial y pantalla final.
+- `WizardLevitation`, `WizardLevitationFeedback`: telequinesis (coger, mover, girar, escalar).
+- `WizardSpellCaster`, `MagicProjectile`: hechizos y su daño.
+- `WizardFlight`: vuelo.
+- `WizardControlMenu`, `WizardLocomotionSettings`, `GraveyardWristHud`: grimorio, opciones de movimiento y marcador.
+- `GoblinEnemy`, `GoblinSpawner`, `GoblinHealthBar`, `GoblinExplosion`: duendes y oleada final.
+- `GhostSystem`, `GhostEnemy`, `GhostLantern`: fantasma y linterna.
+- `PumpkinItem`, `PumpkinSpawner`, `PumpkinDeliveryZone`: calabazas y tumba de entrega.
+- `PlayAreaBounds`: límites del cementerio.
+- `GraveyardFeedback`, `MagicFeedback`, `FloatingText`, `GlowSphere`: feedback, sonidos, textos flotantes y efectos de luz.
+- `HalloweenFontTheme`: letra de Halloween.
 
-### 4.6 Fin de la ronda
+## 8. Recursos externos y uso de IA (disclosure)
 
-Un segundo después de acabar la ronda aparece un panel delante del jugador con:
-- el resultado: **¡VICTORIA!** o **FIN DE LA PARTIDA**, con el motivo de la derrota (energía agotada, vidas perdidas contra el fantasma o poca energía al acabar el tiempo);
-- los **puntos**, la **energía final**, las **vidas restantes** y el **tiempo resistido**;
-- los botones **Jugar de nuevo**, que reinicia la ronda empezando por el tutorial, y **Cerrar**.
+### Recursos de terceros
+- **Unity VR Template** y samples de **XR Interaction Toolkit 3.5.1**: rig XR, caminar, teletransporte y giro.
+- **Colonial City LittlePack – Church Graveyard Environment**, de 3DShapes (Unity Asset Store): el cementerio.
+- **LOWPO: Low-Poly Goblin Pack**, de Standout 7 (Unity Asset Store): los duendes.
+- **WizardPBR** (Unity Asset Store), de [COMPLETAR: autor]: el mago.
+- **Spooky pumpkins**, de [COMPLETAR: autor y origen]: las calabazas.
+- **Creepster**, de Font Diner (Google Fonts), licencia SIL Open Font License 1.1 (`Assets/Fonts/Creepster/OFL.txt`).
+- Apuntes de la asignatura y documentación de Unity y Meta.
 
-Mientras se muestra, los hechizos y la telequinesis se pausan para que los clics no disparen.
+### Uso de IA
+Hemos usado estas herramientas de IA:
 
-### 4.7 Feedback
+- **ChatGPT (OpenAI):** como guía para configurar el proyecto de Unity y los assets (importar los paquetes del Asset Store, materiales, iluminación y ajustes de XR).
+- **Claude Code (Anthropic):** para escribir y cambiar código durante el desarrollo: vuelo, grimorio de muñeca y marcador, tutorial, explosión y barra de vida de los duendes, feedback de sonido y vibración, letra de Halloween, iluminación y la oleada final de arqueros.
+- **Claude (Anthropic, chat):** para revisar el proyecto con los requisitos de la práctica, resolver problemas de la build para Meta Quest (ajustes de OpenXR, nombre del paquete, espacio en disco del PC) y escribir código de estas partes: hechizos que brillan, pantalla final, límites del cementerio, telequinesis con Go-Go y giro con la muñeca, efecto del tamaño de las calabazas, hechizos desbloqueables, fantasma y linterna, y este documento.
 
-| Acción | Visual | Sonido | Vibración |
-|---|---|---|---|
-| Apuntar con telequinesis | Rayo cian y objeto teñido de cian | — | Toque en el mando izquierdo |
-| Coger / sostener / soltar | Rayo y objeto dorados | Barrido ascendente / descendente | Pulso al coger, latido suave al sostener |
-| Lanzar un hechizo | Bola con estela de cometa y luz de su color | Tono ascendente | Pulso en el mando derecho |
-| Hechizo aún recargando | La bolita de la mano derecha está creciendo | — | Toque muy suave |
-| Impacto | Destello del color del hechizo (el Explosivo muestra el tamaño de la explosión) | Golpe (explosión en el Explosivo) | — |
-| Nuevo hechizo desbloqueado | Mensaje de su color delante del jugador | Campanilla | Pulso en el mando derecho |
-| Aparece el fantasma | Fantasma translúcido con luz pálida | Silbido 3D | Toque en ambos mandos |
-| La linterna en el suelo | Cartel flotante "LINTERNA ANTI-FANTASMAS · Cógela con telequinesis" | — | — |
-| La linterna en la mano, apagada | Texto "Mantén Y para encender la luz" sobre la linterna | — | — |
-| La linterna encendida | Haz verde transparente con niebla, luz verde que ilumina la escena, destello en la boca de la linterna y mancha de luz donde el haz choca | — | — |
-| La linterna ilumina al fantasma | El fantasma parpadea, brilla y encoge; su barra de vida baja | — | Vibración suave en el mando izquierdo |
-| Fantasma desterrado | Destello y texto "+10 pts" | Campanilla | — |
-| El fantasma te toca | Mensaje "¡El fantasma te atrapó! Vidas: N" | Zumbido | Fuerte en ambos mandos |
-| Golpear a un duende | Parpadeo rojo y barra de vida (verde → rojo) | Golpe seco | — |
-| Eliminar a un duende | Explosión: destello, luz naranja y trozos | Estallido | — |
-| Aparece un duende | — | Gruñido 3D: se oye de dónde viene | — |
-| Empieza la oleada final | Cartel "¡OLEADA FINAL!" delante del jugador | Cuerno | Vibración fuerte en ambos mandos |
-| Un duende destruye una calabaza | Destello rojo; marcador en rojo | Zumbido 3D | Ambos mandos |
-| Entregar una calabaza | Destello dorado; marcador en verde | Campanilla | Ambos mandos |
-| Volar | — | — | Vibración que crece con la velocidad |
-| Grimorio y tutorial | Botones que se iluminan; opción activa resaltada | Campanilla y cuenta atrás en el tutorial | Toque al apuntar y al pulsar |
-| Ambiente | Niebla nocturna | Viento de fondo | — |
+Las ideas del juego y las decisiones son nuestras (qué añadir, qué cambiar y qué quitar). Todo el código hecho con IA lo hemos revisado y probado en el editor y en las Meta Quest 3.
 
-Los sonidos se generan por código (`MagicFeedback`), porque el proyecto no tenía efectos de sonido adecuados.
+## 9. Limitaciones
 
-También aparecen **textos flotantes** sobre la tumba al entregar una calabaza ("+X pts / +Y% energía"), y la **pantalla de fin de ronda** suena con una campanilla al ganar o un zumbido al perder.
-
-## 5. Estructura
-
-Scripts en `Assets/Scripts/`:
-
-| Script | Responsabilidad |
-|---|---|
-| `GraveyardGameManager` | Reglas de la ronda: energía, puntos, tiempo, inicio, victoria y derrota |
-| `GraveyardTutorial` | Tutorial interactivo antes de cada ronda y cuenta atrás |
-| `GraveyardEndScreen` | Pantalla de fin de ronda (resultado, estadísticas, jugar de nuevo) |
-| `PlayAreaBounds` | Paredes invisibles y techo que mantienen al jugador dentro del cementerio |
-| `GoblinEnemy`, `GoblinSpawner` | Duendes: buscan la calabaza más cercana, reciben daño y reaparecen; oleada final de arqueros (prefabs `Goblin` y `GoblinArcher`) |
-| `GhostSystem`, `GhostEnemy`, `GhostLantern` | Fantasma (aparición, persecución, vidas) y linterna anti-fantasmas (haz según tamaño y rotación) |
-| `GoblinHealthBar`, `GoblinExplosion`, `FadingLight` | Barra de vida, parpadeo al recibir daño y explosión al morir |
-| `PumpkinItem`, `PumpkinSpawner`, `PumpkinDeliveryZone` | Calabazas, su aparición y la tumba de entrega |
-| `GraveyardLightingController` | Luces protectoras que se apagan con la energía |
-| `WizardLevitation`, `WizardLevitationFeedback` | Telequinesis (selección, traslación, rotación y escalado) y su feedback |
-| `WizardSpellCaster` (con `SpellType`), `MagicProjectile` | Hechizos desbloqueables, estela, indicador de recarga e impactos (incluido el daño en área) |
-| `GlowSphere`, `FloatingText` | Esferas brillantes (*unlit*) para hechizos y destellos, y textos flotantes |
-| `WizardFlight` | Vuelo mágico (proveedor de locomoción de XRI) |
-| `WizardLocomotionSettings`, `WizardTurnSettings` | Opciones de movimiento y giro del rig XRI |
-| `WizardControlMenu`, `MenuButtonHover` | Grimorio de muñeca con pestañas |
-| `GraveyardWristHud` | Marcador de la muñeca |
-| `GraveyardFeedback`, `MagicFeedback` | Feedback de eventos de la partida, sonidos sintetizados y vibración |
-| `HalloweenFontTheme` | Aplica la tipografía Creepster a los textos |
-| `WizardHandIK`, `WizardBodyFollow` | IK de las manos del mago y orientación del cuerpo con la cabeza |
-| `WizardMenuToggle` | Conmutador del panel de control antiguo (desactivado en la escena) |
-
-En `Assets/Editor/`, `OpenGraveyardOnStartup` abre la escena del cementerio al abrir el proyecto en Unity.
-
-## 6. Disclosure notice (uso de herramientas y recursos externos)
-
-**Recursos de terceros:**
-
-- **Unity VR Template** (`Assets/VRTemplateAssets`) y samples del **XR Interaction Toolkit 3.5.1** (Starter Assets, Hands Interaction Demo): rig XR, locomoción base (caminar, teletransporte, giro) e interactores.
-- **Colonial City LittlePack – Church Graveyard Environment**, de *3DShapes* (Unity Asset Store): el cementerio.
-- **WizardPBR** (Unity Asset Store) [COMPLETAR: autor]: modelo del mago.
-- **LOWPO: Low-Poly Goblin Pack**, de *Standout 7* (Unity Asset Store): los duendes.
-- **Spooky pumpkins** [COMPLETAR: autor y origen]: las calabazas.
-- **Creepster**, de *Font Diner* (Google Fonts), con licencia SIL Open Font License 1.1, incluida en `Assets/Fonts/Creepster/OFL.txt`.
-- [COMPLETAR: tutoriales, vídeos o documentación seguidos]
-
-**Uso de IA generativa:**
-
-- Se ha usado **Claude (Anthropic)**, a través de Claude Code, como asistente de programación. En esta rama ha implementado:
-  - el vuelo mágico (`WizardFlight`);
-  - el arreglo del cambio de giro (`WizardTurnSettings`) y la orientación del cuerpo con la cabeza (`WizardBodyFollow`);
-  - la estela, la luz y el indicador de recarga de los hechizos;
-  - el grimorio de muñeca (`WizardControlMenu`, `WizardLocomotionSettings`, `MenuButtonHover`) y el marcador de muñeca (`GraveyardWristHud`), que sustituyen al panel anterior fijado a la cámara;
-  - la explosión de los duendes (`GoblinExplosion`, `FadingLight`) y su barra de vida (`GoblinHealthBar`);
-  - la niebla y el ajuste de la iluminación, y la tipografía de Halloween (`HalloweenFontTheme`);
-  - el tutorial y el inicio de ronda (`GraveyardTutorial`; estado de espera en `GraveyardGameManager`, `GoblinEnemy` y `GoblinSpawner`);
-  - el feedback sonoro y háptico (`MagicFeedback`, `GraveyardFeedback` y los cambios en `WizardLevitationFeedback`, `WizardSpellCaster`, `MagicProjectile`, `GoblinEnemy` y `PumpkinDeliveryZone`);
-  - la rotación de la telequinesis con la muñeca, el empuje / atracción Go-Go, su alcance de 8 m, el bloqueo del salto mientras se levita y el arreglo de los límites de escalado (`WizardLevitation`);
-  - el efecto del tamaño de las calabazas (puntos, energía y peso), las calabazas fuera del alcance de los duendes y los textos flotantes (`PumpkinItem`, `PumpkinDeliveryZone`, `GoblinEnemy`, `FloatingText`);
-  - los hechizos desbloqueables y su pestaña del grimorio (`WizardSpellCaster`, `MagicProjectile`, `WizardControlMenu`);
-  - el fantasma, la linterna anti-fantasmas y las vidas (`GhostSystem`, `GhostEnemy`, `GhostLantern`, cambios en `GraveyardGameManager`, `GraveyardFeedback`, `GraveyardWristHud`, `GraveyardEndScreen` y el tutorial);
-  - los hechizos brillantes, la pantalla de fin de partida y los límites del cementerio (`GlowSphere`, `GraveyardEndScreen`, `PlayAreaBounds`);
-  - la oleada final de duendes arqueros (`GoblinSpawner`, prefab `GoblinArcher`, aviso en `GraveyardFeedback`);
-  - la escena de inicio de la build y este documento.
-
-  El detalle está en el historial de commits de la rama. [COMPLETAR: confirmar que el grupo ha revisado y probado estos cambios.]
-- [COMPLETAR: uso de IA, si lo hubo, en el resto del código (mago en primera persona, telequinesis, hechizos, calabazas, duendes, reglas de la partida, iluminación)]
-
-## 7. Limitaciones conocidas
-
-- **Altura de los ojos fija:** el rig usa el modo de seguimiento *Device* con la altura de la plantilla (1,36 m sobre el suelo del rig), no la altura real del jugador.
-- **Panel antiguo:** el panel de control anterior y su conmutador siguen en la escena, desactivados.
+- La altura de los ojos es fija (1,36 m), no es la altura real del jugador.
+- El panel de control antiguo sigue en la escena, pero está desactivado.
