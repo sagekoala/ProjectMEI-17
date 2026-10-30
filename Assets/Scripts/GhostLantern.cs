@@ -20,15 +20,15 @@ public class GhostLantern : MonoBehaviour
     static readonly Color LensReady = new Color(0.25f, 0.55f, 0.3f);
     static readonly Color LensOff = new Color(0.15f, 0.25f, 0.17f);
 
-    // Layered cones: (relative radius, alpha). Denser in the middle, with
-    // a bright core, so the beam is clearly visible even when looking
-    // along it from behind.
+    // Layered cones: (relative radius, alpha). Faint like real light,
+    // a little denser towards the middle; the green spot light does the
+    // actual lighting.
     static readonly Vector2[] ConeLayers =
     {
-        new Vector2(1f, 0.12f),
-        new Vector2(0.65f, 0.18f),
-        new Vector2(0.35f, 0.28f),
-        new Vector2(0.12f, 0.5f),
+        new Vector2(1f, 0.035f),
+        new Vector2(0.6f, 0.045f),
+        new Vector2(0.3f, 0.06f),
+        new Vector2(0.1f, 0.09f),
     };
 
     private GhostSystem system;
@@ -49,7 +49,6 @@ public class GhostLantern : MonoBehaviour
     private TextMeshPro label;
     private float nextHitPulse;
     private InputAction shineAction;
-    private bool wasHeld;
 
 
     public Rigidbody Body => body;
@@ -169,7 +168,7 @@ public class GhostLantern : MonoBehaviour
         if (translucent != null)
             hitSpotRenderer.sharedMaterial = translucent;
         Color spotColor = BeamColor;
-        spotColor.a = 0.45f;
+        spotColor.a = 0.12f;
         GlowSphere.SetColor(hitSpotRenderer, spotColor);
         hitSpot = spot.transform;
 
@@ -298,14 +297,6 @@ public class GhostLantern : MonoBehaviour
         bool pressed = ShineButtonPressed;
         bool shining = IsHeld && pressed;
 
-        // Diagnostics: what the lantern sees.
-        if (IsHeld != wasHeld)
-            Debug.Log(IsHeld ? "GhostLantern: picked up." : "GhostLantern: released.", this);
-        wasHeld = IsHeld;
-        if (pressed && shineAction.WasPressedThisFrame())
-            Debug.Log($"GhostLantern: Y pressed (held: {IsHeld}).", this);
-        if (shining && !IsShining)
-            Debug.Log("GhostLantern: light on.", this);
         IsShining = shining;
 
         UpdateLabel();
@@ -338,7 +329,7 @@ public class GhostLantern : MonoBehaviour
 
         UpdateMist(range, radius);
         UpdateHitSpot(origin, range, radius);
-        flare.localScale = Vector3.one * (0.09f + 0.03f * Mathf.Sin(Time.time * 12f)) * SizeMultiplier;
+        flare.localScale = Vector3.one * (0.06f + 0.015f * Mathf.Sin(Time.time * 12f)) * SizeMultiplier;
 
         beamLight.range = range * 1.6f;
         beamLight.spotAngle = Mathf.Min(angle * 2.4f, 120f);
@@ -365,7 +356,7 @@ public class GhostLantern : MonoBehaviour
             puffs[i].localScale = new Vector3(size, size, size * 1.6f);
 
             Color color = BeamColor;
-            color.a = 0.22f * Mathf.Sin(Mathf.PI * t);
+            color.a = 0.07f * Mathf.Sin(Mathf.PI * t);
             GlowSphere.SetColor(puffRenderers[i], color);
         }
     }
