@@ -90,8 +90,7 @@ public class WizardControlMenu : MonoBehaviour
     private TextMeshProUGUI turnTitle;
     private TextMeshProUGUI turnValue;
     private TextMeshProUGUI flightSpeedValue;
-    private Button vignetteOnButton;
-    private Button vignetteOffButton;
+
     private TextMeshProUGUI gameStatus;
     private Button pauseButton;
 
@@ -274,12 +273,6 @@ public class WizardControlMenu : MonoBehaviour
 
         if (flightSpeedValue != null)
             flightSpeedValue.text = $"{flight.maxSpeed:0} m/s";
-
-        if (vignetteOnButton != null)
-        {
-            SetSelected(vignetteOnButton, flight.ComfortVignette);
-            SetSelected(vignetteOffButton, !flight.ComfortVignette);
-        }
 
         RefreshGame();
     }
@@ -557,13 +550,6 @@ public class WizardControlMenu : MonoBehaviour
             flightSpeedValue = AddStepper(page,
                 () => ChangeFlightSpeed(-1),
                 () => ChangeFlightSpeed(1));
-
-            AddSectionTitle(page, "Viñeta de confort al volar");
-            RectTransform vignetteRow = AddRow(page);
-            vignetteOnButton = AddButton(vignetteRow, "Sí", ButtonColor,
-                () => { flight.ComfortVignette = true; Refresh(); });
-            vignetteOffButton = AddButton(vignetteRow, "No", ButtonColor,
-                () => { flight.ComfortVignette = false; Refresh(); });
         }
     }
 

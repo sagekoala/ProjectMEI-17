@@ -32,34 +32,6 @@ public class WizardFlight : LocomotionProvider, IGravityController
     public HapticImpulsePlayer haptics;
     public float pulseInterval = 0.2f;
 
-    [Header("Comfort")]
-    [Tooltip("Darkens the edges of the view while flying, which reduces " +
-             "motion sickness. Can be switched in the grimoire.")]
-    [SerializeField] private bool comfortVignette = true;
-
-    [Tooltip("The rig's tunneling vignette. Found automatically if empty.")]
-    public TunnelingVignetteController vignette;
-
-    [Tooltip("Visible part of the view while flying (1 = no vignette).")]
-    [Range(0.3f, 1f)] public float vignetteAperture = 0.5f;
-
-    [Tooltip("Edge color. A deep magic purple: a black edge is almost " +
-             "invisible in the dark graveyard.")]
-    public Color vignetteColor = new Color(0.12f, 0.03f, 0.22f, 1f);
-
-    private LocomotionVignetteProvider vignetteProvider;
-
-    public bool ComfortVignette
-    {
-        get => comfortVignette;
-        set
-        {
-            comfortVignette = value;
-            if (vignetteProvider != null)
-                vignetteProvider.enabled = value;
-        }
-    }
-
     private InputAction throttleAction;
     private readonly XROriginMovement movement = new XROriginMovement();
     private bool isFlying;
@@ -104,41 +76,15 @@ public class WizardFlight : LocomotionProvider, IGravityController
         );
     }
 
-    // Registers the flight with the rig's tunneling vignette, so the
-    // vignette also reacts to flying (the template only lists its own
-    // move, turn and teleport providers).
+    // The game uses no comfort vignette: the template's one (for walking,
+    // turning and teleporting) is switched off too.
     protected void Start()
     {
-        if (vignette == null)
-            vignette = FindAnyObjectByType<TunnelingVignetteController>();
+        TunnelingVignetteController vignette =
+            FindAnyObjectByType<TunnelingVignetteController>();
 
-        if (vignette == null)
-        {
-            Debug.LogWarning("WizardFlight: no TunnelingVignetteController found.", this);
-            return;
-        }
-
-        // Own parameters: a narrower opening and a purple edge, so the
-        // effect is clearly visible at night.
-        var parameters = new VignetteParameters();
-        parameters.CopyFrom(vignette.defaultParameters);
-        parameters.apertureSize = vignetteAperture;
-        parameters.featheringEffect = 0.25f;
-        parameters.easeInTime = 0.25f;
-        parameters.easeOutTime = 0.35f;
-        parameters.vignetteColor = vignetteColor;
-        parameters.vignetteColorBlend = vignetteColor;
-
-        vignetteProvider = new LocomotionVignetteProvider
-        {
-            locomotionProvider = this,
-            enabled = comfortVignette,
-            overrideDefaultParameters = true,
-            overrideParameters = parameters,
-        };
-        vignette.locomotionVignetteProviders.Add(vignetteProvider);
-
-        Debug.Log($"WizardFlight: comfort vignette registered on '{vignette.name}'.", this);
+        if (vignette != null)
+            vignette.gameObject.SetActive(false);
     }
 
     protected void OnEnable()
