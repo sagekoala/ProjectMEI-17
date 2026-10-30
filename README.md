@@ -65,9 +65,9 @@ Aparece al empezar y cada vez que se reinicia la partida. Mientras dura, el tiem
 | Evento | Efecto |
 |---|---|
 | Entregar una calabaza en la tumba iluminada | +10 puntos y +15% de energía a tamaño normal; se multiplica por su tamaño (0,5× → +5 puntos, 2× → +20 puntos y +30%) |
-| Tamaño de la calabaza | Las grandes pesan más (siguen la mano más despacio) y los duendes tardan más en comérselas (1,5 s × tamaño); las pequeñas, al revés |
+| Tamaño de la calabaza | Las grandes valen más pero pesan más (siguen la mano más despacio); las pequeñas, al revés |
 | Calabaza levitada en alto | Fuera del alcance de los duendes: esperan debajo |
-| Eliminar un duende (6 impactos) | +5 puntos |
+| Eliminar un duende (6 de vida) | +5 puntos |
 | Un duende destruye una calabaza | −10% de energía |
 | Energía al empezar | 70% |
 | Victoria | Acabar los 7 minutos con más del 10% de energía |
@@ -75,13 +75,24 @@ Aparece al empezar y cada vez que se reinicia la partida. Mientras dura, el tiem
 
 Al principio hay un duende; a partir del primer minuto, dos a la vez. Cada duende eliminado reaparece a los 8 s. Siempre hay hasta 3 calabazas en el cementerio.
 
+#### Hechizos desbloqueables
+
+Cada ronda empieza solo con el Rayo. Entregar calabazas desbloquea hechizos más potentes, que se eligen en el grimorio (pestaña Hechizo). Al desbloquear uno aparece un mensaje delante del jugador, con campanilla y vibración.
+
+| Hechizo | Color | Efecto | Se desbloquea |
+|---|---|---|---|
+| Rayo | Cian | Daño 1 (6 impactos por duende) | Desde el principio |
+| Rayo arcano | Morado | Daño 1, vuela 1,6× más rápido (más fácil acertar de lejos) | 1 calabaza entregada |
+| Explosivo | Verde | Daño 1,5 a todos los duendes en 1,5 m | 3 calabazas entregadas |
+| Bola de fuego | Naranja | Daño 2, bola más grande (3 impactos por duende) | 5 calabazas entregadas |
+
 ### 4.4 El grimorio (control)
 
 Se abre con **X** y flota sobre la mano izquierda, mirando hacia ti. Mientras está abierto se pausan los hechizos, la telequinesis y el vuelo, para que los clics no los activen.
 
 | Pestaña | Opciones |
 |---|---|
-| Hechizo | Elegir entre los 4 colores del hechizo; el activo lleva un borde blanco |
+| Hechizo | Lista de los 4 hechizos: el elegido lleva borde blanco y la marca ELEGIDO; los bloqueados aparecen en gris con las calabazas que faltan (el siguiente, en dorado) |
 | Movimiento | Stick izquierdo: caminar o teletransporte · velocidad al caminar · giro suave o por pasos · velocidad o ángulo de giro · velocidad de vuelo |
 | Partida | Puntos, energía, tiempo y resultado · **Pausar / Reanudar** · **Reiniciar** |
 | Ayuda | Objetivo, puntuación y controles (los valores se leen del juego) |
@@ -98,7 +109,8 @@ Encima de la mano izquierda se ven siempre los **puntos**, la **energía** y el 
 | Coger / sostener / soltar | Rayo y objeto dorados | Barrido ascendente / descendente | Pulso al coger, latido suave al sostener |
 | Lanzar un hechizo | Bola con estela de cometa y luz de su color | Tono ascendente | Pulso en el mando derecho |
 | Hechizo aún recargando | La bolita de la mano derecha está creciendo | — | Toque muy suave |
-| Impacto | Destello del color del hechizo | Golpe | — |
+| Impacto | Destello del color del hechizo (el Explosivo muestra el tamaño de la explosión) | Golpe (explosión en el Explosivo) | — |
+| Nuevo hechizo desbloqueado | Mensaje de su color delante del jugador | Campanilla | Pulso en el mando derecho |
 | Golpear a un duende | Parpadeo rojo y barra de vida (verde → rojo) | Golpe seco | — |
 | Eliminar a un duende | Explosión: destello, luz naranja y trozos | Estallido | — |
 | Aparece un duende | — | Gruñido 3D: se oye de dónde viene | — |
@@ -156,7 +168,8 @@ Scripts en `Assets/Scripts/`:
   - el tutorial y el inicio de ronda (`GraveyardTutorial`; estado de espera en `GraveyardGameManager`, `GoblinEnemy` y `GoblinSpawner`);
   - el feedback sonoro y háptico (`MagicFeedback`, `GraveyardFeedback` y los cambios en `WizardLevitationFeedback`, `WizardSpellCaster`, `MagicProjectile`, `GoblinEnemy` y `PumpkinDeliveryZone`);
   - la rotación de la telequinesis con la muñeca, el empuje / atracción Go-Go, su alcance de 8 m, el bloqueo del salto mientras se levita y el arreglo de los límites de escalado (`WizardLevitation`);
-  - el efecto del tamaño de las calabazas (puntos, energía, peso y tiempo que tardan los duendes en comérselas) y los textos flotantes (`PumpkinItem`, `PumpkinDeliveryZone`, `GoblinEnemy`, `FloatingText`);
+  - el efecto del tamaño de las calabazas (puntos, energía y peso), las calabazas fuera del alcance de los duendes y los textos flotantes (`PumpkinItem`, `PumpkinDeliveryZone`, `GoblinEnemy`, `FloatingText`);
+  - los hechizos desbloqueables y su pestaña del grimorio (`WizardSpellCaster`, `MagicProjectile`, `WizardControlMenu`);
   - los hechizos brillantes, la pantalla de fin de partida y los límites del cementerio (`GlowSphere`, `GraveyardEndScreen`, `PlayAreaBounds`);
   - la escena de inicio de la build y este documento.
 

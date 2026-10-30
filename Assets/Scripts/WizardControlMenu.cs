@@ -65,6 +65,7 @@ public class WizardControlMenu : MonoBehaviour
     static readonly Color TextColor = new Color(0.95f, 0.92f, 1f);
     static readonly Color VictoryColor = new Color(0.4f, 1f, 0.55f);
     static readonly Color DefeatColor = new Color(1f, 0.3f, 0.3f);
+    static readonly Color LockedColor = new Color(0.16f, 0.15f, 0.18f);
 
     const float PanelWidth = 460f;
     const float ButtonHeight = 56f;
@@ -78,6 +79,8 @@ public class WizardControlMenu : MonoBehaviour
     private readonly List<GameObject> tabPages = new List<GameObject>();
 
     private Button[] colorButtons;
+    private TextMeshProUGUI[] spellLabels;
+    private int shownDeliveries = -1;
     private Button walkButton;
     private Button teleportButton;
     private Button smoothTurnButton;
@@ -203,6 +206,9 @@ public class WizardControlMenu : MonoBehaviour
 
     void SelectSpellColor(int index)
     {
+        if (!spellCaster.IsUnlocked(index))
+            return;
+
         spellCaster.SetSpellColor(index);
         Refresh();
     }
@@ -237,14 +243,7 @@ public class WizardControlMenu : MonoBehaviour
 
     void Refresh()
     {
-        if (colorButtons != null)
-        {
-            for (int i = 0; i < colorButtons.Length; i++)
-            {
-                colorButtons[i].GetComponent<Outline>().enabled =
-                    i == spellCaster.CurrentColorIndex;
-            }
-        }
+        RefreshSpells();
 
         if (walkButton != null)
         {
@@ -276,8 +275,65 @@ public class WizardControlMenu : MonoBehaviour
         RefreshGame();
     }
 
+    // Spell list: the chosen one is outlined and marked ELEGIDO; locked
+    // ones are greyed out and say how many pumpkins are still needed.
+    void RefreshSpells()
+    {
+        if (colorButtons == null)
+            return;
+
+        shownDeliveries = spellCaster.Deliveries;
+        bool nextLockedShown = false;
+
+        for (int i = 0; i < colorButtons.Length; i++)
+        {
+            SpellType spell = spellCaster.spells[i];
+            bool unlocked = spellCaster.IsUnlocked(i);
+            bool chosen = i == spellCaster.CurrentColorIndex;
+
+            colorButtons[i].interactable = unlocked;
+            colorButtons[i].GetComponent<Outline>().enabled = chosen;
+            colorButtons[i].targetGraphic.color = unlocked
+                ? Color.Lerp(spell.color, Color.black, 0.55f)
+                : LockedColor;
+
+            string colorHex = ColorUtility.ToHtmlStringRGB(spell.color);
+            string name = $"<color=#{colorHex}><b>{spell.name}</b></color>";
+
+            if (chosen)
+            {
+                spellLabels[i].text =
+                    $"{name}  — ELEGIDO\n<size=75%>{spell.description}</size>";
+            }
+            else if (unlocked)
+            {
+                spellLabels[i].text =
+                    $"{name}\n<size=75%>{spell.description} · pulsa para elegir</size>";
+            }
+            else
+            {
+                int needed = spell.deliveriesToUnlock;
+                int have = Mathf.Min(spellCaster.Deliveries, needed);
+                string pumpkins = needed == 1 ? "calabaza" : "calabazas";
+
+                // The next spell to unlock is highlighted in gold.
+                string goal = !nextLockedShown
+                    ? $"<color=#FFD24D>Entrega {needed} {pumpkins} para desbloquear ({have}/{needed})</color>"
+                    : $"Entrega {needed} {pumpkins} para desbloquear ({have}/{needed})";
+                nextLockedShown = true;
+
+                spellLabels[i].text =
+                    $"<b>{spell.name}</b>  — BLOQUEADO\n<size=75%>{goal}</size>";
+            }
+        }
+    }
+
     void RefreshGame()
     {
+        // A delivery while the book is open unlocks spells live.
+        if (colorButtons != null && spellCaster.Deliveries != shownDeliveries)
+            RefreshSpells();
+
         if (gameStatus == null)
             return;
 
@@ -409,29 +465,47 @@ public class WizardControlMenu : MonoBehaviour
 
     void BuildSpellSection(Transform page)
     {
-        AddSectionTitle(page, "Color del hechizo");
+        AddSectionTitle(page, "Hechizos");
 
-        RectTransform row = AddRow(page);
-        Color[] colors = spellCaster.spellColors;
-        colorButtons = new Button[colors.Length];
+        SpellType[] spells = spellCaster.spells;
+        colorButtons = new Button[spells.Length];
+        spellLabels = new TextMeshProUGUI[spells.Length];
 
-        for (int i = 0; i < colors.Length; i++)
+        for (int i = 0; i < spells.Length; i++)
         {
             int index = i;
-            Button button = AddButton(row, "", colors[i],
+            Button button = AddButton(page, "", ButtonColor,
                 () => SelectSpellColor(index));
 
-            // Highlights the selected color.
+            // Two lines: name and description / unlock goal.
+            button.GetComponent<LayoutElement>().preferredHeight = 78f;
+
+            TextMeshProUGUI label = AddText(button.transform, "", 24f,
+                FontStyles.Normal, TextAlignmentOptions.Left);
+            label.richText = true;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.enableAutoSizing = true;
+            label.fontSizeMin = 14f;
+            label.fontSizeMax = 24f;
+
+            RectTransform labelRect = label.rectTransform;
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = new Vector2(16f, 4f);
+            labelRect.offsetMax = new Vector2(-12f, -4f);
+
+            // Highlights the chosen spell.
             Outline outline = button.gameObject.AddComponent<Outline>();
             outline.effectColor = Color.white;
             outline.effectDistance = new Vector2(5f, -5f);
 
             colorButtons[i] = button;
+            spellLabels[i] = label;
         }
 
         AddText(page,
-            "La bolita de tu mano derecha muestra el color elegido " +
-            "y crece mientras el hechizo se recarga.",
+            "Entrega calabazas en la tumba para desbloquear hechizos. " +
+            "La bolita de tu mano derecha muestra el hechizo elegido.",
             20f, FontStyles.Italic, TextAlignmentOptions.Center);
     }
 

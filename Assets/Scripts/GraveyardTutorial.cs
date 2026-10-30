@@ -171,8 +171,9 @@ public class GraveyardTutorial : MonoBehaviour
             {
                 title = "El grimorio",
                 body =
-                    "Pulsa X para abrir tu grimorio: color del hechizo, " +
-                    "opciones de movimiento, estado de la partida y ayuda.",
+                    "Pulsa X para abrir tu grimorio: hechizos, opciones " +
+                    "de movimiento, estado de la partida y ayuda.\n\n" +
+                    "Entregando calabazas desbloqueas hechizos más potentes.",
                 isDone = () => menu.IsOpen,
             });
         }

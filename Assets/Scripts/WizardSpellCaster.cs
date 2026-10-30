@@ -3,6 +3,25 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
+// One of the spells the wizard can cast. Spells after the first are
+// locked until enough pumpkins have been delivered in the round.
+[System.Serializable]
+public class SpellType
+{
+    public string name = "Rayo";
+    public Color color = Color.cyan;
+    [Tooltip("Damage per hit. Goblins have 6 health.")]
+    public float damage = 1f;
+    public float speedMultiplier = 1f;
+    public float sizeMultiplier = 1f;
+    [Tooltip("If > 0, explodes and damages every goblin in this radius (m).")]
+    public float splashRadius = 0f;
+    [Tooltip("Pumpkins to deliver in the round to unlock it (0 = from the start).")]
+    public int deliveriesToUnlock = 0;
+    [Tooltip("Short description for the grimoire.")]
+    public string description = "Daño 1";
+}
+
 public class WizardSpellCaster : MonoBehaviour
 {
     [Header("Quest 3 Input")]
@@ -13,13 +32,33 @@ public class WizardSpellCaster : MonoBehaviour
     public float spellLifetime = 5f;
     public float spellSize = 0.12f;
 
-    [Header("Spell Appearance")]
-    public Color[] spellColors =
+    [Header("Spells (unlocked by delivering pumpkins)")]
+    public SpellType[] spells =
     {
-        Color.cyan,
-        new Color(0.65f, 0.25f, 1f),
-        Color.green,
-        Color.red
+        new SpellType
+        {
+            name = "Rayo", color = Color.cyan,
+            damage = 1f, deliveriesToUnlock = 0,
+            description = "Daño 1",
+        },
+        new SpellType
+        {
+            name = "Rayo arcano", color = new Color(0.65f, 0.25f, 1f),
+            damage = 1f, speedMultiplier = 1.6f, deliveriesToUnlock = 1,
+            description = "Daño 1 · muy rápido",
+        },
+        new SpellType
+        {
+            name = "Explosivo", color = new Color(0.45f, 1f, 0.2f),
+            damage = 1.5f, splashRadius = 1.5f, deliveriesToUnlock = 3,
+            description = "Daño 1,5 · explota en área",
+        },
+        new SpellType
+        {
+            name = "Bola de fuego", color = new Color(1f, 0.4f, 0.1f),
+            damage = 2f, sizeMultiplier = 1.8f, deliveriesToUnlock = 5,
+            description = "Daño x2 · bola grande",
+        },
     };
 
     [Header("Spell Trail")]
@@ -47,6 +86,7 @@ public class WizardSpellCaster : MonoBehaviour
     private float nextCastTime = 0f;
 
     private int currentColorIndex = 0;
+    private int lastKnownDeliveries;
 
     private Transform readyIndicator;
     private Renderer readyIndicatorRenderer;
@@ -56,10 +96,23 @@ public class WizardSpellCaster : MonoBehaviour
     // Time of the last spell cast (negative if none yet).
     public float LastCastTime { get; private set; } = -1f;
 
+    public SpellType CurrentSpell =>
+        spells != null && spells.Length > 0
+            ? spells[currentColorIndex % spells.Length]
+            : null;
+
     public Color CurrentColor =>
-        spellColors != null && spellColors.Length > 0
-            ? spellColors[currentColorIndex % spellColors.Length]
-            : Color.cyan;
+        CurrentSpell != null ? CurrentSpell.color : Color.cyan;
+
+    // Pumpkins delivered this round (all spells unlocked without a game).
+    public int Deliveries =>
+        GraveyardGameManager.Instance != null
+            ? GraveyardGameManager.Instance.PumpkinsDelivered
+            : int.MaxValue;
+
+    public bool IsUnlocked(int index) =>
+        spells != null && index >= 0 && index < spells.Length &&
+        Deliveries >= spells[index].deliveriesToUnlock;
 
     // 0 right after casting, 1 when the next spell is ready.
     public float CooldownProgress =>
@@ -70,6 +123,11 @@ public class WizardSpellCaster : MonoBehaviour
     void Awake()
     {
         CreateReadyIndicator();
+    }
+
+    void Start()
+    {
+        lastKnownDeliveries = Deliveries;
     }
 
     void OnEnable()
@@ -94,6 +152,7 @@ public class WizardSpellCaster : MonoBehaviour
     void Update()
     {
         UpdateReadyIndicator();
+        CheckUnlocks();
 
         if (castAction == null || castAction.action == null)
             return;
@@ -104,23 +163,71 @@ public class WizardSpellCaster : MonoBehaviour
         }
     }
 
-    // Cycles through the available spell colors.
+    // Cycles through the unlocked spells.
     public void ChangeSpellColor()
     {
-        if (spellColors == null || spellColors.Length == 0)
+        if (spells == null || spells.Length == 0)
             return;
 
-        currentColorIndex =
-            (currentColorIndex + 1) % spellColors.Length;
+        for (int step = 1; step <= spells.Length; step++)
+        {
+            int next = (currentColorIndex + step) % spells.Length;
+            if (IsUnlocked(next))
+            {
+                currentColorIndex = next;
+                return;
+            }
+        }
     }
 
-    // Selects a spell color directly (used by the grimoire).
+    // Selects a spell directly (used by the grimoire). Locked spells
+    // can't be selected.
     public void SetSpellColor(int index)
     {
-        if (spellColors == null || index < 0 || index >= spellColors.Length)
+        if (!IsUnlocked(index))
             return;
 
         currentColorIndex = index;
+    }
+
+    // When a delivery unlocks a spell: a message in front of the
+    // player, a chime and a vibration.
+    void CheckUnlocks()
+    {
+        int deliveries = Deliveries;
+        if (deliveries == lastKnownDeliveries || spells == null)
+            return;
+
+        for (int i = 0; i < spells.Length; i++)
+        {
+            int needed = spells[i].deliveriesToUnlock;
+            if (needed > lastKnownDeliveries && needed <= deliveries)
+                AnnounceUnlock(spells[i]);
+        }
+
+        lastKnownDeliveries = deliveries;
+    }
+
+    void AnnounceUnlock(SpellType spell)
+    {
+        Transform head = Camera.main != null ? Camera.main.transform : transform;
+
+        Vector3 forward = Vector3.ProjectOnPlane(head.forward, Vector3.up);
+        if (forward.sqrMagnitude < 0.001f)
+            forward = head.forward;
+        forward.Normalize();
+
+        FloatingText message = FloatingText.Spawn(
+            head.position + forward * 1.5f + Vector3.up * 0.15f,
+            $"¡Nuevo hechizo: {spell.name}!\n" +
+            "<size=60%>Elígelo en el grimorio (X)</size>",
+            spell.color
+        );
+        message.duration = 3.5f;
+        message.riseDistance = 0.15f;
+
+        MagicFeedback.Play(MagicFeedback.ChimeSound, head.position, 1f);
+        MagicFeedback.Pulse(haptics, 0.6f, 0.25f);
     }
 
     // Creates a projectile in the direction of the controller.
@@ -141,18 +248,24 @@ public class WizardSpellCaster : MonoBehaviour
         Vector3 spawnPosition =
             transform.position + direction * 0.25f;
 
-        // A glowing (unlit) orb in the selected color. It keeps its
+        // A glowing (unlit) orb of the selected spell. It keeps its
         // collider to hit goblins.
-        Color color = CurrentColor;
+        SpellType type = CurrentSpell ?? new SpellType();
+        Color color = type.color;
+        float size = spellSize * type.sizeMultiplier;
+
         GameObject spell = GlowSphere.Create(
-            "Magic Orb", spawnPosition, spellSize, color, keepCollider: true
+            "Magic Orb", spawnPosition, size, color, keepCollider: true
         );
 
-        AddTrail(spell, color);
+        AddTrail(spell, color, size);
         AddLight(spell, color);
 
-        // Handle projectile collisions and impact effects.
-        spell.AddComponent<MagicProjectile>().color = color;
+        // Handle projectile collisions, damage and impact effects.
+        MagicProjectile projectile = spell.AddComponent<MagicProjectile>();
+        projectile.color = color;
+        projectile.damage = type.damage;
+        projectile.splashRadius = type.splashRadius;
 
         Rigidbody rb = spell.AddComponent<Rigidbody>();
 
@@ -160,7 +273,7 @@ public class WizardSpellCaster : MonoBehaviour
         rb.collisionDetectionMode =
             CollisionDetectionMode.Continuous;
 
-        rb.linearVelocity = direction * spellSpeed;
+        rb.linearVelocity = direction * spellSpeed * type.speedMultiplier;
 
         MagicFeedback.Play(MagicFeedback.CastSound, spawnPosition, 0.6f);
         MagicFeedback.Pulse(haptics, 0.3f, 0.08f);
@@ -170,7 +283,7 @@ public class WizardSpellCaster : MonoBehaviour
     }
 
     // A comet tail: as wide as the orb at the head, thin at the end.
-    void AddTrail(GameObject spell, Color color)
+    void AddTrail(GameObject spell, Color color, float size)
     {
         if (trailMaterial == null)
             return;
@@ -178,7 +291,7 @@ public class WizardSpellCaster : MonoBehaviour
         TrailRenderer trail = spell.AddComponent<TrailRenderer>();
         trail.time = trailTime;
         trail.minVertexDistance = 0.05f;
-        trail.widthMultiplier = spellSize;
+        trail.widthMultiplier = size;
         trail.widthCurve = AnimationCurve.Linear(0f, 1f, 1f, 0f);
         trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         trail.receiveShadows = false;

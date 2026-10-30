@@ -32,6 +32,8 @@ public class GraveyardGameManager : MonoBehaviour
 
     public float CurrentEnergy { get; private set; }
     public int TotalScore { get; private set; }
+    // Pumpkins delivered this round (unlocks spells).
+    public int PumpkinsDelivered { get; private set; }
     [Header("Round Start")]
     [Tooltip("If true, the round waits for StartRound() (e.g. after the tutorial).")]
     public bool waitForStart = false;
@@ -99,6 +101,7 @@ public class GraveyardGameManager : MonoBehaviour
             return;
 
         TotalScore += points;
+        PumpkinsDelivered++;
         ChangeEnergy(energyPerDelivery * energyMultiplier);
         UpdateDisplay();
 
