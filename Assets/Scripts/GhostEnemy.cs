@@ -107,6 +107,9 @@ public class GhostEnemy : MonoBehaviour
         if (gone)
             return;
 
+        if (exposure <= 0f)
+            Debug.Log("GhostEnemy: lit by the lantern.", this);
+
         exposure += deltaTime;
         litThisFrame = true;
 

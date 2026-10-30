@@ -24,7 +24,7 @@ public class GhostSystem : MonoBehaviour
     [Header("Lantern")]
     public Vector3 lanternPosition = new Vector3(1.3f, 1.2f, -11.6f);
     [Tooltip("Beam length (the same at any size).")]
-    public float baseBeamRange = 6f;
+    public float baseBeamRange = 8f;
     [Tooltip("Beam half-angle at normal size. It widens as the lantern grows.")]
     public float baseBeamAngle = 15f;
 

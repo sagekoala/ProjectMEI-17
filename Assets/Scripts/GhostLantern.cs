@@ -1,6 +1,7 @@
 
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 // Spectral lantern. It is picked up with telekinesis and then held like a
 // flashlight: in front of the hand, pointing where the hand points, so it
@@ -47,6 +48,8 @@ public class GhostLantern : MonoBehaviour
     private Renderer hitSpotRenderer;
     private TextMeshPro label;
     private float nextHitPulse;
+    private InputAction shineAction;
+    private bool wasHeld;
 
 
     public Rigidbody Body => body;
@@ -174,9 +177,13 @@ public class GhostLantern : MonoBehaviour
         lightObject.transform.SetParent(beamRoot, false);
         beamLight = lightObject.AddComponent<Light>();
         beamLight.type = LightType.Spot;
-        beamLight.color = new Color(0.5f, 1f, 0.55f);
-        beamLight.intensity = 4f;
+        beamLight.color = new Color(0.4f, 1f, 0.45f);
+        beamLight.intensity = 10f;
         beamLight.shadows = LightShadows.None;
+        // 'Important': URP lights only the 4 most important lights per
+        // object, and the lamps and spells would otherwise win.
+        beamLight.renderMode = LightRenderMode.ForcePixel;
+        beamLight.innerSpotAngle = 1f;
 
         root.SetActive(false);
 
@@ -226,13 +233,38 @@ public class GhostLantern : MonoBehaviour
         return mesh;
     }
 
+    void Awake()
+    {
+        // Its own binding for the Y button (left controller's secondary
+        // button), independent of the telekinesis actions. Y on the
+        // keyboard too, for testing in the editor.
+        shineAction = new InputAction("Lantern Shine", InputActionType.Button);
+        shineAction.AddBinding("<XRController>{LeftHand}/{SecondaryButton}");
+        shineAction.AddBinding("<XRController>{LeftHand}/secondaryButton");
+        shineAction.AddBinding("<Keyboard>/y");
+    }
+
+    void OnEnable()
+    {
+        shineAction.Enable();
+    }
+
+    void OnDisable()
+    {
+        shineAction.Disable();
+    }
+
     void Start()
     {
         levitation = FindAnyObjectByType<WizardLevitation>();
+        if (levitation == null)
+            Debug.LogWarning("GhostLantern: no WizardLevitation found.", this);
     }
 
     void OnDestroy()
     {
+        shineAction?.Dispose();
+
         if (beamRoot != null)
             Destroy(beamRoot.gameObject);
         if (label != null)
@@ -249,17 +281,29 @@ public class GhostLantern : MonoBehaviour
     public float BeamAngle => Mathf.Clamp(
         system.baseBeamAngle * SizeMultiplier, MinBeamAngle, MaxBeamAngle);
 
+    // Y, through the lantern's own action or the telekinesis Y action.
     bool ShineButtonPressed =>
-        levitation != null &&
-        levitation.rotateAction != null &&
-        levitation.rotateAction.action != null &&
-        levitation.rotateAction.action.IsPressed();
+        shineAction.IsPressed() ||
+        (levitation != null &&
+         levitation.rotateAction != null &&
+         levitation.rotateAction.action != null &&
+         levitation.rotateAction.action.IsPressed());
 
     void LateUpdate()
     {
-        IsHeld = levitation != null && levitation.HeldObject == body;
-        bool shining = IsHeld && ShineButtonPressed;
+        if (levitation == null)
+            levitation = FindAnyObjectByType<WizardLevitation>();
 
+        IsHeld = levitation != null && levitation.HeldObject == body;
+        bool pressed = ShineButtonPressed;
+        bool shining = IsHeld && pressed;
+
+        // Diagnostics: what the lantern sees.
+        if (IsHeld != wasHeld)
+            Debug.Log(IsHeld ? "GhostLantern: picked up." : "GhostLantern: released.", this);
+        wasHeld = IsHeld;
+        if (pressed && shineAction.WasPressedThisFrame())
+            Debug.Log($"GhostLantern: Y pressed (held: {IsHeld}).", this);
         if (shining && !IsShining)
             Debug.Log("GhostLantern: light on.", this);
         IsShining = shining;
@@ -296,8 +340,9 @@ public class GhostLantern : MonoBehaviour
         UpdateHitSpot(origin, range, radius);
         flare.localScale = Vector3.one * (0.09f + 0.03f * Mathf.Sin(Time.time * 12f)) * SizeMultiplier;
 
-        beamLight.range = range * 1.2f;
-        beamLight.spotAngle = angle * 2f;
+        beamLight.range = range * 1.6f;
+        beamLight.spotAngle = Mathf.Min(angle * 2.4f, 120f);
+        beamLight.innerSpotAngle = angle * 1.2f;
 
         LightGhost(origin, range, angle);
     }
