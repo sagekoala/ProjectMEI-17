@@ -68,7 +68,7 @@ Al principio solo tienes el Rayo. Al entregar calabazas se desbloquean hechizos 
 - **Bola de fuego** (naranja): daño 2. Con 5 calabazas.
 
 ### Fantasma y linterna
-- A los 20 s de empezar sale un fantasma por el lado más lejano del cementerio. Vuela hacia ti.
+- A los 20 s de empezar sale un fantasma por el lado más lejano del cementerio. Vuela hacia ti. Mientras está, se oye un **lamento** que avisa de que viene: suena desde donde está el fantasma y se vuelve más agudo cuanto más cerca está.
 - Si te toca, pierdes una vida (tienes 10) y vuelve a salir por el otro lado.
 - Cerca del inicio está la **linterna anti-fantasmas**, con un cartel encima.
 - Cógela con telequinesis: se queda en tu mano y apunta hacia delante.
@@ -99,7 +99,7 @@ Casi todas las acciones tienen respuesta visual, sonido y vibración:
 - **Hechizos:** bola brillante con estela; sonido al lanzar; vibración en la mano derecha. La bolita de la mano derecha muestra si el hechizo está listo.
 - **Duendes:** parpadean en rojo al recibir daño, tienen barra de vida y explotan al morir. Se oye un gruñido cuando salen.
 - **Calabazas:** destello dorado y texto "+puntos" al entregar; destello rojo si un duende se la come.
-- **Fantasma:** silbido al salir. Con la luz parpadea, encoge y la mano vibra. Mensaje y vibración fuerte si te toca.
+- **Fantasma:** silbido al salir y un lamento continuo mientras está (más agudo cuanto más cerca, más grave cuando le da la luz). Con la luz parpadea, encoge y la mano vibra. Mensaje y vibración fuerte si te toca.
 - **Linterna:** cartel en el suelo, aviso "Mantén Y para encender la luz" en la mano, y luz verde que ilumina la escena.
 - **Hechizo nuevo y oleada final:** mensaje delante del jugador, sonido y vibración.
 - **Ambiente:** niebla, viento y letra de Halloween.
@@ -146,7 +146,7 @@ Todos están en `Assets/Scripts/`:
 <!--
 Borrador (borrar este comentario al completar):
 - ChatGPT (OpenAI): como guía para configurar el proyecto de Unity y los assets (importar los paquetes del Asset Store, materiales, iluminación y ajustes de XR).
-- Claude Code (Anthropic): para escribir y cambiar código durante el desarrollo: vuelo, grimorio de muñeca y marcador, tutorial, explosión y barra de vida de los duendes, feedback de sonido y vibración, letra de Halloween, iluminación y la oleada final de arqueros.
+- Claude Code (Anthropic): para escribir y cambiar código durante el desarrollo: vuelo, grimorio de muñeca y marcador, tutorial, explosión y barra de vida de los duendes, feedback de sonido y vibración, letra de Halloween, iluminación, la oleada final de arqueros y el sonido de aviso del fantasma.
 - Claude (Anthropic, chat): para revisar el proyecto con los requisitos de la práctica, resolver problemas de la build para Meta Quest (ajustes de OpenXR, nombre del paquete, espacio en disco del PC) y escribir código de estas partes: hechizos que brillan, pantalla final, límites del cementerio, telequinesis con Go-Go y giro con la muñeca, efecto del tamaño de las calabazas, hechizos desbloqueables, fantasma y linterna, y este documento.
 - Las ideas del juego y las decisiones son nuestras. Todo el código hecho con IA lo hemos revisado y probado en el editor y en las Meta Quest 3.
 -->

@@ -20,6 +20,7 @@ public static class MagicFeedback
     static AudioClip growlSound;
     static AudioClip hitSound;
     static AudioClip windLoop;
+    static AudioClip ghostWailLoop;
     static AudioClip hornSound;
 
     // Rising tone.
@@ -77,6 +78,11 @@ public static class MagicFeedback
     public static AudioClip HitSound =>
         hitSound != null ? hitSound :
         (hitSound = Noise("Hit", 0.15f, 0.7f, 30f, 0.4f, 4));
+
+    // Seamless looping ghost moan, played while a ghost is around.
+    public static AudioClip GhostWailLoop =>
+        ghostWailLoop != null ? ghostWailLoop :
+        (ghostWailLoop = GhostWail("Ghost Wail Loop", 4f, 0.5f));
 
     // Seamless looping wind for the background.
     public static AudioClip WindLoop =>
@@ -183,24 +189,61 @@ public static class MagicFeedback
     // filtered noise, crossfaded so it loops
     static AudioClip Wind(string name, float seconds, float volume)
     {
-        const float fadeSeconds = 0.5f;
-        int count = Mathf.CeilToInt(seconds * SampleRate);
-        int fade = Mathf.CeilToInt(fadeSeconds * SampleRate);
-
         System.Random random = new System.Random(6);
         float previous = 0f;
-        float[] raw = new float[count + fade];
 
-        for (int i = 0; i < raw.Length; i++)
+        return Loop(name, seconds, time =>
         {
-            float time = (float)i / SampleRate;
             float white = (float)(random.NextDouble() * 2.0 - 1.0);
             previous = Mathf.Lerp(previous, white, 0.02f);
 
             // Two whole gusts per clip, so the swell also loops.
             float gust = 0.6f + 0.4f * Mathf.Sin(2f * Mathf.PI * 2f * time / seconds);
-            raw[i] = volume * 6f * gust * previous;
-        }
+            return volume * 6f * gust * previous;
+        });
+    }
+
+    // Eerie ghost moan that loops: two voices a fifth apart that rise and
+    // fall ("oooOOOooo") with a trembling vibrato, plus a breath.
+    static AudioClip GhostWail(string name, float seconds, float volume)
+    {
+        System.Random random = new System.Random(7);
+        float phaseLow = 0f;
+        float phaseHigh = 0f;
+        float breath = 0f;
+
+        return Loop(name, seconds, time =>
+        {
+            // One rise and fall per clip, so the glide also loops.
+            float glide = Mathf.Sin(2f * Mathf.PI * time / seconds);
+            float vibrato = 1f + 0.025f * Mathf.Sin(2f * Mathf.PI * 5.5f * time);
+            float hz = (330f + 110f * glide) * vibrato;
+
+            phaseLow += 2f * Mathf.PI * hz / SampleRate;
+            phaseHigh += 2f * Mathf.PI * hz * 1.5f / SampleRate;
+
+            float white = (float)(random.NextDouble() * 2.0 - 1.0);
+            breath = Mathf.Lerp(breath, white, 0.05f);
+
+            float tone = Mathf.Sin(phaseLow) + 0.3f * Mathf.Sin(2f * phaseLow)
+                + 0.4f * Mathf.Sin(phaseHigh);
+            float swell = 0.7f + 0.3f * glide;
+            return volume * swell * (0.45f * tone + 1.5f * breath);
+        });
+    }
+
+    // Clip that loops without a click: the extra half second after the
+    // end is crossfaded into the start.
+    static AudioClip Loop(string name, float seconds, Func<float, float> sample)
+    {
+        const float fadeSeconds = 0.5f;
+        int count = Mathf.CeilToInt(seconds * SampleRate);
+        int fade = Mathf.CeilToInt(fadeSeconds * SampleRate);
+
+        // Samples are generated in order, so generators may keep state.
+        float[] raw = new float[count + fade];
+        for (int i = 0; i < raw.Length; i++)
+            raw[i] = sample((float)i / SampleRate);
 
         float[] data = new float[count];
         for (int i = 0; i < count; i++)

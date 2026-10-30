@@ -22,6 +22,7 @@ public class GhostEnemy : MonoBehaviour
     private bool litThisFrame;
     private float bobOffset;
     private bool gone;
+    private AudioSource wail;
 
     public float Radius => 0.35f;
 
@@ -33,6 +34,7 @@ public class GhostEnemy : MonoBehaviour
         GhostEnemy ghost = root.AddComponent<GhostEnemy>();
         ghost.system = system;
         ghost.Build();
+        ghost.StartWail();
 
         MagicFeedback.Play(MagicFeedback.WhooshSound, position, 1f);
         if (GraveyardFeedback.Instance != null)
@@ -116,6 +118,9 @@ public class GhostEnemy : MonoBehaviour
             return;
 
         GraveyardGameManager game = GraveyardGameManager.Instance;
+        bool playing = (game == null || game.IsPlaying) && Time.timeScale > 0f;
+        SetWailPaused(!playing);
+
         if (game != null && !game.IsPlaying)
             return;
 
@@ -132,6 +137,7 @@ public class GhostEnemy : MonoBehaviour
 
         Move(lit);
         UpdateLook(lit);
+        UpdateWail(lit);
         healthBar.SetHealth(1f - lit);
 
         litThisFrame = false;
@@ -176,6 +182,50 @@ public class GhostEnemy : MonoBehaviour
 
         transform.localScale = visualScale * Mathf.Lerp(1f, 0.7f, lit);
         glow.intensity = Mathf.Lerp(1.5f, 4f, lit);
+    }
+
+    // Warning sound for as long as the ghost is around (it stops when the
+    // ghost object is destroyed). Partly 3D: it tells where the ghost
+    // comes from, but is heard from anywhere in the cemetery.
+    void StartWail()
+    {
+        wail = gameObject.AddComponent<AudioSource>();
+        wail.clip = MagicFeedback.GhostWailLoop;
+        wail.loop = true;
+        wail.playOnAwake = false;
+        wail.volume = 0.8f;
+        wail.spatialBlend = 0.75f;
+        wail.rolloffMode = AudioRolloffMode.Linear;
+        wail.minDistance = 2f;
+        wail.maxDistance = 25f;
+        wail.dopplerLevel = 0f;
+        wail.Play();
+    }
+
+    // Higher and more urgent as it gets closer; lower while the lantern
+    // weakens it.
+    void UpdateWail(float lit)
+    {
+        if (wail == null)
+            return;
+
+        float distance = Vector3.Distance(transform.position, head.position);
+        float closeness = 1f - Mathf.InverseLerp(1f, 12f, distance);
+
+        wail.pitch = Mathf.Lerp(0.9f, 1.3f, closeness) * Mathf.Lerp(1f, 0.75f, lit);
+        wail.volume = Mathf.Lerp(0.6f, 1f, closeness);
+    }
+
+    // Audio ignores Time.timeScale, so pause it with the game.
+    void SetWailPaused(bool paused)
+    {
+        if (wail == null)
+            return;
+
+        if (paused && wail.isPlaying)
+            wail.Pause();
+        else if (!paused && !wail.isPlaying)
+            wail.UnPause();
     }
 
     void Banish()
