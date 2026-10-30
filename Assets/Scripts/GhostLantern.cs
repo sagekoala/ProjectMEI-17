@@ -1,21 +1,30 @@
 
 using UnityEngine;
 
-// Spectral lantern: picked up with telekinesis like any other object.
-// While it is levitated it shines a visible cone of light along its
-// forward axis, so it is aimed by rotating it (Y + wrist). A ghost inside
-// the cone is banished after a moment of light.
-// Its size changes the beam: bigger = longer but narrower (reaches far,
-// harder to aim); smaller = shorter but wider (easy to aim, needs the
-// ghost close).
+// Spectral lantern. It is picked up with telekinesis and then held like a
+// flashlight: in front of the hand, pointing where the hand points, so it
+// is aimed by turning the wrist. Holding Y makes it shine a misty green
+// beam; a ghost inside the beam is banished after a moment of light.
+// Its size changes the beam's radius: bigger = wider (easier to hit),
+// smaller = narrower. The length stays the same.
 public class GhostLantern : MonoBehaviour
 {
-    const float MinBeamAngle = 8f;
-    const float MaxBeamAngle = 40f;
+    const float MinBeamAngle = 6f;
+    const float MaxBeamAngle = 35f;
+    const int MistPuffs = 8;
 
-    static readonly Color BeamColor = new Color(0.75f, 1f, 0.65f, 0.16f);
-    static readonly Color LensOn = new Color(0.85f, 1f, 0.7f);
-    static readonly Color LensOff = new Color(0.3f, 0.4f, 0.3f);
+    static readonly Color BeamColor = new Color(0.45f, 1f, 0.55f, 1f);
+    static readonly Color LensOn = new Color(0.6f, 1f, 0.65f);
+    static readonly Color LensReady = new Color(0.25f, 0.55f, 0.3f);
+    static readonly Color LensOff = new Color(0.15f, 0.25f, 0.17f);
+
+    // Layered cones: (relative radius, alpha). Denser in the middle.
+    static readonly Vector2[] ConeLayers =
+    {
+        new Vector2(1f, 0.05f),
+        new Vector2(0.65f, 0.07f),
+        new Vector2(0.3f, 0.10f),
+    };
 
     private GhostSystem system;
     private Rigidbody body;
@@ -23,15 +32,20 @@ public class GhostLantern : MonoBehaviour
     private Vector3 baseScale;
     private Vector3 home;
 
-    private Transform beam;
-    private Renderer beamRenderer;
+    private Transform beamRoot;
+    private Transform[] cones;
+    private Transform[] puffs;
+    private Renderer[] puffRenderers;
     private Light beamLight;
     private Renderer lensRenderer;
 
-    public Rigidbody Body => body;
-    public bool IsShining { get; private set; }
-
     private bool wasHeld;
+    private float grabTime;
+    private bool hintShown;
+
+    public Rigidbody Body => body;
+    public bool IsHeld { get; private set; }
+    public bool IsShining { get; private set; }
 
     public static GhostLantern Create(Vector3 position, GhostSystem system)
     {
@@ -79,32 +93,65 @@ public class GhostLantern : MonoBehaviour
         BuildBeam();
     }
 
-    // A cone of light, kept as its own object (not a child) so the
-    // lantern's scale doesn't stretch it twice.
+    // The beam is its own object (not a child), so the lantern's scale
+    // doesn't stretch it twice.
     void BuildBeam()
     {
-        GameObject beamObject = new GameObject("Lantern Beam");
-        beam = beamObject.transform;
-
-        beamObject.AddComponent<MeshFilter>().sharedMesh = BuildConeMesh(24);
-        beamRenderer = beamObject.AddComponent<MeshRenderer>();
-        beamRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        beamRenderer.receiveShadows = false;
+        GameObject root = new GameObject("Lantern Beam");
+        beamRoot = root.transform;
 
         Material translucent = Resources.Load<Material>("GlowTransparent");
-        if (translucent != null)
-            beamRenderer.sharedMaterial = translucent;
-        GlowSphere.SetColor(beamRenderer, BeamColor);
+        Mesh cone = BuildConeMesh(24);
+
+        cones = new Transform[ConeLayers.Length];
+        for (int i = 0; i < ConeLayers.Length; i++)
+        {
+            GameObject layer = new GameObject("Beam Layer");
+            layer.transform.SetParent(beamRoot, false);
+            layer.AddComponent<MeshFilter>().sharedMesh = cone;
+
+            MeshRenderer renderer = layer.AddComponent<MeshRenderer>();
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            if (translucent != null)
+                renderer.sharedMaterial = translucent;
+
+            Color color = BeamColor;
+            color.a = ConeLayers[i].y;
+            GlowSphere.SetColor(renderer, color);
+
+            cones[i] = layer.transform;
+        }
+
+        // Mist: soft puffs drifting out along the beam.
+        puffs = new Transform[MistPuffs];
+        puffRenderers = new Renderer[MistPuffs];
+        for (int i = 0; i < MistPuffs; i++)
+        {
+            GameObject puff = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            puff.name = "Mist";
+            Destroy(puff.GetComponent<Collider>());
+            puff.transform.SetParent(beamRoot, false);
+
+            Renderer renderer = puff.GetComponent<Renderer>();
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            if (translucent != null)
+                renderer.sharedMaterial = translucent;
+
+            puffs[i] = puff.transform;
+            puffRenderers[i] = renderer;
+        }
 
         GameObject lightObject = new GameObject("Lantern Light");
-        lightObject.transform.SetParent(beam, false);
+        lightObject.transform.SetParent(beamRoot, false);
         beamLight = lightObject.AddComponent<Light>();
         beamLight.type = LightType.Spot;
-        beamLight.color = new Color(0.85f, 1f, 0.75f);
-        beamLight.intensity = 3f;
+        beamLight.color = new Color(0.5f, 1f, 0.55f);
+        beamLight.intensity = 4f;
         beamLight.shadows = LightShadows.None;
 
-        beamObject.SetActive(false);
+        root.SetActive(false);
     }
 
     // Apex at the origin, open base of radius 1 at z = 1.
@@ -139,55 +186,105 @@ public class GhostLantern : MonoBehaviour
 
     void OnDestroy()
     {
-        if (beam != null)
-            Destroy(beam.gameObject);
+        if (beamRoot != null)
+            Destroy(beamRoot.gameObject);
     }
 
     // 1 = normal size.
     public float SizeMultiplier =>
         baseScale.x > 0f ? transform.localScale.x / baseScale.x : 1f;
 
-    public float BeamRange => system.baseBeamRange * SizeMultiplier;
+    public float BeamRange => system.baseBeamRange;
 
+    // Only the width depends on the size.
     public float BeamAngle => Mathf.Clamp(
-        system.baseBeamAngle / SizeMultiplier, MinBeamAngle, MaxBeamAngle);
+        system.baseBeamAngle * SizeMultiplier, MinBeamAngle, MaxBeamAngle);
+
+    bool ShineButtonPressed =>
+        levitation != null &&
+        levitation.rotateAction != null &&
+        levitation.rotateAction.action != null &&
+        levitation.rotateAction.action.IsPressed();
 
     void LateUpdate()
     {
-        bool held = levitation != null && levitation.HeldObject == body;
-        IsShining = held;
+        IsHeld = levitation != null && levitation.HeldObject == body;
+        IsShining = IsHeld && ShineButtonPressed;
 
-        // When picked up it starts pointing where the hand points; from
-        // then on it keeps its direction and is aimed with Y + wrist.
-        if (held && !wasHeld)
+        if (IsHeld && !wasHeld)
         {
-            Quaternion aim = Quaternion.LookRotation(levitation.transform.forward, Vector3.up);
-            body.rotation = aim;
-            transform.rotation = aim;
+            grabTime = Time.time;
+            hintShown = false;
         }
-        wasHeld = held;
+        wasHeld = IsHeld;
 
-        beam.gameObject.SetActive(held);
-        GlowSphere.SetColor(lensRenderer, held ? LensOn : LensOff);
+        // A reminder if the lantern is held but not lit.
+        if (IsHeld && !IsShining && !hintShown && Time.time - grabTime > 0.6f)
+        {
+            hintShown = true;
+            FloatingText hint = FloatingText.Spawn(
+                transform.position + Vector3.up * 0.2f,
+                "Mantén Y para encender la luz",
+                new Color(0.6f, 1f, 0.65f));
+            hint.duration = 2.5f;
+            hint.riseDistance = 0.1f;
+        }
 
-        if (!held)
+        beamRoot.gameObject.SetActive(IsShining);
+        GlowSphere.SetColor(lensRenderer,
+            IsShining ? LensOn : IsHeld ? LensReady : LensOff);
+
+        if (!IsHeld)
         {
             ReturnHomeIfLost();
             return;
         }
+
+        if (!IsShining)
+            return;
 
         float range = BeamRange;
         float angle = BeamAngle;
         float radius = range * Mathf.Tan(angle * Mathf.Deg2Rad);
 
         Vector3 origin = transform.position + transform.forward * 0.15f * SizeMultiplier;
-        beam.SetPositionAndRotation(origin, transform.rotation);
-        beam.localScale = new Vector3(radius, radius, range);
+        beamRoot.SetPositionAndRotation(origin, transform.rotation);
+
+        for (int i = 0; i < cones.Length; i++)
+        {
+            float r = radius * ConeLayers[i].x;
+            cones[i].localScale = new Vector3(r, r, range);
+        }
+
+        UpdateMist(range, radius);
 
         beamLight.range = range * 1.2f;
         beamLight.spotAngle = angle * 2f;
 
         LightGhost(origin, range, angle);
+    }
+
+    // Puffs drift from the lantern to the end of the beam, growing with
+    // the cone and fading in and out.
+    void UpdateMist(float range, float radius)
+    {
+        for (int i = 0; i < puffs.Length; i++)
+        {
+            float t = Mathf.Repeat(Time.time * 0.45f + (float)i / puffs.Length, 1f);
+            float wobble = Mathf.Sin(Time.time * 1.7f + i * 2.1f);
+
+            puffs[i].localPosition = new Vector3(
+                wobble * radius * 0.25f * t,
+                Mathf.Cos(Time.time * 1.3f + i) * radius * 0.2f * t,
+                range * t);
+
+            float size = Mathf.Max(0.05f, radius * t * 1.3f);
+            puffs[i].localScale = new Vector3(size, size, size * 1.6f);
+
+            Color color = BeamColor;
+            color.a = 0.10f * Mathf.Sin(Mathf.PI * t);
+            GlowSphere.SetColor(puffRenderers[i], color);
+        }
     }
 
     void LightGhost(Vector3 origin, float range, float angle)

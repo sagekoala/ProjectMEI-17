@@ -600,7 +600,7 @@ public class WizardControlMenu : MonoBehaviour
             "Estirar / recoger el brazo: alejar / acercar el objeto\n" +
             "Y + girar la muñeca: rotar el objeto levitado\n" +
             "A / B: agrandar / encoger\n" +
-            "Farol: levítalo y apunta su luz al fantasma (Y + muñeca)\n" +
+            "Farol: cógelo, mantén Y para encender la luz y apunta con la muñeca\n" +
             "Gatillo der.: lanzar hechizo\n" +
             "Grip der.: volar hacia donde apunta la mano\n" +
             "Stick izq.: moverse · Stick der.: girar / teletransporte\n" +

@@ -145,10 +145,11 @@ public class GraveyardTutorial : MonoBehaviour
                     body =
                         "Durante la ronda, un fantasma vendrá a por ti. Si te toca, " +
                         $"pierdes una vida (tienes {game.ghostLives}).\n\n" +
-                        "Coge el FAROL ESPECTRAL con telequinesis (está cerca de ti) " +
-                        "y apunta su luz al fantasma girándolo con Y + la muñeca.\n\n" +
-                        "Grande: luz más larga y estrecha. Pequeño: más corta y ancha.",
-                    isDone = () => levitation.HeldObject == ghosts.Lantern.Body,
+                        "Coge el FAROL ESPECTRAL con telequinesis (está cerca de ti): " +
+                        "lo sostienes como una linterna. MANTÉN Y para encender su luz " +
+                        "verde y apúntala al fantasma girando la muñeca.\n\n" +
+                        "A / B: haz más ancho o más estrecho.",
+                    isDone = () => ghosts.Lantern.IsShining,
                 });
             }
         }

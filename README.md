@@ -22,7 +22,7 @@ Todas las metáforas de interacción se eligieron para que encajen con la fantas
 
 | Tarea | Metáfora | Por qué |
 |---|---|---|
-| Manipulación con propósito | **Farol espectral**: se levita y su luz se apunta **girándolo** (Y + muñeca); su **tamaño** cambia el haz (grande: largo y estrecho; pequeño: corto y ancho) | Cada transformación tiene un uso en el juego: traslación para llevar calabazas, rotación para apuntar el farol, escalado para decidir entre valor y peso (calabazas) o entre alcance y amplitud (farol) |
+| Manipulación con propósito | **Farol espectral**: se coge con telequinesis y se sostiene como una linterna; manteniendo **Y** emite una luz verde con niebla que se apunta **girando la muñeca**; su **tamaño** cambia el radio del haz | Cada transformación tiene un uso en el juego: traslación para llevar calabazas, rotación para apuntar el farol, escalado para decidir entre valor y peso (calabazas) o la anchura del haz (farol) |
 | Selección y manipulación | **Telequinesis**: un rayo mágico desde la mano izquierda selecciona a distancia; el objeto se queda a la distancia donde se cogió, se aleja o acerca estirando el brazo (Go-Go), rota con la muñeca y se escala con A / B | Selección a distancia por rayo, natural para "mover cosas con la mente". El tamaño tiene efecto en el juego: más valor y más resistencia contra los duendes, pero más peso |
 | Navegación propia | **Vuelo mágico**: mantener el grip derecho y volar hacia donde apunta la mano, con la velocidad según la presión | Es el desplazamiento propio de un mago. Se controla con una sola mano, así que se puede volar y lanzar hechizos a la vez |
 | Navegación estándar | Caminar con el stick y teletransporte (plantilla XRI) | Opciones de confort conocidas, configurables en el grimorio |
@@ -77,7 +77,7 @@ Aparece al empezar y cada vez que se reinicia la partida. Mientras dura, el tiem
 | Victoria | Acabar los 7 minutos con más del 10% de energía |
 | Derrota | Energía al 0%, o perder las 10 vidas contra el fantasma |
 
-El fantasma aparece a los 20 s de empezar la ronda, en la esquina del cementerio más lejana al jugador, flota a 0,8 m/s hacia la cabeza y, mientras le da la luz, se ralentiza, parpadea y encoge. El **farol espectral** está cerca del punto de inicio y solo ilumina mientras se levita. Al cogerlo apunta hacia donde apunta la mano; después mantiene su dirección y se apunta con **Y + muñeca**. A tamaño normal el haz mide 4 m y 22°; a 2× mide 8 m y 11°; a 0,5×, 2 m y 40° (máximo). Como solo hay una mano de telequinesis, hay que elegir entre llevar una calabaza o protegerse con el farol.
+El fantasma aparece a los 20 s de empezar la ronda, en la esquina del cementerio más lejana al jugador, flota a 0,8 m/s hacia la cabeza y, mientras le da la luz, se ralentiza, parpadea y encoge. El **farol espectral** está cerca del punto de inicio. Al cogerlo con telequinesis se queda delante de la mano y apunta hacia donde apunta la mano, como una linterna; **manteniendo Y** emite una luz verde con niebla, y se apunta girando la muñeca (si se coge y no se enciende, aparece el recordatorio "Mantén Y para encender la luz"). El haz mide siempre 6 m; su anchura depende del tamaño del farol: 15° a tamaño normal, 30° a 2× (más fácil acertar) y 7,5° a 0,5×. Como solo hay una mano de telequinesis, hay que elegir entre llevar una calabaza o protegerse con el farol.
 
 Al principio hay un duende; a partir del primer minuto, dos a la vez. Cada duende eliminado reaparece a los 8 s. Siempre hay hasta 3 calabazas en el cementerio.
 

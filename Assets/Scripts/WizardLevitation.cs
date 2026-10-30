@@ -31,6 +31,11 @@ public class WizardLevitation : MonoBehaviour
     public Transform head;
     public float shoulderDrop = 0.25f;
 
+    [Header("Hand tools")]
+    [Tooltip("Tools such as the spectral lantern are held like a flashlight: " +
+             "this close in front of the hand, pointing where the hand points.")]
+    public float toolHoldDistance = 0.3f;
+
     [Header("Weight")]
     [Tooltip("Bigger objects follow the hand more slowly (heavier); " +
              "smaller ones faster.")]
@@ -60,6 +65,10 @@ public class WizardLevitation : MonoBehaviour
     private Quaternion objectRotationAtClutch;
 
     private bool jumpWasEnabled;
+
+    // The held object is a hand tool (held like a flashlight).
+    private bool holdingTool;
+    public bool HoldingTool => heldObject != null && holdingTool;
 
     // Go-Go state, measured when the object is grabbed.
     private float grabDistance;
@@ -105,6 +114,12 @@ public class WizardLevitation : MonoBehaviour
         if (heldObject == null)
             return;
 
+        if (holdingTool)
+        {
+            HoldTool();
+            return;
+        }
+
         UpdateHoldDistance();
 
         Vector3 targetPosition =
@@ -116,6 +131,19 @@ public class WizardLevitation : MonoBehaviour
         heldObject.angularVelocity = Vector3.zero;
 
         UpdateRotation();
+    }
+
+    // A tool sits just in front of the hand and turns with it, so it is
+    // aimed by turning the wrist. Bigger tools sit a bit further out so
+    // they don't hit the hand.
+    void HoldTool()
+    {
+        float distance = toolHoldDistance + 0.1f * (HeldSizeMultiplier - 1f);
+
+        Vector3 targetPosition = transform.position + transform.forward * distance;
+        heldObject.linearVelocity = (targetPosition - heldObject.position) * moveSpeed * 1.5f;
+        heldObject.angularVelocity = Vector3.zero;
+        heldObject.MoveRotation(transform.rotation);
     }
 
     // Go-Go: the distance grows exponentially with how much further the
@@ -249,6 +277,7 @@ public class WizardLevitation : MonoBehaviour
 
         heldObject = rb;
         isRotating = false;
+        holdingTool = rb.GetComponent<GhostLantern>() != null;
 
         originalGravity = rb.useGravity;
         originalKinematic = rb.isKinematic;
