@@ -26410,7 +26410,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5215810559370997148, guid: 5db62e8384d87064ea7c6f55b25d333f, type: 3}
       propertyPath: m_Name
-      value: Goblin_Test01
+      value: Goblin
       objectReference: {fileID: 0}
     - target: {fileID: 5215810559370997148, guid: 5db62e8384d87064ea7c6f55b25d333f, type: 3}
       propertyPath: m_IsActive
@@ -26471,7 +26471,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3556793548377773877, guid: fbaa0ecf05be4f04d8e68154da27374d, type: 3}
       propertyPath: m_Name
-      value: Pumpkin_Test01
+      value: Pumpkin
       objectReference: {fileID: 0}
     - target: {fileID: 3556793548377773877, guid: fbaa0ecf05be4f04d8e68154da27374d, type: 3}
       propertyPath: m_IsActive
