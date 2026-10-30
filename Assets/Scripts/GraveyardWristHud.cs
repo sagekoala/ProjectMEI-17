@@ -44,6 +44,7 @@ public class GraveyardWristHud : MonoBehaviour
         textObject.transform.SetParent(hudObject.transform, false);
 
         hudText = textObject.AddComponent<TextMeshProUGUI>();
+        HalloweenFontTheme.Apply(hudText);
         hudText.fontSize = 30f;
         hudText.fontStyle = FontStyles.Bold;
         hudText.alignment = TextAlignmentOptions.Center;

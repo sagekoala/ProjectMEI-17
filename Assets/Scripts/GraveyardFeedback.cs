@@ -113,8 +113,7 @@ public class GraveyardFeedback : MonoBehaviour
         textObject.transform.SetParent(sign.transform, false);
 
         TextMeshProUGUI label = textObject.AddComponent<TextMeshProUGUI>();
-        if (HalloweenFontTheme.Current != null)
-            label.font = HalloweenFontTheme.Current;
+        HalloweenFontTheme.Apply(label);
         label.text = text;
         label.fontSize = 110f;
         label.color = color;

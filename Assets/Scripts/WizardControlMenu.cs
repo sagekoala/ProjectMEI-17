@@ -682,6 +682,7 @@ public class WizardControlMenu : MonoBehaviour
         RectTransform rect = CreateRect("Text", parent);
 
         TextMeshProUGUI label = rect.gameObject.AddComponent<TextMeshProUGUI>();
+        HalloweenFontTheme.Apply(label);
         label.text = text;
         label.fontSize = size;
         label.fontStyle = style;

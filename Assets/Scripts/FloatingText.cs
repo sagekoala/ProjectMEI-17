@@ -21,6 +21,7 @@ public class FloatingText : MonoBehaviour
         go.transform.localScale = Vector3.one * 0.1f;
 
         TextMeshPro label = go.AddComponent<TextMeshPro>();
+        HalloweenFontTheme.Apply(label);
         label.text = text;
         label.fontSize = 14f;
         label.fontStyle = FontStyles.Bold;

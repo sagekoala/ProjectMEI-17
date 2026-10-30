@@ -191,6 +191,7 @@ public class GhostLantern : MonoBehaviour
         labelObject.transform.localScale = Vector3.one * 0.06f;
 
         label = labelObject.AddComponent<TextMeshPro>();
+        HalloweenFontTheme.Apply(label);
         label.text = HeldText;
         label.fontSize = 12f;
         label.alignment = TextAlignmentOptions.Center;

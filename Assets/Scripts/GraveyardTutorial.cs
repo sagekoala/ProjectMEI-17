@@ -412,6 +412,7 @@ public class GraveyardTutorial : MonoBehaviour
     {
         TextMeshProUGUI text =
             CreateRect("Text", parent).gameObject.AddComponent<TextMeshProUGUI>();
+        HalloweenFontTheme.Apply(text);
         text.fontSize = size;
         text.color = color;
         text.alignment = TextAlignmentOptions.Center;

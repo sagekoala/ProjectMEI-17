@@ -26284,7 +26284,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HalloweenFontTheme
   font: {fileID: 12800000, guid: 675b68dc77cc401f811fead7551e6c18, type: 3}
-  minFontSize: 24
 --- !u!1 &2800000021
 GameObject:
   m_ObjectHideFlags: 0
