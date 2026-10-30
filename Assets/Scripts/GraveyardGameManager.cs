@@ -92,13 +92,14 @@ public class GraveyardGameManager : MonoBehaviour
         UpdateDisplay();
     }
 
-    public void PumpkinDelivered(int points)
+    // energyMultiplier scales the energy gained (bigger pumpkins give more).
+    public void PumpkinDelivered(int points, float energyMultiplier = 1f)
     {
         if (!IsPlaying)
             return;
 
         TotalScore += points;
-        ChangeEnergy(energyPerDelivery);
+        ChangeEnergy(energyPerDelivery * energyMultiplier);
         UpdateDisplay();
 
         Debug.Log(

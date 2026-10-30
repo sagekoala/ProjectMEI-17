@@ -21,7 +21,7 @@ Todas las metáforas de interacción se eligieron para que encajen con la fantas
 
 | Tarea | Metáfora | Por qué |
 |---|---|---|
-| Selección y manipulación | **Telequinesis**: un rayo mágico desde la mano izquierda; el objeto flota delante de la mano y la sigue | Selección a distancia por rayo, natural para "mover cosas con la mente". El objeto se puede rotar y escalar mientras se sostiene |
+| Selección y manipulación | **Telequinesis**: un rayo mágico desde la mano izquierda selecciona a distancia; el objeto se queda a la distancia donde se cogió, se aleja o acerca estirando el brazo (Go-Go), rota con la muñeca y se escala con A / B | Selección a distancia por rayo, natural para "mover cosas con la mente". El tamaño tiene efecto en el juego: más valor y más resistencia contra los duendes, pero más peso |
 | Navegación propia | **Vuelo mágico**: mantener el grip derecho y volar hacia donde apunta la mano, con la velocidad según la presión | Es el desplazamiento propio de un mago. Se controla con una sola mano, así que se puede volar y lanzar hechizos a la vez |
 | Navegación estándar | Caminar con el stick y teletransporte (plantilla XRI) | Opciones de confort conocidas, configurables en el grimorio |
 | Acción | **Hechizos** con el gatillo derecho | La mano derecha "ataca" y la izquierda "manipula": cada mano tiene un papel claro |
@@ -44,7 +44,8 @@ Otras decisiones:
 
 | Mando | Control | Acción |
 |---|---|---|
-| Izquierdo | **Gatillo** (mantener) | Telequinesis: levitar el objeto al que apuntas |
+| Izquierdo | **Gatillo** (mantener) | Telequinesis: levitar el objeto al que apuntas (hasta 8 m) |
+| Izquierdo | **Estirar / recoger el brazo** (mientras levitas) | Alejar / acercar el objeto (técnica Go-Go: cuanto más lejos está, más rápido se mueve) |
 | Izquierdo | **Y** (mantener, mientras levitas) | Rotar el objeto girando la muñeca, en cualquier eje. Al soltar Y se queda como está |
 | Derecho | **A / B** (mientras levitas) | Agrandar / encoger el objeto (entre 0,5× y 2× de su tamaño original). Mientras levitas, A no salta |
 | Derecho | **Gatillo** | Lanzar un hechizo (se recarga en 0,35 s) |
@@ -63,7 +64,9 @@ Aparece al empezar y cada vez que se reinicia la partida. Mientras dura, el tiem
 
 | Evento | Efecto |
 |---|---|
-| Entregar una calabaza en la tumba iluminada | +10 puntos y +15% de energía |
+| Entregar una calabaza en la tumba iluminada | +10 puntos y +15% de energía a tamaño normal; se multiplica por su tamaño (0,5× → +5 puntos, 2× → +20 puntos y +30%) |
+| Tamaño de la calabaza | Las grandes pesan más (siguen la mano más despacio) y los duendes tardan más en comérselas (1,5 s × tamaño); las pequeñas, al revés |
+| Calabaza levitada en alto | Fuera del alcance de los duendes: esperan debajo |
 | Eliminar un duende (6 impactos) | +5 puntos |
 | Un duende destruye una calabaza | −10% de energía |
 | Energía al empezar | 70% |
@@ -152,7 +155,9 @@ Scripts en `Assets/Scripts/`:
   - la niebla y el ajuste de la iluminación, y la tipografía de Halloween (`HalloweenFontTheme`);
   - el tutorial y el inicio de ronda (`GraveyardTutorial`; estado de espera en `GraveyardGameManager`, `GoblinEnemy` y `GoblinSpawner`);
   - el feedback sonoro y háptico (`MagicFeedback`, `GraveyardFeedback` y los cambios en `WizardLevitationFeedback`, `WizardSpellCaster`, `MagicProjectile`, `GoblinEnemy` y `PumpkinDeliveryZone`);
-  - la rotación de la telequinesis con la muñeca, su alcance de 8 m, el bloqueo del salto mientras se levita y el arreglo de los límites de escalado (`WizardLevitation`);
+  - la rotación de la telequinesis con la muñeca, el empuje / atracción Go-Go, su alcance de 8 m, el bloqueo del salto mientras se levita y el arreglo de los límites de escalado (`WizardLevitation`);
+  - el efecto del tamaño de las calabazas (puntos, energía, peso y tiempo que tardan los duendes en comérselas) y los textos flotantes (`PumpkinItem`, `PumpkinDeliveryZone`, `GoblinEnemy`, `FloatingText`);
+  - los hechizos brillantes, la pantalla de fin de partida y los límites del cementerio (`GlowSphere`, `GraveyardEndScreen`, `PlayAreaBounds`);
   - la escena de inicio de la build y este documento.
 
   El detalle está en el historial de commits de la rama. [COMPLETAR: confirmar que el grupo ha revisado y probado estos cambios.]

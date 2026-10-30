@@ -14,8 +14,27 @@ public class WizardLevitation : MonoBehaviour
 
     [Header("Levitation Settings")]
     public float maxDistance = 8f;
+    [Tooltip("Fixed distance from the hand, only used when Go-Go is off.")]
     public float holdDistance = 1.5f;
     public float moveSpeed = 12f;
+
+    [Header("Go-Go push / pull")]
+    [Tooltip("Stretch the arm to push the object away, bring the hand " +
+             "back to pull it in. The object starts where it was grabbed.")]
+    public bool useGoGo = true;
+    [Tooltip("How strongly arm movement changes the distance. The change " +
+             "is exponential: fine control near you, fast far away.")]
+    public float goGoGain = 3f;
+    public float minHoldDistance = 0.4f;
+    [Tooltip("The head; the arm is measured from a point below it " +
+             "(the shoulders). Defaults to the main camera.")]
+    public Transform head;
+    public float shoulderDrop = 0.25f;
+
+    [Header("Weight")]
+    [Tooltip("Bigger objects follow the hand more slowly (heavier); " +
+             "smaller ones faster.")]
+    public bool sizeAffectsSpeed = true;
 
     [Header("Scaling Settings")]
     public float scaleSpeed = 0.5f;
@@ -42,6 +61,15 @@ public class WizardLevitation : MonoBehaviour
 
     private bool jumpWasEnabled;
 
+    // Go-Go state, measured when the object is grabbed.
+    private float grabDistance;
+    private float grabArmExtension;
+    private float currentHoldDistance;
+    private float holdDistanceVelocity;
+
+    // Current distance between the hand and the held object's anchor.
+    public float CurrentHoldDistance => currentHoldDistance;
+
     // Scale each object had the first time it was levitated. The scale
     // limits are relative to this, so regrabbing an object can't push it
     // past minScaleMultiplier / maxScaleMultiplier.
@@ -52,6 +80,9 @@ public class WizardLevitation : MonoBehaviour
     {
         if (jumpProvider == null)
             jumpProvider = FindJumpProvider();
+
+        if (head == null && Camera.main != null)
+            head = Camera.main.transform;
     }
 
     void Update()
@@ -74,15 +105,67 @@ public class WizardLevitation : MonoBehaviour
         if (heldObject == null)
             return;
 
+        UpdateHoldDistance();
+
         Vector3 targetPosition =
-            transform.position + transform.forward * holdDistance;
+            transform.position + transform.forward * currentHoldDistance;
 
         Vector3 direction = targetPosition - heldObject.position;
 
-        heldObject.linearVelocity = direction * moveSpeed;
+        heldObject.linearVelocity = direction * FollowSpeed();
         heldObject.angularVelocity = Vector3.zero;
 
         UpdateRotation();
+    }
+
+    // Go-Go: the distance grows exponentially with how much further the
+    // arm is stretched than when the object was grabbed (and shrinks when
+    // the hand comes back towards the body).
+    void UpdateHoldDistance()
+    {
+        if (!useGoGo)
+        {
+            currentHoldDistance = holdDistance;
+            return;
+        }
+
+        float stretch = ArmExtension() - grabArmExtension;
+
+        float target = Mathf.Clamp(
+            grabDistance * Mathf.Exp(goGoGain * stretch),
+            minHoldDistance,
+            maxDistance
+        );
+
+        // Smoothed, so small hand tremors don't shake a far object.
+        currentHoldDistance = Mathf.SmoothDamp(
+            currentHoldDistance, target, ref holdDistanceVelocity,
+            0.08f, Mathf.Infinity, Time.fixedDeltaTime
+        );
+    }
+
+    float ArmExtension()
+    {
+        if (head == null)
+            return 0f;
+
+        Vector3 shoulders = head.position - Vector3.up * shoulderDrop;
+        return Vector3.Distance(transform.position, shoulders);
+    }
+
+    // Size multiplier of the held object (1 = its original size).
+    public float HeldSizeMultiplier =>
+        heldObject == null || initialScale.x <= 0f
+            ? 1f
+            : heldObject.transform.localScale.x / initialScale.x;
+
+    float FollowSpeed()
+    {
+        if (!sizeAffectsSpeed)
+            return moveSpeed;
+
+        // 2x size -> half speed (heavy), 0.5x -> 1.5x speed (light).
+        return moveSpeed * Mathf.Clamp(1f / HeldSizeMultiplier, 0.5f, 1.5f);
     }
 
     // While Y is held, the object copies how the wrist turns since Y was
@@ -105,7 +188,6 @@ public class WizardLevitation : MonoBehaviour
             isRotating = true;
             handRotationAtClutch = transform.rotation;
             objectRotationAtClutch = heldObject.rotation;
-            Debug.Log("WizardLevitation: wrist rotation started.", this);
         }
 
         Quaternion wristDelta =
@@ -173,6 +255,13 @@ public class WizardLevitation : MonoBehaviour
         originalConstraints = rb.constraints;
         initialScale = GetOriginalScale(rb);
 
+        // The object stays at the distance where it was grabbed; the arm
+        // pushes or pulls it from there.
+        grabDistance = Mathf.Clamp(hit.distance, minHoldDistance, maxDistance);
+        grabArmExtension = ArmExtension();
+        currentHoldDistance = useGoGo ? grabDistance : holdDistance;
+        holdDistanceVelocity = 0f;
+
         rb.useGravity = false;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
@@ -201,7 +290,10 @@ public class WizardLevitation : MonoBehaviour
 
         if (!originalScales.TryGetValue(rb, out Vector3 scale))
         {
-            scale = rb.transform.localScale;
+            // Pumpkins know their spawn size; other objects use their
+            // size the first time they are grabbed.
+            PumpkinItem pumpkin = rb.GetComponentInParent<PumpkinItem>();
+            scale = pumpkin != null ? pumpkin.BaseScale : rb.transform.localScale;
             originalScales[rb] = scale;
         }
 

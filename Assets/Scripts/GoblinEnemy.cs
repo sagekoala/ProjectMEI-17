@@ -9,6 +9,19 @@ public class GoblinEnemy : MonoBehaviour
 
     private PumpkinItem target;
 
+    [Header("Eating")]
+    [Tooltip("Seconds to eat a pumpkin of normal size. Bigger pumpkins " +
+             "take longer (2x size = twice as long), smaller ones less: " +
+             "time for the wizard to save them.")]
+    public float eatTimePerSize = 1.5f;
+
+    [Tooltip("A pumpkin levitated higher than this above the goblin is " +
+             "out of reach: it waits underneath.")]
+    public float reachHeight = 1.2f;
+
+    private PumpkinItem eating;
+    private float eatTimer;
+
     [Header("Combat")]
     public int maxHealth = 6;
 
@@ -33,6 +46,38 @@ public class GoblinEnemy : MonoBehaviour
 
         if (direction.magnitude <= attackDistance)
         {
+            float height = target.transform.position.y - transform.position.y;
+
+            if (height > reachHeight)
+            {
+                // Out of reach (levitated): wait underneath.
+                eating = null;
+                return;
+            }
+
+            if (eating != target)
+            {
+                // Starts eating: warn the player.
+                eating = target;
+                eatTimer = 0f;
+                FloatingText.Spawn(
+                    target.transform.position + Vector3.up * 0.4f,
+                    "¡ÑAM!", new Color(1f, 0.3f, 0.25f));
+                MagicFeedback.Play(MagicFeedback.GrowlSound, transform.position, 0.8f);
+            }
+
+            eatTimer += Time.deltaTime;
+
+            if (eatTimer < eatTimePerSize * target.SizeMultiplier)
+            {
+                // Chewing: stays in place, facing the pumpkin.
+                if (direction.sqrMagnitude > 0.01f)
+                    transform.rotation = Quaternion.LookRotation(direction);
+                return;
+            }
+
+            eating = null;
+
             if (GraveyardGameManager.Instance != null)
                 GraveyardGameManager.Instance.PumpkinDestroyed();
 
@@ -43,6 +88,9 @@ public class GoblinEnemy : MonoBehaviour
             target = null;
             return;
         }
+
+        // The pumpkin got away (e.g. levitated): stop eating.
+        eating = null;
 
         // Move horizontally toward the nearest pumpkin.
         transform.position +=

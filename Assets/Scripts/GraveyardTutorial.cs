@@ -128,8 +128,11 @@ public class GraveyardTutorial : MonoBehaviour
                 body =
                     "Apunta a una calabaza con la mano izquierda y " +
                     "mantén el GATILLO IZQUIERDO para levitarla.\n\n" +
-                    "Mientras la levitas: mantén Y y gira la muñeca para rotarla, A / B para " +
-                    "agrandarla o encogerla.",
+                    "Estira el brazo para alejarla y recógelo para acercarla. " +
+                    "Mantén Y y gira la muñeca para rotarla; A / B para " +
+                    "agrandarla o encogerla.\n\n" +
+                    "Las grandes valen más y los duendes tardan más en " +
+                    "comérselas, pero pesan más.",
                 isDone = () => levitation.HeldObject != null,
             });
         }

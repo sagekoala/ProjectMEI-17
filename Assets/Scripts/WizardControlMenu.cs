@@ -505,7 +505,8 @@ public class WizardControlMenu : MonoBehaviour
                 $"Mantén la energía por encima del {game.minimumVictoryEnergy:0}% " +
                 "hasta que acabe el tiempo.\n\n" +
                 "<b>PUNTOS</b>\n" +
-                $"Calabaza entregada: {pumpkinPoints}+{game.energyPerDelivery:0}% energía\n" +
+                $"Calabaza entregada: {pumpkinPoints}+{game.energyPerDelivery:0}% energía " +
+                "(más si es grande)\n" +
                 $"Duende eliminado: +{game.pointsPerGoblin} puntos\n" +
                 $"Calabaza destruida: −{game.energyLostPerPumpkin:0}% energía\n";
         }
@@ -513,6 +514,7 @@ public class WizardControlMenu : MonoBehaviour
         help +=
             "\n<b>CONTROLES</b>\n" +
             "Gatillo izq.: levitar / soltar\n" +
+            "Estirar / recoger el brazo: alejar / acercar el objeto\n" +
             "Y + girar la muñeca: rotar el objeto levitado\n" +
             "A / B: agrandar / encoger\n" +
             "Gatillo der.: lanzar hechizo\n" +
