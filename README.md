@@ -16,7 +16,7 @@ Eres un mago que protege un cementerio colonial en la noche de Halloween. Unos d
 
 Entregar calabazas **desbloquea hechizos más potentes**, y el último minuto es una **oleada final** de duendes arqueros. Antes de cada ronda, un **tutorial interactivo** enseña a jugar, y al terminar una **pantalla de fin de ronda** muestra el resultado y permite volver a jugar.
 
-**Duración de una partida:** la ronda dura **7 minutos** de juego, o menos si la energía llega a 0. A eso se suma el tutorial previo, de 1 a 2 minutos si se hacen todos los pasos o unos segundos si se salta. En total, unos **8–9 minutos**.
+**Duración de una partida:** la ronda dura **7 minutos** de juego, o menos si la energía llega a 0 o se pierden las 10 vidas contra el fantasma. A eso se suma el tutorial previo, de 1 a 2 minutos si se hacen todos los pasos o unos segundos si se salta. En total, unos **8–9 minutos**.
 
 ## 2. Decisiones de diseño
 
@@ -117,8 +117,8 @@ Encima de la mano izquierda se ven siempre los **puntos**, la **energía** y el 
 ### 4.6 Fin de la ronda
 
 Un segundo después de acabar la ronda aparece un panel delante del jugador con:
-- el resultado: **¡VICTORIA!** o **FIN DE LA PARTIDA**, con el motivo (energía agotada o poco tiempo con poca energía);
-- los **puntos**, la **energía final** y el **tiempo resistido**;
+- el resultado: **¡VICTORIA!** o **FIN DE LA PARTIDA**, con el motivo de la derrota (energía agotada, vidas perdidas contra el fantasma o poca energía al acabar el tiempo);
+- los **puntos**, la **energía final**, las **vidas restantes** y el **tiempo resistido**;
 - los botones **Jugar de nuevo**, que reinicia la ronda empezando por el tutorial, y **Cerrar**.
 
 Mientras se muestra, los hechizos y la telequinesis se pausan para que los clics no disparen.
