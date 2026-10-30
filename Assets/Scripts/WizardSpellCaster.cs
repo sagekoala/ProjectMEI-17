@@ -141,25 +141,18 @@ public class WizardSpellCaster : MonoBehaviour
         Vector3 spawnPosition =
             transform.position + direction * 0.25f;
 
-        GameObject spell = GameObject.CreatePrimitive(
-            PrimitiveType.Sphere
-        );
-
-        spell.name = "Magic Orb";
-        spell.transform.position = spawnPosition;
-        spell.transform.localScale =
-            Vector3.one * spellSize;
-
-        // Apply the currently selected spell color.
+        // A glowing (unlit) orb in the selected color. It keeps its
+        // collider to hit goblins.
         Color color = CurrentColor;
-        Renderer renderer = spell.GetComponent<Renderer>();
-        renderer.material.color = color;
+        GameObject spell = GlowSphere.Create(
+            "Magic Orb", spawnPosition, spellSize, color, keepCollider: true
+        );
 
         AddTrail(spell, color);
         AddLight(spell, color);
 
         // Handle projectile collisions and impact effects.
-        spell.AddComponent<MagicProjectile>();
+        spell.AddComponent<MagicProjectile>().color = color;
 
         Rigidbody rb = spell.AddComponent<Rigidbody>();
 
@@ -216,15 +209,11 @@ public class WizardSpellCaster : MonoBehaviour
 
     void CreateReadyIndicator()
     {
-        GameObject orb = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        orb.name = "Spell Ready Indicator";
-
-        // Visual only.
-        Destroy(orb.GetComponent<Collider>());
+        GameObject orb = GlowSphere.Create(
+            "Spell Ready Indicator", transform.position, indicatorSize, CurrentColor
+        );
 
         readyIndicatorRenderer = orb.GetComponent<Renderer>();
-        readyIndicatorRenderer.shadowCastingMode =
-            UnityEngine.Rendering.ShadowCastingMode.Off;
 
         // Not parented to the hand: the hand is scaled, so the orb is
         // placed in world space every frame instead.
@@ -243,6 +232,6 @@ public class WizardSpellCaster : MonoBehaviour
         readyIndicator.localScale =
             Vector3.one * (indicatorSize * CooldownProgress);
 
-        readyIndicatorRenderer.material.color = CurrentColor;
+        GlowSphere.SetColor(readyIndicatorRenderer, CurrentColor);
     }
 }

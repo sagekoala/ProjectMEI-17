@@ -65,15 +65,7 @@ public class GraveyardFeedback : MonoBehaviour
 
     static void SpawnFlash(Vector3 position, float size, Color color, float duration)
     {
-        GameObject flash = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        flash.name = "Feedback Flash";
-        flash.transform.position = position;
-        flash.transform.localScale = Vector3.one * size;
-
-        // Visual only.
-        Destroy(flash.GetComponent<Collider>());
-
-        flash.GetComponent<Renderer>().material.color = color;
+        GameObject flash = GlowSphere.Create("Feedback Flash", position, size, color);
         Destroy(flash, duration);
     }
 

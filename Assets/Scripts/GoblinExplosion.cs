@@ -23,15 +23,10 @@ public static class GoblinExplosion
 
     static void SpawnFlash(Vector3 center)
     {
-        GameObject flash = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        flash.name = "Explosion Flash";
-        flash.transform.position = center;
-        flash.transform.localScale = Vector3.one * 1.2f;
+        GameObject flash = GlowSphere.Create(
+            "Explosion Flash", center, 1.2f, FlashColor
+        );
 
-        // Visual only.
-        Object.Destroy(flash.GetComponent<Collider>());
-
-        flash.GetComponent<Renderer>().material.color = FlashColor;
         Object.Destroy(flash, 0.2f);
     }
 
