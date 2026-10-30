@@ -1,31 +1,26 @@
 
 using UnityEngine;
 
-// The ghost and the spectral lantern. The lantern lies near the start
-// (pick it up with telekinesis); once the round starts, a ghost appears
-// on the far side of the cemetery and floats towards the wizard. Lighting
-// it with the lantern banishes it; if it touches the wizard, a life is
-// lost. Either way it comes back after a while, from the far side.
-// Added by GraveyardGameManager if it is not in the scene.
+// Spawns the lantern and the ghost
 public class GhostSystem : MonoBehaviour
 {
     public static GhostSystem Instance { get; private set; }
 
     [Header("Ghost")]
-    [Tooltip("Seconds after the round starts before the first ghost.")]
+    [Tooltip("First ghost delay (s)")]
     public float firstGhostDelay = 20f;
-    [Tooltip("Seconds before a new ghost after one is banished or catches you.")]
+    [Tooltip("Respawn delay (s)")]
     public float respawnDelay = 8f;
     public float ghostSpeed = 0.8f;
     public float spawnHeight = 3f;
-    [Tooltip("Seconds of light needed to banish the ghost.")]
+    [Tooltip("Light time to kill it (s)")]
     public float banishTime = 2f;
 
     [Header("Lantern")]
     public Vector3 lanternPosition = new Vector3(1.3f, 1.2f, -11.6f);
-    [Tooltip("Beam length (the same at any size).")]
+    [Tooltip("Beam length")]
     public float baseBeamRange = 8f;
-    [Tooltip("Beam half-angle at normal size. It widens as the lantern grows.")]
+    [Tooltip("Beam half-angle at size 1 (wider when bigger)")]
     public float baseBeamAngle = 15f;
 
     public GhostLantern Lantern { get; private set; }

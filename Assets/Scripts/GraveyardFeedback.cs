@@ -2,10 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
-// Game-wide feedback for events that happen away from the player's hands:
-// 3D sounds (so the player hears where things happen), vibration on both
-// controllers for the important ones, and a looping background wind.
-// Gameplay scripts call it through Instance, like GraveyardGameManager.
+// Feedback for game events (3D sounds, haptics, wind)
 public class GraveyardFeedback : MonoBehaviour
 {
     public static GraveyardFeedback Instance { get; private set; }
@@ -43,8 +40,7 @@ public class GraveyardFeedback : MonoBehaviour
             Instance = null;
     }
 
-    // A goblin destroyed a pumpkin: the player must notice, even if it
-    // happened behind them.
+    // pumpkin destroyed
     public void PumpkinLost(Vector3 position)
     {
         MagicFeedback.Play(MagicFeedback.FailSound, position, 1f);
@@ -52,8 +48,7 @@ public class GraveyardFeedback : MonoBehaviour
         PulseBoth(0.6f, 0.3f);
     }
 
-    // A ghost appeared: a whoosh is played where it is; a light tick on
-    // both hands so the wizard looks around.
+    // ghost appeared
     public void GhostAppeared(Vector3 position)
     {
         PulseBoth(0.2f, 0.1f);
@@ -74,8 +69,7 @@ public class GraveyardFeedback : MonoBehaviour
         PulseBoth(0.4f, 0.15f);
     }
 
-    // The final wave begins: a horn, a strong vibration and a sign in
-    // front of the player for a few seconds.
+    // final wave starts
     public void AnnounceFinalWave()
     {
         Camera head = Camera.main;

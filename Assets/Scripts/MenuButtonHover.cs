@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-// Tells the wizard menu when a pointer starts hovering one of its
-// buttons, for hover feedback.
+// hover feedback for menu buttons
 public class MenuButtonHover : MonoBehaviour, IPointerEnterHandler
 {
     public WizardControlMenu menu;

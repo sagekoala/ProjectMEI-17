@@ -2,9 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
-// Shared sound and haptic feedback for the wizard's actions.
-// The project has no suitable magic sound assets, so the sounds are
-// synthesized once in code and cached.
+// Sounds (generated in code) and haptics
 public static class MagicFeedback
 {
     const int SampleRate = 44100;
@@ -182,8 +180,7 @@ public static class MagicFeedback
         });
     }
 
-    // Slowly swelling, heavily filtered noise. The end is cross-faded
-    // into the start so the clip loops without a click.
+    // filtered noise, crossfaded so it loops
     static AudioClip Wind(string name, float seconds, float volume)
     {
         const float fadeSeconds = 0.5f;

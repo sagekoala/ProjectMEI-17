@@ -2,9 +2,7 @@
 using TMPro;
 using UnityEngine;
 
-// A short 3D text that floats up, faces the player and fades out, e.g.
-// "+20 pts" when a pumpkin is delivered or "¡ÑAM!" when a goblin starts
-// eating one.
+// Floating text that rises, faces the camera and fades out
 public class FloatingText : MonoBehaviour
 {
     public float duration = 1.6f;

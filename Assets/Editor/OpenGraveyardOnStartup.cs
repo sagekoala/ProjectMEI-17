@@ -3,10 +3,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
-// Editor only: when Unity starts on the template's SampleScene (or an empty
-// scene), open the game scene instead. It runs once per editor session, so
-// it never fights you if you open another scene on purpose. Builds are not
-// affected; they start with the first scene in the build scene list.
+// Opens the graveyard scene when the editor starts on SampleScene (editor only)
 [InitializeOnLoad]
 static class OpenGraveyardOnStartup
 {

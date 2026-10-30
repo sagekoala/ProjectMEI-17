@@ -19,7 +19,7 @@ public class GraveyardGameManager : MonoBehaviour
     public float roundDuration = 300f;
 
     [Header("Ghost")]
-    [Tooltip("Times the ghost can catch the wizard before the round is lost.")]
+    [Tooltip("Lives against the ghost")]
     public int ghostLives = 10;
     public int pointsPerGhost = 10;
 
@@ -43,7 +43,7 @@ public class GraveyardGameManager : MonoBehaviour
     // Why the round was lost (empty on victory).
     public string DefeatReason { get; private set; } = "";
     [Header("Round Start")]
-    [Tooltip("If true, the round waits for StartRound() (e.g. after the tutorial).")]
+    [Tooltip("Wait for StartRound() (after the tutorial)")]
     public bool waitForStart = false;
 
     public bool GameOver { get; private set; }
@@ -64,9 +64,7 @@ public class GraveyardGameManager : MonoBehaviour
         remainingTime = roundDuration;
         GhostLivesLeft = ghostLives;
 
-        // The end-of-round screen and the cemetery limits. Added here if
-        // they are not in the scene, with their default settings; add
-        // them to this object in the editor to tweak them.
+        // add these if they are not in the scene
         if (FindAnyObjectByType<GraveyardEndScreen>() == null)
             gameObject.AddComponent<GraveyardEndScreen>();
 

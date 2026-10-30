@@ -6,29 +6,24 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit.UI;
 
-// End-of-round screen: when the round ends (victory or defeat) a panel
-// appears in front of the player with the result, the stats and buttons
-// to play again or close it. While it is shown, spells and telekinesis
-// are paused, so clicking the buttons with the trigger doesn't cast.
-// The panel is built in code at Start (hidden), so the Halloween font
-// theme also applies to it.
+// End of round panel (result, stats, play again)
 public class GraveyardEndScreen : MonoBehaviour
 {
     [Header("Targets (found automatically if empty)")]
     public GraveyardGameManager game;
     public Transform head;
 
-    [Tooltip("Paused while the screen is shown.")]
+    [Tooltip("Disabled while the screen is shown")]
     public Behaviour[] disableWhileShown;
 
     [Header("Placement")]
     public float distance = 1.6f;
-    [Tooltip("Below eye level, in meters.")]
+    [Tooltip("Height offset")]
     public float heightOffset = -0.1f;
-    [Tooltip("Seconds between the end of the round and the screen.")]
+    [Tooltip("Delay before showing (s)")]
     public float delay = 1f;
 
-    [Tooltip("World size of one canvas pixel, in meters.")]
+    [Tooltip("Canvas scale")]
     public float metersPerPixel = 0.0012f;
 
     static readonly Color PanelColor = new Color(0.08f, 0.06f, 0.12f, 0.92f);

@@ -1,9 +1,6 @@
 using UnityEngine;
 
-// Keeps the first-person wizard body under the player's head and turns it
-// towards where the head looks. Quick glances don't move the body: it
-// starts turning once the head is turned past a threshold, like a real
-// person would, and keeps turning until it faces the head again.
+// Body follows the head, turns after a threshold
 public class WizardBodyFollow : MonoBehaviour
 {
     [Tooltip("The wizard body (child of the XR Origin).")]
@@ -13,10 +10,10 @@ public class WizardBodyFollow : MonoBehaviour
     public Transform head;
 
     [Header("Turning")]
-    [Tooltip("The body starts turning when the head is turned more than this (degrees).")]
+    [Tooltip("Start turning angle (degrees)")]
     public float startTurnAngle = 30f;
 
-    [Tooltip("The body stops turning when it is within this angle of the head (degrees).")]
+    [Tooltip("Stop turning angle (degrees)")]
     public float stopTurnAngle = 3f;
 
     [Tooltip("How fast the body turns (degrees per second).")]
@@ -28,8 +25,7 @@ public class WizardBodyFollow : MonoBehaviour
 
     private bool isTurning;
 
-    // Update, not LateUpdate: the Animator (and the hand IK) runs after
-    // Update, so it sees the body already in its new place.
+    // Update so the animator/IK sees the new position
     void Update()
     {
         if (body == null)

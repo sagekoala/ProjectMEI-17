@@ -10,8 +10,7 @@ public class GoblinEnemy : MonoBehaviour
     private PumpkinItem target;
 
     [Header("Reach")]
-    [Tooltip("A pumpkin levitated higher than this above the goblin is " +
-             "out of reach: it waits underneath.")]
+    [Tooltip("Pumpkins higher than this are out of reach")]
     public float reachHeight = 1.2f;
 
     [Header("Combat")]

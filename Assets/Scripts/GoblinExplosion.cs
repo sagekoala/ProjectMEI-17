@@ -1,7 +1,6 @@
 using UnityEngine;
 
-// Explosion played when an enemy dies: a flash, a fading light, chunks
-// that fly off with physics (using the enemy's own material) and a boom.
+// Explosion when an enemy dies
 public static class GoblinExplosion
 {
     const int ChunkCount = 14;

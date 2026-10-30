@@ -11,9 +11,7 @@ public class WizardTurnSettings : MonoBehaviour
     public SnapTurnProvider snapTurn;
 
     [Header("Controller Input Managers")]
-    [Tooltip("The XRI managers own the turn input actions and re-enable them " +
-             "on their own (e.g. when the ray leaves a UI button), so the " +
-             "turn mode must be set on them, not on the actions directly.")]
+    [Tooltip("Turn mode is set on the XRI input managers")]
     public ControllerInputActionManager[] inputManagers;
 
     [Header("Interface")]

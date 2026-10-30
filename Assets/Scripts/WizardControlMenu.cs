@@ -10,10 +10,7 @@ using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 using UnityEngine.XR.Interaction.Toolkit.UI;
 
-// Wrist "spellbook" menu: a world-space panel that floats above the left
-// controller, organized in tabs: spell, movement, game and help.
-// Open/close it with the X button; use it with the right hand ray
-// (trigger) or by poking it. The panel is built in code.
+// Grimoire menu on the left wrist (X to open)
 public class WizardControlMenu : MonoBehaviour
 {
     [Header("Targets")]
@@ -25,7 +22,7 @@ public class WizardControlMenu : MonoBehaviour
     [Tooltip("Used to show the points of a delivered pumpkin in the help.")]
     public PumpkinSpawner pumpkinSpawner;
 
-    [Tooltip("Paused while the menu is open, so menu clicks don't cast spells, levitate or fly.")]
+    [Tooltip("Disabled while the menu is open")]
     public Behaviour[] disableWhileOpen;
 
     [Header("Placement")]
@@ -137,8 +134,7 @@ public class WizardControlMenu : MonoBehaviour
 
     void Start()
     {
-        // Built in Start so the locomotion settings have validated
-        // their references in Awake.
+        // built in Start, after the settings Awake
         BuildMenu();
         SetOpen(startOpen);
     }
@@ -194,8 +190,7 @@ public class WizardControlMenu : MonoBehaviour
         if (head == null)
             return;
 
-        // A world-space canvas is read from behind its forward axis,
-        // so point it away from the head.
+        // canvas faces away from the head
         Vector3 away = position - head.position;
         if (away.sqrMagnitude > 0.0001f)
         {
@@ -277,9 +272,7 @@ public class WizardControlMenu : MonoBehaviour
         RefreshGame();
     }
 
-    // Spell list, one line each: a color swatch, the name and either its
-    // effect (unlocked) or the pumpkins still needed (locked; the next
-    // one in gold). The chosen spell has a white border and a check.
+    // spell list: color, name, effect or unlock goal
     void RefreshSpells()
     {
         if (colorButtons == null)
@@ -486,8 +479,7 @@ public class WizardControlMenu : MonoBehaviour
             Image swatchImage = swatch.gameObject.AddComponent<Image>();
             swatchImage.raycastTarget = false;
 
-            // Kept under the Halloween theme's size limit: plain font,
-            // easier to read at this size.
+            // under 24 so it keeps the normal font
             TextMeshProUGUI label = AddText(button.transform, "", 22f,
                 FontStyles.Normal, TextAlignmentOptions.Left);
             label.richText = true;
@@ -714,8 +706,7 @@ public class WizardControlMenu : MonoBehaviour
         Button button = rect.gameObject.AddComponent<Button>();
         button.targetGraphic = image;
 
-        // Hover/press feedback. "Selected" keeps the normal tint so a
-        // clicked button does not stay highlighted.
+        // hover/press colors
         ColorBlock colors = button.colors;
         colors.normalColor = new Color(0.85f, 0.85f, 0.85f);
         colors.highlightedColor = Color.white;

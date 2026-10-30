@@ -8,11 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 using UnityEngine.XR.Interaction.Toolkit.UI;
 
-// Tutorial shown before every round: a panel floating in front of the
-// player (it re-centers when the head turns away) that teaches how to
-// play step by step. Action steps complete when the player does the
-// action; every step can also be skipped. The last step starts the
-// round with a countdown. Needs GraveyardGameManager.waitForStart.
+// Tutorial before each round
 public class GraveyardTutorial : MonoBehaviour
 {
     [Header("Game")]
@@ -29,7 +25,7 @@ public class GraveyardTutorial : MonoBehaviour
     public float distance = 1.6f;
     public float heightOffset = -0.15f;
 
-    [Tooltip("The panel re-centers when the head turns further than this away from it (degrees).")]
+    [Tooltip("Re-center angle (degrees)")]
     public float recenterAngle = 35f;
 
     public float followSpeed = 3f;
@@ -163,8 +159,7 @@ public class GraveyardTutorial : MonoBehaviour
                     "Pulsa el GATILLO DERECHO para lanzar un hechizo.\n\n" +
                     "La bolita de tu mano derecha muestra su color y " +
                     "crece mientras el hechizo se recarga.",
-                // Only spells cast after the step appears count: the
-                // trigger that clicks the buttons also casts.
+                // only count spells cast after the step starts
                 isDone = () => spellCaster.LastCastTime > stepShownTime,
             });
         }
@@ -305,8 +300,7 @@ public class GraveyardTutorial : MonoBehaviour
 
     // ---------- Placement ----------
 
-    // Floats in front of the head at a fixed spot in the world, and glides
-    // back in front when the player looks too far away from it.
+    // keep the panel in front of the player
     void PlaceInFront(bool immediately)
     {
         if (head == null)

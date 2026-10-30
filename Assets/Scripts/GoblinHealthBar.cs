@@ -1,9 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-// Damage feedback for an enemy: a health bar floating above it (always
-// facing the player, green to red) and a short red flash on its body
-// when it is hit. Added in code by GoblinEnemy.
+// Health bar over the enemy + red flash on hit
 public class GoblinHealthBar : MonoBehaviour
 {
     public float barWidth = 0.5f;

@@ -1,14 +1,11 @@
 
 using UnityEngine;
 
-// A ghost built from glowing shapes: a translucent body, a tail and dark
-// eyes, with a pale light. It floats towards the wizard's head, bobbing.
-// The lantern's beam makes it flicker, slows it down and, after enough
-// light, banishes it. If it reaches the wizard, a life is lost.
+// Ghost: flies to the player, dies after enough lantern light
 public class GhostEnemy : MonoBehaviour
 {
     public float catchRadius = 0.6f;
-    [Tooltip("Lowest height while it is still far away, so it floats over the goblins.")]
+    [Tooltip("Min height while far away")]
     public float cruiseHeight = 1.8f;
 
     static readonly Color BodyColor = new Color(0.75f, 0.95f, 1f, 0.55f);
@@ -76,8 +73,7 @@ public class GhostEnemy : MonoBehaviour
 
         bobOffset = Random.value * 10f;
 
-        // Same health bar as the goblins: it drains while the light is on
-        // the ghost, and refills slowly when it isn't.
+        // reuse the goblin health bar
         healthBar = gameObject.AddComponent<GoblinHealthBar>();
     }
 
@@ -148,8 +144,7 @@ public class GhostEnemy : MonoBehaviour
     {
         Vector3 target = head.position;
 
-        // While far, it floats high over the goblins and comes down
-        // as it gets close.
+        // stay high while far away (above the goblins)
         float horizontal = Vector3.Distance(
             new Vector3(transform.position.x, 0f, transform.position.z),
             new Vector3(target.x, 0f, target.z));

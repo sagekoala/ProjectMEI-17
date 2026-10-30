@@ -4,8 +4,7 @@ using UnityEngine.XR.Interaction.Toolkit.Locomotion.Movement;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Turning;
 using UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets;
 
-// Runtime access to the XR rig locomotion options, so they can be
-// changed from the wizard control menu.
+// Locomotion options used by the grimoire
 public class WizardLocomotionSettings : MonoBehaviour
 {
     [Header("XR Rig Controllers")]
@@ -77,8 +76,7 @@ public class WizardLocomotionSettings : MonoBehaviour
         if (!IsConfigured)
             return;
 
-        // The right hand owns turning, so make the left hand and the
-        // turn providers agree with it.
+        // right hand controls turning, sync the rest
         SetSmoothTurn(rightHandInput.smoothTurnEnabled);
     }
 
@@ -123,8 +121,7 @@ public class WizardLocomotionSettings : MonoBehaviour
         Changed?.Invoke();
     }
 
-    // Changes the speed or the angle of the active turn mode.
-    // direction: +1 more, -1 less.
+    // direction: +1 more, -1 less
     public void ChangeTurn(int direction)
     {
         if (!IsConfigured)

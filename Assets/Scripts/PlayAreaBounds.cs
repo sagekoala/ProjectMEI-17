@@ -2,24 +2,18 @@
 using Unity.XR.CoreUtils;
 using UnityEngine;
 
-// Keeps the player inside the cemetery walls. Every frame, after
-// walking, teleporting or flying, if the head is outside the box the
-// whole XR rig is pushed back in. It works like an invisible wall that
-// also stops you from flying over the real walls, and a ceiling so you
-// can't fly off into the sky.
-// The default box matches the walls of Colonial_Graveyard; select the
-// object in the editor to see it (yellow) and adjust it.
+// Keeps the player inside the graveyard walls
 public class PlayAreaBounds : MonoBehaviour
 {
     [Header("Play Area (world space)")]
     public Vector3 center = new Vector3(3.34f, 0f, -12.62f);
-    [Tooltip("Width (X) and depth (Z) of the area between the walls. Y is ignored.")]
+    [Tooltip("Size X/Z (Y not used)")]
     public Vector3 size = new Vector3(12.59f, 0f, 15.53f);
 
-    [Tooltip("How close the head can get to the walls, in meters.")]
+    [Tooltip("Distance from the walls")]
     public float wallMargin = 0.4f;
 
-    [Tooltip("Highest the head can go (world Y), so flying has a ceiling.")]
+    [Tooltip("Max head height")]
     public float maxHeadHeight = 7f;
 
     [Header("Rig (found automatically if empty)")]

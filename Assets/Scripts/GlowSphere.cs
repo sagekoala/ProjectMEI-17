@@ -1,12 +1,7 @@
 
 using UnityEngine;
 
-// Glowing spheres for magic effects (spells, flashes, the ready orb).
-// They use an unlit material, so they look bright even in the dark
-// graveyard; a lit sphere with a light at its center looks almost black
-// from outside. The material lives in Assets/Resources so it is always
-// included in the build. Colors go through a property block, so no
-// material copies are created.
+// Unlit glowing spheres (spells, flashes). Material is in Resources
 public static class GlowSphere
 {
     const string MaterialName = "GlowUnlit";

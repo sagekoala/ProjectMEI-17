@@ -1,10 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-// A small score display that floats above the left hand: points, energy
-// and time left while playing, and the result when the round ends.
-// World-space and attached to the hand, so it is readable at a glance
-// without being stuck to the player's face.
+// Score display over the left hand
 public class GraveyardWristHud : MonoBehaviour
 {
     public GraveyardGameManager game;

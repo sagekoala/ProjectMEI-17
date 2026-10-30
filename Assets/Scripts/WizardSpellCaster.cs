@@ -3,8 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
-// One of the spells the wizard can cast. Spells after the first are
-// locked until enough pumpkins have been delivered in the round.
+// Spell type, unlocked by delivering pumpkins
 [System.Serializable]
 public class SpellType
 {
@@ -71,8 +70,7 @@ public class WizardSpellCaster : MonoBehaviour
     public float spellLightIntensity = 2f;
 
     [Header("Ready Indicator")]
-    [Tooltip("A small orb in front of the hand showing the selected color. " +
-             "It grows back while the spell recharges.")]
+    [Tooltip("Orb on the hand, grows back while recharging")]
     public float indicatorSize = 0.04f;
     public float indicatorDistance = 0.06f;
 
@@ -138,7 +136,7 @@ public class WizardSpellCaster : MonoBehaviour
 
     void OnDisable()
     {
-        // e.g. while the menu is open.
+        // e.g. menu open
         if (readyIndicator != null)
             readyIndicator.gameObject.SetActive(false);
     }
@@ -180,8 +178,7 @@ public class WizardSpellCaster : MonoBehaviour
         }
     }
 
-    // Selects a spell directly (used by the grimoire). Locked spells
-    // can't be selected.
+    // used by the grimoire
     public void SetSpellColor(int index)
     {
         if (!IsUnlocked(index))
@@ -190,8 +187,7 @@ public class WizardSpellCaster : MonoBehaviour
         currentColorIndex = index;
     }
 
-    // When a delivery unlocks a spell: a message in front of the
-    // player, a chime and a vibration.
+    // spell unlocked: message, sound, haptic
     void CheckUnlocks()
     {
         int deliveries = Deliveries;
@@ -203,8 +199,7 @@ public class WizardSpellCaster : MonoBehaviour
             int needed = spells[i].deliveriesToUnlock;
             if (needed > lastKnownDeliveries && needed <= deliveries)
             {
-                // The new spell is equipped right away; the grimoire can
-                // switch back to any other unlocked one.
+                // equip it
                 currentColorIndex = i;
                 AnnounceUnlock(spells[i]);
             }
@@ -252,8 +247,7 @@ public class WizardSpellCaster : MonoBehaviour
         Vector3 spawnPosition =
             transform.position + direction * 0.25f;
 
-        // A glowing (unlit) orb of the selected spell. It keeps its
-        // collider to hit goblins.
+        // spell orb (keeps the collider)
         SpellType type = CurrentSpell ?? new SpellType();
         Color color = type.color;
         float size = spellSize * type.sizeMultiplier;
@@ -300,8 +294,7 @@ public class WizardSpellCaster : MonoBehaviour
         trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         trail.receiveShadows = false;
 
-        // Own copy of the material, tinted with the spell color, so the
-        // shared asset is not modified.
+        // copy the material so the asset isn't changed
         Material material = new Material(trailMaterial);
         Color trailColor = color;
         trailColor.a = 0.6f;
@@ -332,8 +325,7 @@ public class WizardSpellCaster : MonoBehaviour
 
         readyIndicatorRenderer = orb.GetComponent<Renderer>();
 
-        // Not parented to the hand: the hand is scaled, so the orb is
-        // placed in world space every frame instead.
+        // not parented, the hand is scaled
         readyIndicator = orb.transform;
     }
 

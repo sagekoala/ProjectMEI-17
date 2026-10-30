@@ -7,38 +7,33 @@ public class WizardLevitation : MonoBehaviour
 {
     [Header("Quest 3 Input")]
     public InputActionReference levitateAction;
-    [Tooltip("Clutch: while held, the levitated object turns with the wrist.")]
+    [Tooltip("Hold to rotate with the wrist")]
     public InputActionReference rotateAction;
     public InputActionReference enlargeAction;
     public InputActionReference shrinkAction;
 
     [Header("Levitation Settings")]
     public float maxDistance = 8f;
-    [Tooltip("Fixed distance from the hand, only used when Go-Go is off.")]
+    [Tooltip("Hold distance when Go-Go is off")]
     public float holdDistance = 1.5f;
     public float moveSpeed = 12f;
 
     [Header("Go-Go push / pull")]
-    [Tooltip("Stretch the arm to push the object away, bring the hand " +
-             "back to pull it in. The object starts where it was grabbed.")]
+    [Tooltip("Go-Go: stretch the arm to push, pull back to bring closer")]
     public bool useGoGo = true;
-    [Tooltip("How strongly arm movement changes the distance. The change " +
-             "is exponential: fine control near you, fast far away.")]
+    [Tooltip("Go-Go sensitivity (exponential)")]
     public float goGoGain = 3f;
     public float minHoldDistance = 0.4f;
-    [Tooltip("The head; the arm is measured from a point below it " +
-             "(the shoulders). Defaults to the main camera.")]
+    [Tooltip("Head (defaults to main camera)")]
     public Transform head;
     public float shoulderDrop = 0.25f;
 
     [Header("Hand tools")]
-    [Tooltip("Tools such as the spectral lantern are held like a flashlight: " +
-             "this close in front of the hand, pointing where the hand points.")]
+    [Tooltip("Distance in front of the hand for tools (lantern)")]
     public float toolHoldDistance = 0.3f;
 
     [Header("Weight")]
-    [Tooltip("Bigger objects follow the hand more slowly (heavier); " +
-             "smaller ones faster.")]
+    [Tooltip("Bigger objects move slower")]
     public bool sizeAffectsSpeed = true;
 
     [Header("Scaling Settings")]
@@ -47,9 +42,7 @@ public class WizardLevitation : MonoBehaviour
     public float maxScaleMultiplier = 2f;
 
     [Header("Jump")]
-    [Tooltip("The XR rig's jump provider. A also enlarges the levitated " +
-             "object, so jumping is switched off while holding one. " +
-             "Found automatically if left empty.")]
+    [Tooltip("Jump provider, disabled while holding (A also scales). Auto if empty")]
     public Behaviour jumpProvider;
 
     private Rigidbody heldObject;
@@ -79,9 +72,7 @@ public class WizardLevitation : MonoBehaviour
     // Current distance between the hand and the held object's anchor.
     public float CurrentHoldDistance => currentHoldDistance;
 
-    // Scale each object had the first time it was levitated. The scale
-    // limits are relative to this, so regrabbing an object can't push it
-    // past minScaleMultiplier / maxScaleMultiplier.
+    // original scale of each object (for the scale limits)
     private readonly Dictionary<Rigidbody, Vector3> originalScales =
         new Dictionary<Rigidbody, Vector3>();
 
@@ -133,9 +124,7 @@ public class WizardLevitation : MonoBehaviour
         UpdateRotation();
     }
 
-    // A tool sits just in front of the hand and turns with it, so it is
-    // aimed by turning the wrist. Bigger tools sit a bit further out so
-    // they don't hit the hand.
+    // tools (lantern) stay in front of the hand
     void HoldTool()
     {
         float distance = toolHoldDistance + 0.1f * (HeldSizeMultiplier - 1f);
@@ -146,9 +135,7 @@ public class WizardLevitation : MonoBehaviour
         heldObject.MoveRotation(transform.rotation);
     }
 
-    // Go-Go: the distance grows exponentially with how much further the
-    // arm is stretched than when the object was grabbed (and shrinks when
-    // the hand comes back towards the body).
+    // Go-Go: distance grows exponentially with arm extension
     void UpdateHoldDistance()
     {
         if (!useGoGo)
@@ -196,9 +183,7 @@ public class WizardLevitation : MonoBehaviour
         return moveSpeed * Mathf.Clamp(1f / HeldSizeMultiplier, 0.5f, 1.5f);
     }
 
-    // While Y is held, the object copies how the wrist turns since Y was
-    // pressed, on every axis. Releasing Y leaves the object as it is, so
-    // it can be turned further by pressing Y again (like a ratchet).
+    // while Y is held the object copies the wrist rotation
     void UpdateRotation()
     {
         bool pressed = rotateAction != null &&
@@ -260,8 +245,7 @@ public class WizardLevitation : MonoBehaviour
 
         Ray ray = new Ray(transform.position, transform.forward);
 
-        // Ignore trigger volumes (e.g. the delivery tomb), so they don't
-        // block the ray in front of a pumpkin.
+        // ignore triggers (delivery tomb)
         if (!Physics.Raycast(ray, out RaycastHit hit, maxDistance,
                 Physics.DefaultRaycastLayers,
                 QueryTriggerInteraction.Ignore))
@@ -284,8 +268,7 @@ public class WizardLevitation : MonoBehaviour
         originalConstraints = rb.constraints;
         initialScale = GetOriginalScale(rb);
 
-        // The object stays at the distance where it was grabbed; the arm
-        // pushes or pulls it from there.
+        // keep the grab distance
         grabDistance = Mathf.Clamp(hit.distance, minHoldDistance, maxDistance);
         grabArmExtension = ArmExtension();
         currentHoldDistance = useGoGo ? grabDistance : holdDistance;
@@ -303,8 +286,7 @@ public class WizardLevitation : MonoBehaviour
 
     Vector3 GetOriginalScale(Rigidbody rb)
     {
-        // Forget objects that were destroyed (e.g. pumpkins delivered or
-        // broken by goblins), so the dictionary doesn't keep growing.
+        // remove destroyed objects
         if (originalScales.Count > 32)
         {
             var destroyed = new List<Rigidbody>();
@@ -319,8 +301,7 @@ public class WizardLevitation : MonoBehaviour
 
         if (!originalScales.TryGetValue(rb, out Vector3 scale))
         {
-            // Pumpkins know their spawn size; other objects use their
-            // size the first time they are grabbed.
+            // pumpkins use their spawn scale
             PumpkinItem pumpkin = rb.GetComponentInParent<PumpkinItem>();
             scale = pumpkin != null ? pumpkin.BaseScale : rb.transform.localScale;
             originalScales[rb] = scale;
@@ -364,9 +345,7 @@ public class WizardLevitation : MonoBehaviour
         }
     }
 
-    // Looks the provider up by type name among the XR rig's components
-    // (this hand is inside the rig), so this script doesn't depend on the
-    // XR Interaction Toolkit's jump namespace or on scene-wide searches.
+    // find the jump provider by name inside the rig
     Behaviour FindJumpProvider()
     {
         foreach (MonoBehaviour behaviour in

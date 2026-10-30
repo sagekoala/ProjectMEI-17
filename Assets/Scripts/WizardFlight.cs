@@ -5,14 +5,11 @@ using UnityEngine.XR.Interaction.Toolkit.Locomotion;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Gravity;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Comfort;
 
-// Magic flight (custom navigation): hold the right grip to fly where the
-// right hand points; squeezing harder flies faster. The XR rig's character
-// controller still collides with walls and the ground. Gravity is
-// switched off while flying and comes back when the grip is released.
+// Flight: hold right grip, fly where the hand points
 public class WizardFlight : LocomotionProvider, IGravityController
 {
     [Header("Flight")]
-    [Tooltip("The player flies towards this transform's forward (the right controller).")]
+    [Tooltip("Fly direction (right controller)")]
     public Transform steeringHand;
 
     public GravityProvider gravityProvider;
@@ -76,8 +73,7 @@ public class WizardFlight : LocomotionProvider, IGravityController
         );
     }
 
-    // The game uses no comfort vignette: the template's one (for walking,
-    // turning and teleporting) is switched off too.
+    // no vignette, turn off the template one
     protected void Start()
     {
         TunnelingVignetteController vignette =

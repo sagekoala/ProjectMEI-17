@@ -3,12 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Spectral lantern. It is picked up with telekinesis and then held like a
-// flashlight: in front of the hand, pointing where the hand points, so it
-// is aimed by turning the wrist. Holding Y makes it shine a misty green
-// beam; a ghost inside the beam is banished after a moment of light.
-// Its size changes the beam's radius: bigger = wider (easier to hit),
-// smaller = narrower. The length stays the same.
+// Anti-ghost lantern: held like a flashlight, Y turns the light on
 public class GhostLantern : MonoBehaviour
 {
     const float MinBeamAngle = 6f;
@@ -20,9 +15,7 @@ public class GhostLantern : MonoBehaviour
     static readonly Color LensReady = new Color(0.25f, 0.55f, 0.3f);
     static readonly Color LensOff = new Color(0.15f, 0.25f, 0.17f);
 
-    // Layered cones: (relative radius, alpha). Faint like real light,
-    // a little denser towards the middle; the green spot light does the
-    // actual lighting.
+    // cone layers: relative radius, alpha
     static readonly Vector2[] ConeLayers =
     {
         new Vector2(1f, 0.035f),
@@ -105,8 +98,7 @@ public class GhostLantern : MonoBehaviour
         BuildBeam();
     }
 
-    // The beam is its own object (not a child), so the lantern's scale
-    // doesn't stretch it twice.
+    // beam is not a child so the lantern scale doesn't affect it
     void BuildBeam()
     {
         GameObject root = new GameObject("Lantern Beam");
@@ -183,8 +175,7 @@ public class GhostLantern : MonoBehaviour
         beamLight.color = new Color(0.4f, 1f, 0.45f);
         beamLight.intensity = 10f;
         beamLight.shadows = LightShadows.None;
-        // 'Important': URP lights only the 4 most important lights per
-        // object, and the lamps and spells would otherwise win.
+        // ForcePixel so URP doesn't drop it (4 lights per object limit)
         beamLight.renderMode = LightRenderMode.ForcePixel;
         beamLight.innerSpotAngle = 1f;
 
@@ -193,8 +184,7 @@ public class GhostLantern : MonoBehaviour
         BuildLabel();
     }
 
-    // A label over the lantern: what it is while it lies on the ground,
-    // and how to switch it on while it is held and off.
+    // label: name on the ground, Y hint in the hand
     void BuildLabel()
     {
         GameObject labelObject = new GameObject("Lantern Label");
@@ -238,9 +228,7 @@ public class GhostLantern : MonoBehaviour
 
     void Awake()
     {
-        // Its own binding for the Y button (left controller's secondary
-        // button), independent of the telekinesis actions. Y on the
-        // keyboard too, for testing in the editor.
+        // own Y binding (+ keyboard Y for testing)
         shineAction = new InputAction("Lantern Shine", InputActionType.Button);
         shineAction.AddBinding("<XRController>{LeftHand}/{SecondaryButton}");
         shineAction.AddBinding("<XRController>{LeftHand}/secondaryButton");
@@ -342,8 +330,7 @@ public class GhostLantern : MonoBehaviour
         LightGhost(origin, range, angle);
     }
 
-    // Puffs drift from the lantern to the end of the beam, growing with
-    // the cone and fading in and out.
+    // mist puffs moving along the beam
     void UpdateMist(float range, float radius)
     {
         for (int i = 0; i < puffs.Length; i++)
@@ -365,8 +352,7 @@ public class GhostLantern : MonoBehaviour
         }
     }
 
-    // A splash of light where the beam meets the ground, a grave or a
-    // wall; at the end of the beam if it hits nothing.
+    // light spot where the beam hits
     void UpdateHitSpot(Vector3 origin, float range, float radius)
     {
         float distance = range;

@@ -7,11 +7,11 @@ public class MagicProjectile : MonoBehaviour
     public float impactSize = 0.3f;
     public float impactDuration = 0.2f;
 
-    [Tooltip("Spell color, reused for the impact flash.")]
+    [Tooltip("Spell color (for the impact)")]
     public Color color = Color.cyan;
 
     public float damage = 1f;
-    [Tooltip("If > 0, damages every goblin in this radius (m).")]
+    [Tooltip("Area damage radius (0 = none)")]
     public float splashRadius = 0f;
 
     private bool hasHit = false;
@@ -45,8 +45,7 @@ public class MagicProjectile : MonoBehaviour
                 goblin.TakeDamage(damage);
         }
 
-        // A short flash in the spell's color at the collision point;
-        // explosive spells show the size of their blast.
+        // impact flash (bigger for explosive)
         float flashSize = splashRadius > 0f ? splashRadius * 1.2f : impactSize;
         GameObject flash = GlowSphere.Create(
             "Magic Impact", impactPosition, flashSize, color

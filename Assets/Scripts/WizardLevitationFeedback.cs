@@ -59,7 +59,7 @@ public class WizardLevitationFeedback : MonoBehaviour
 
     void LateUpdate()
     {
-        // Missing, or paused (e.g. while the grimoire is open).
+        // missing or paused (menu open)
         if (levitation == null || !levitation.isActiveAndEnabled)
         {
             ray.enabled = false;
@@ -107,8 +107,7 @@ public class WizardLevitationFeedback : MonoBehaviour
         SetTint(null, Color.white);
     }
 
-    // Sound and vibration when grabbing and releasing, and a soft pulse
-    // while an object is levitated.
+    // grab / release / hold feedback
     void UpdateHoldFeedback(Rigidbody held)
     {
         if (held != lastHeld)

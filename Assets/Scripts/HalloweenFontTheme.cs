@@ -3,18 +3,13 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-// Gives the game's texts a Halloween look: a spooky font (Creepster) on
-// every TextMeshPro text of the scene, including the ones the grimoire
-// and the HUD build in code, and the 3D texts in the world. Small
-// interface texts keep the default font, because a decorative font is
-// hard to read at small sizes in VR.
+// Sets the Creepster font on big texts
 public class HalloweenFontTheme : MonoBehaviour
 {
     [Tooltip("Spooky font file (.ttf) with 'Include Font Data' enabled.")]
     public Font font;
 
-    [Tooltip("Interface (canvas) texts smaller than this keep the default font, " +
-             "for readability. 3D world texts always get the spooky font.")]
+    [Tooltip("Canvas texts smaller than this keep the default font")]
     public float minFontSize = 24f;
 
     private TMP_FontAsset fontAsset;
@@ -50,8 +45,7 @@ public class HalloweenFontTheme : MonoBehaviour
         if (fontAsset == null)
             yield break;
 
-        // Wait one frame: the grimoire and the HUD create their texts in
-        // their own Start/Awake.
+        // wait a frame, other UI is created in Start
         yield return null;
 
         // Every text in the loaded scenes, including inactive ones.
@@ -74,8 +68,7 @@ public class HalloweenFontTheme : MonoBehaviour
 
     bool UsesSpookyFont(TMP_Text text)
     {
-        // 3D texts (e.g. the delivery sign) measure size in other units,
-        // so the size limit only applies to canvas texts.
+        // size limit only for canvas texts
         if (!(text is TextMeshProUGUI))
             return true;
 

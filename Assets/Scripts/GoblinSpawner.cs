@@ -15,7 +15,7 @@ public class GoblinSpawner : MonoBehaviour
     public float respawnDelay = 7.5f;
 
     [Header("Final Wave")]
-    [Tooltip("Enemy of the final wave (e.g. the fast, fragile goblin archer).")]
+    [Tooltip("Final wave enemy (goblin archer)")]
     public GameObject finalWavePrefab;
 
     [Tooltip("The final wave starts when this many seconds of the round are left.")]
@@ -61,8 +61,7 @@ public class GoblinSpawner : MonoBehaviour
         }
     }
 
-    // The regular goblins keep coming; the final wave adds its enemies
-    // on top, a little apart so they don't all appear at once.
+    // final wave enemies, spawned a bit apart
     void StartFinalWave()
     {
         FinalWaveStarted = true;
@@ -78,11 +77,10 @@ public class GoblinSpawner : MonoBehaviour
         }
     }
 
-    // Keeps one enemy of this kind alive: spawns it, waits until it dies,
-    // waits the respawn delay and spawns the next one.
+    // keeps one enemy alive, respawns after delay
     IEnumerator GoblinSlot(GameObject prefab, float delay, float firstDelay)
     {
-        // No goblins before the round starts (e.g. during the tutorial).
+        // no goblins before the round starts
         if (GraveyardGameManager.Instance != null)
         {
             yield return new WaitUntil(() =>
