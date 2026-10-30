@@ -14,7 +14,7 @@ Para ganar tienes que:
 - Llevar las calabazas con telequinesis hasta la tumba iluminada. Cada calabaza da puntos y energía.
 - Matar a los duendes con hechizos antes de que lleguen a las calabazas.
 - Protegerte del fantasma con la linterna anti-fantasmas.
-- Tener más del 10% de energía cuando acaba la ronda (7 minutos).
+- Tener más del 10% de energía cuando acaba la ronda (5 minutos: 4 de juego normal y 1 de oleada final).
 
 Pierdes si la energía llega a 0% o si el fantasma te toca 10 veces.
 
@@ -57,7 +57,7 @@ Los menús se usan con el rayo de la mano derecha y el gatillo.
 ### Duendes
 - Buscan la calabaza más cercana. Si se la comen, pierdes 10% de energía.
 - Tienen 6 de vida. Matar a uno da +5 puntos.
-- En el último minuto llega la **oleada final**: suena un cuerno y llegan duendes arqueros, más rápidos pero con solo 2 de vida.
+- En el último minuto (a partir del minuto 4) llega la **oleada final**: suena un cuerno y llegan duendes arqueros, más rápidos pero con solo 2 de vida.
 
 ### Hechizos
 Al principio solo tienes el Rayo. Al entregar calabazas se desbloquean hechizos nuevos, y el nuevo se pone solo. En el grimorio puedes volver a cualquier hechizo desbloqueado.

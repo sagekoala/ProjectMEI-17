@@ -8833,7 +8833,7 @@ MonoBehaviour:
   energyPerDelivery: 15
   energyLostPerPumpkin: 10
   pointsPerGoblin: 5
-  roundDuration: 420
+  roundDuration: 300
   minimumVictoryEnergy: 10
   scoreText: {fileID: 880389356}
   energyText: {fileID: 1370346076}
