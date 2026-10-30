@@ -14,7 +14,9 @@ Eres un mago que protege un cementerio colonial en la noche de Halloween. Unos d
 - **Protegerte del fantasma**: flota hacia ti por encima del cementerio. Se destierra apuntándole con la luz de la **linterna anti-fantasmas**, que se coge con telequinesis.
 - **Mantener la energía** del cementerio por encima del 10% hasta que acabe el tiempo de la ronda (7 minutos). Las luces protectoras se apagan a medida que baja la energía. Si llega a 0, pierdes.
 
-Antes de cada ronda, un **tutorial interactivo** enseña a jugar.
+Entregar calabazas **desbloquea hechizos más potentes**, y el último minuto es una **oleada final** de duendes arqueros. Antes de cada ronda, un **tutorial interactivo** enseña a jugar, y al terminar una **pantalla de fin de ronda** muestra el resultado y permite volver a jugar.
+
+**Duración de una partida:** la ronda dura **7 minutos** de juego, o menos si la energía llega a 0. A eso se suma el tutorial previo, de 1 a 2 minutos si se hacen todos los pasos o unos segundos si se salta. En total, unos **8–9 minutos**.
 
 ## 2. Decisiones de diseño
 
@@ -31,14 +33,17 @@ Todas las metáforas de interacción se eligieron para que encajen con la fantas
 
 Otras decisiones:
 - **Interfaces en el mundo.** El grimorio, el marcador y el tutorial están colocados en el mundo o en la mano, nunca fijos a la vista. El tutorial flota delante y se recoloca solo si giras la cabeza.
-- **Feedback multisensorial.** Cada acción importante se nota con la vista, el oído y el tacto (sección 4.6).
+- **Feedback multisensorial.** Cada acción importante se nota con la vista, el oído y el tacto (sección 4.7).
 - **Ambiente de Halloween.** Noche con niebla, tipografía de terror (Creepster) y viento de fondo.
+- **Límites del cementerio.** Paredes invisibles y un techo impiden salir del cementerio volando o teletransportándose, para que la navegación libre no rompa el juego.
 
 ## 3. Cómo abrir y ejecutar el proyecto
 
 1. Abrir la carpeta del proyecto con **Unity 6000.5.0f1**. Los paquetes (XR Interaction Toolkit 3.5.1, OpenXR, Meta OpenXR, Input System, URP) se resuelven desde `Packages/manifest.json`.
 2. La escena del juego es `Assets/Scenes/Colonial_Graveyard.unity`, que es la escena inicial de la build.
-3. Para las gafas: plataforma **Android**, con las Meta Quest 3 conectadas, **Build And Run**.
+3. Para las gafas: plataforma **Android**, con las Meta Quest 3 conectadas, **Build And Run**. La app se instala como `com.mei17.guardiancementerio` ("Guardian del Cementerio").
+
+En *Project Settings → XR Plug-in Management → OpenXR*, pestaña de Android, solo debe estar activado **Meta Quest Support** (no "Android XR Support"). Si no, las Quest abren la app como una ventana plana en lugar de en VR.
 
 ## 4. Manual de uso
 
@@ -109,7 +114,16 @@ Se abre con **X** y flota sobre la mano izquierda, mirando hacia ti. Mientras es
 
 Encima de la mano izquierda se ven siempre los **puntos**, la **energía** y el **tiempo**. Se pone en rojo con poca energía, parpadea en rojo al perder energía y en verde al ganarla, y muestra el resultado al acabar la ronda.
 
-### 4.6 Feedback
+### 4.6 Fin de la ronda
+
+Un segundo después de acabar la ronda aparece un panel delante del jugador con:
+- el resultado: **¡VICTORIA!** o **FIN DE LA PARTIDA**, con el motivo (energía agotada o poco tiempo con poca energía);
+- los **puntos**, la **energía final** y el **tiempo resistido**;
+- los botones **Jugar de nuevo**, que reinicia la ronda empezando por el tutorial, y **Cerrar**.
+
+Mientras se muestra, los hechizos y la telequinesis se pausan para que los clics no disparen.
+
+### 4.7 Feedback
 
 | Acción | Visual | Sonido | Vibración |
 |---|---|---|---|
@@ -138,6 +152,8 @@ Encima de la mano izquierda se ven siempre los **puntos**, la **energía** y el 
 
 Los sonidos se generan por código (`MagicFeedback`), porque el proyecto no tenía efectos de sonido adecuados.
 
+También aparecen **textos flotantes** sobre la tumba al entregar una calabaza ("+X pts / +Y% energía"), y la **pantalla de fin de ronda** suena con una campanilla al ganar o un zumbido al perder.
+
 ## 5. Estructura
 
 Scripts en `Assets/Scripts/`:
@@ -146,13 +162,16 @@ Scripts en `Assets/Scripts/`:
 |---|---|
 | `GraveyardGameManager` | Reglas de la ronda: energía, puntos, tiempo, inicio, victoria y derrota |
 | `GraveyardTutorial` | Tutorial interactivo antes de cada ronda y cuenta atrás |
+| `GraveyardEndScreen` | Pantalla de fin de ronda (resultado, estadísticas, jugar de nuevo) |
+| `PlayAreaBounds` | Paredes invisibles y techo que mantienen al jugador dentro del cementerio |
 | `GoblinEnemy`, `GoblinSpawner` | Duendes: buscan la calabaza más cercana, reciben daño y reaparecen; oleada final de arqueros (prefabs `Goblin` y `GoblinArcher`) |
 | `GhostSystem`, `GhostEnemy`, `GhostLantern` | Fantasma (aparición, persecución, vidas) y linterna anti-fantasmas (haz según tamaño y rotación) |
 | `GoblinHealthBar`, `GoblinExplosion`, `FadingLight` | Barra de vida, parpadeo al recibir daño y explosión al morir |
 | `PumpkinItem`, `PumpkinSpawner`, `PumpkinDeliveryZone` | Calabazas, su aparición y la tumba de entrega |
 | `GraveyardLightingController` | Luces protectoras que se apagan con la energía |
 | `WizardLevitation`, `WizardLevitationFeedback` | Telequinesis (selección, traslación, rotación y escalado) y su feedback |
-| `WizardSpellCaster`, `MagicProjectile` | Hechizos, estela, indicador de recarga e impactos |
+| `WizardSpellCaster` (con `SpellType`), `MagicProjectile` | Hechizos desbloqueables, estela, indicador de recarga e impactos (incluido el daño en área) |
+| `GlowSphere`, `FloatingText` | Esferas brillantes (*unlit*) para hechizos y destellos, y textos flotantes |
 | `WizardFlight` | Vuelo mágico (proveedor de locomoción de XRI) |
 | `WizardLocomotionSettings`, `WizardTurnSettings` | Opciones de movimiento y giro del rig XRI |
 | `WizardControlMenu`, `MenuButtonHover` | Grimorio de muñeca con pestañas |
@@ -160,6 +179,9 @@ Scripts en `Assets/Scripts/`:
 | `GraveyardFeedback`, `MagicFeedback` | Feedback de eventos de la partida, sonidos sintetizados y vibración |
 | `HalloweenFontTheme` | Aplica la tipografía Creepster a los textos |
 | `WizardHandIK`, `WizardBodyFollow` | IK de las manos del mago y orientación del cuerpo con la cabeza |
+| `WizardMenuToggle` | Conmutador del panel de control antiguo (desactivado en la escena) |
+
+En `Assets/Editor/`, `OpenGraveyardOnStartup` abre la escena del cementerio al abrir el proyecto en Unity.
 
 ## 6. Disclosure notice (uso de herramientas y recursos externos)
 
@@ -197,5 +219,5 @@ Scripts en `Assets/Scripts/`:
 
 ## 7. Limitaciones conocidas
 
-- **El APK se abre como una ventana plana en las Quest**: la app no está arrancando en modo VR. Está pendiente de revisar la configuración de OpenXR para Android; la primera prueba es desactivar "Android XR Support" y dejar solo "Meta Quest Support".
+- **Altura de los ojos fija:** el rig usa el modo de seguimiento *Device* con la altura de la plantilla (1,36 m sobre el suelo del rig), no la altura real del jugador.
 - **Panel antiguo:** el panel de control anterior y su conmutador siguen en la escena, desactivados.
